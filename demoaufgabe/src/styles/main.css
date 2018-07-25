@@ -1,0 +1,27 @@
+body {
+    font-family: Monospace;
+    background-color: #101010;
+    color: #fff;
+    margin: 0px;
+    overflow: hidden;
+} 
+
+a {
+    color: #f00;
+}
+
+#threejs {
+    z-index: 5;
+}
+
+#canvas2 {
+    z-index: 999;
+    top: 100px;
+    left: 0px;
+    position: fixed;
+    border: 1px solid red;
+   /* background-color: #f00;*/
+}
+
+
+
