@@ -33,7 +33,6 @@ export const WEBVR = {
 			};
 
 			renderer.vr.setDevice( device );
-
 		}
 
 		function showEnterXR( device ) {
@@ -173,6 +172,14 @@ export const WEBVR = {
 			window.addEventListener( 'vrdisplaypresentchange', function ( event ) {
 
 				button.textContent = event.display.isPresenting ? 'EXIT VR' : 'ENTER VR';
+				
+				if (event.display.isPresenting){
+					console.log('vrdisplaypresentchange: Entered VR mode.');
+					
+				} else {
+					console.log('vrdisplaypresentchange: Exited VR mode.')
+				}
+				
 
 			}, false );
 
@@ -212,7 +219,6 @@ export const WEBVR = {
 			stylizeElement( message );
 
 			return message;
-
 		}
 
 	},

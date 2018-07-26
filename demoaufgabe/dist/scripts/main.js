@@ -1,11 +1,13 @@
 import {WEBVR} from './libs/webVR.js';
 //import * as stat from './libs/threejs-stats.js';
 import GeoBounds from './geo/geoBounds.js';
+//import FirstPersonControls from '../libs/FirstPersonVRControls.js';
 
 var clock = new THREE.Clock();
 
 var container, canvas;
 var camera, scene, renderer;
+var rig = new THREE.PerspectiveCamera(); // Three js object for camera rig
 var ANTI_ALIAS = false;
 
 var stats = new Stats();
@@ -44,6 +46,7 @@ let mbUrl = 'https://api.mapbox.com/v4/mapbox.streets/10/558/355.png?access_toke
 let url = 'http://localhost:8081/tiles/10/557/354';
 let textureUrl = '../data/Gale_texture_mobile_2048px.jpg';
 
+
 function loadTile(zoom, x, y){
     imgLoader.load(
         mbUrl,
@@ -51,13 +54,6 @@ function loadTile(zoom, x, y){
         function (data){
             if (!!data){
                 console.log(data);
-
-                var container = document.getElementById('container');
-                var canvas2 = container.appendChild(document.createElement('canvas'));
-                canvas2.setAttribute('id', 'canvas2');
-
-                var ctx = canvas2.getContext('2d');
-                ctx.drawImage(data,0,0);
 
                 //let image = new ImageData(imgArray, ctx.canvas.width, ctx.canvas.height);
 
@@ -119,7 +115,7 @@ function loadTile(zoom, x, y){
     );
 }
 
-loadTile()
+//loadTile()
 
 /**
  * Initializes VR Controls 
@@ -198,12 +194,12 @@ function initVRControls(){
             controller.parent.remove( controller );
         });
 
-        isVRControls = true;
+        //isVRControls = true;
     });
 }
 
 function initKeyboardControls(){
-    keyboardControls = new THREE.OrbitControls(camera);
+    keyboardControls = new THREE.OrbitControls(rig);
     keyboardControls.autoForward = false;
     keyboardControls.dragToLook = true;
     keyboardControls.movementSpeed = 2;
@@ -215,11 +211,17 @@ function init() {
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color( 0x505050 );
-    camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 2000 );
-    camera.position.set(0, 800, 50);
-    camera.rotation.set(-Math.PI / 2,0,0);
 
-    scene.add(camera);
+    camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 2000 );
+   // camera.position.set(0, 800, 50);
+   // camera.rotation.set(-Math.PI / 2,0,0);
+
+    rig.add(camera);
+    rig.position.set(0, 800, 50);
+    rig.rotation.set(-Math.PI / 2,0,0);
+    scene.add(rig);
+
+//    scene.add(camera);
 
     //loadTerrain();
     initPoints();
@@ -433,6 +435,7 @@ function animate() {
     renderer.setAnimationLoop(render);
 }
 
+//render Loop
 function render() {
     stats.begin();
     var delta = clock.getDelta() * 60;
@@ -442,6 +445,7 @@ function render() {
     } else {
         if (keyboardControls != undefined){
             keyboardControls.update(delta);
+            //rig.translate(0.001);
         } else {
             //alert("KeyboardControls undefined");
         }
