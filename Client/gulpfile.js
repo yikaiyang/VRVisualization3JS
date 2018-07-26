@@ -43,8 +43,8 @@ gulp.task('images', function(){
 });
 
 gulp.task('js', function(){
-    gulp.src('./src/scripts/**/*.js')
-        .pipe(gulp.dest('./dist/scripts/'))
+    gulp.src('./src/js/**/*.js')
+        .pipe(gulp.dest('./dist/js/'))
         .pipe(connect.reload());
 });
 

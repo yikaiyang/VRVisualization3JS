@@ -26,8 +26,17 @@
     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
     OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     -->
-    <title>VR Visualization</title>
-    <link rel="stylesheet" type="text/css" href="styles/main.css">
+    <title>Open Earth View - viewer-earth</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
 </head>
 
 <body>
@@ -35,33 +44,9 @@
     <script src="js/turf/v2.0.2/turf.min.js"></script>
     <script src="js/controls/EarthControls.js"></script>
     <script src="js/loaders/GeojsonLoader.js"></script>
-    <script src="js/threejs-stats.js"></script>
+
     <script src="js/toolbox.js"></script>
-    <script src="libs/webVR.js" ></script>
     <script>
-        function initVR(renderer){
-            renderer.vr.enabled = true;
-            let vrButton = WEBVR.createButton(renderer);
-            if (!!vrButton){
-                document.body.appendChild(vrButton);
-            }
-        }
-
-        var stats;
-        function initFPSCounter(){
-            stats = new Stats();
-            if (!!stats){
-                stats.showPanel(0);
-                document.body.appendChild(stats.dom);
-            }
-        }
-
-        initFPSCounter();
-
-        //import {WEBVR} from './libs/webVR.js';
-        var proxy = '192.168.0.182';
-        var proxyPort = '8484';
-
         var TILE_PROVIDER01 = '.tile.openstreetmap.org';
         var TILE_PROVIDER01_RANDOM = ['a', 'b', 'c'];
         var TILE_PROVIDER01_FILE_EXT = 'png';
@@ -75,14 +60,14 @@
         // UNESCO
         this.LONGITUDE_ORI = 2.3057599523656336;
         this.LATITUDE_ORI = 48.849568465379264;
-        var R = 6378.137; //radius in kilometers
+        var R = 6378.137;
         var xtile = 0;
         var ytile = 0;
         var zoom = 0;
         var tileGroups;
         var tileGroup = [];
 
-        var defaultAlti = 150; //R * 1000;
+        var defaultAlti = 150;
         var geojsonLoader = new THREE.GeojsonLoader();
 
         var params = getSearchParameters();
@@ -92,7 +77,7 @@
         var renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
 
-       /*  renderer.shadowMapEnabled = true;
+        renderer.shadowMapEnabled = true;
         renderer.shadowMapSoft = false;
 
         renderer.shadowCameraNear = 3;
@@ -102,15 +87,11 @@
         renderer.shadowMapBias = 0.0039;
         renderer.shadowMapDarkness = 0.5;
         renderer.shadowMapWidth = 1024;
-        renderer.shadowMapHeight = 1024; */
-
-        //enableVR
-        initVR(renderer);
+        renderer.shadowMapHeight = 1024;
 
         var goUpdateSceneLazy = function() {
             updateSceneLazy();
         };
-
         var controls = new THREE.EarthControls(
             camera,
             renderer.domElement,
@@ -139,6 +120,7 @@
         document.addEventListener("keydown", onDocumentKeyDown, false);
 
         camera.position.z = altitude;
+        camera.position.z = altitude;
 
         function onDocumentKeyDown(event) {
             var keyCode = event.which;
@@ -158,15 +140,12 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             render();
         }
-
         var render = function() {
-            stats.begin();
             renderer.render(scene, camera);
-            stats.end();
         }
 
         var updateSceneLazy = function() {
-            requestAnimationFrame(render);
+            // requestAnimationFrame(render);
             ////////////////////////////////////////////////////////////
             var oldZoom = zoom;
             var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();

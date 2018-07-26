@@ -16,7 +16,7 @@ try {
 
 
 app.get('/', function (req, res){
-    res.send('Hello world');
+    res.send('');
 });
 
 app.get('/tiles/', function (req, res){

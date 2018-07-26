@@ -37,17 +37,31 @@
     <script src="js/loaders/GeojsonLoader.js"></script>
     <script src="js/threejs-stats.js"></script>
     <script src="js/toolbox.js"></script>
-    <script type="module" src="libs/webVR.js" ></script>
+    <script src="libs/webVR.js" ></script>
     <script>
-        //import {WEBVR} from './libs/webVR.js';
-        var stats = new Stats();
-
-        if (!!stats){
-            stats.showPanel(0);
-            document.body.appendChild(stats.dom);
+        function initVR(renderer){
+            renderer.vr.enabled = true;
+            let vrButton = WEBVR.createButton(renderer);
+            if (!!vrButton){
+                document.body.appendChild(vrButton);
+            }
         }
 
-        
+        var stats;
+        function initFPSCounter(){
+            stats = new Stats();
+            if (!!stats){
+                stats.showPanel(0);
+                document.body.appendChild(stats.dom);
+            }
+        }
+
+        initFPSCounter();
+
+        //import {WEBVR} from './libs/webVR.js';
+        var proxy = '192.168.0.182';
+        var proxyPort = '8484';
+
         var TILE_PROVIDER01 = '.tile.openstreetmap.org';
         var TILE_PROVIDER01_RANDOM = ['a', 'b', 'c'];
         var TILE_PROVIDER01_FILE_EXT = 'png';
@@ -68,7 +82,7 @@
         var tileGroups;
         var tileGroup = [];
 
-        var defaultAlti = R * 1000;
+        var defaultAlti = 150; //R * 1000;
         var geojsonLoader = new THREE.GeojsonLoader();
 
         var params = getSearchParameters();
@@ -78,7 +92,7 @@
         var renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
 
-        renderer.shadowMapEnabled = true;
+       /*  renderer.shadowMapEnabled = true;
         renderer.shadowMapSoft = false;
 
         renderer.shadowCameraNear = 3;
@@ -88,7 +102,10 @@
         renderer.shadowMapBias = 0.0039;
         renderer.shadowMapDarkness = 0.5;
         renderer.shadowMapWidth = 1024;
-        renderer.shadowMapHeight = 1024;
+        renderer.shadowMapHeight = 1024; */
+
+        //enableVR
+        initVR(renderer);
 
         var goUpdateSceneLazy = function() {
             updateSceneLazy();
@@ -149,7 +166,7 @@
         }
 
         var updateSceneLazy = function() {
-            //requestAnimationFrame(render);
+            requestAnimationFrame(render);
             ////////////////////////////////////////////////////////////
             var oldZoom = zoom;
             var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
