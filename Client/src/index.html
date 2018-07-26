@@ -27,7 +27,7 @@
     OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     -->
     <title>VR Visualization</title>
-    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="styles/main.css">
 </head>
 
 <body>
@@ -35,9 +35,19 @@
     <script src="js/turf/v2.0.2/turf.min.js"></script>
     <script src="js/controls/EarthControls.js"></script>
     <script src="js/loaders/GeojsonLoader.js"></script>
-
+    <script src="js/threejs-stats.js"></script>
     <script src="js/toolbox.js"></script>
+    <script type="module" src="libs/webVR.js" ></script>
     <script>
+        //import {WEBVR} from './libs/webVR.js';
+        var stats = new Stats();
+
+        if (!!stats){
+            stats.showPanel(0);
+            document.body.appendChild(stats.dom);
+        }
+
+        
         var TILE_PROVIDER01 = '.tile.openstreetmap.org';
         var TILE_PROVIDER01_RANDOM = ['a', 'b', 'c'];
         var TILE_PROVIDER01_FILE_EXT = 'png';
@@ -83,6 +93,7 @@
         var goUpdateSceneLazy = function() {
             updateSceneLazy();
         };
+
         var controls = new THREE.EarthControls(
             camera,
             renderer.domElement,
@@ -130,12 +141,15 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             render();
         }
+
         var render = function() {
+            stats.begin();
             renderer.render(scene, camera);
+            stats.end();
         }
 
         var updateSceneLazy = function() {
-            // requestAnimationFrame(render);
+            //requestAnimationFrame(render);
             ////////////////////////////////////////////////////////////
             var oldZoom = zoom;
             var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
