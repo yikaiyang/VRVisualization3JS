@@ -88,10 +88,8 @@ var Stats = function () {
 				frames = 0;
 
 				if ( memPanel ) {
-
 					var memory = performance.memory;
 					memPanel.update( memory.usedJSHeapSize / 1048576, memory.jsHeapSizeLimit / 1048576 );
-
 				}
 
 			}

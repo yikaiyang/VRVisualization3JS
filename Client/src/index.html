@@ -61,14 +61,14 @@
         // UNESCO
         this.LONGITUDE_ORI = 2.3057599523656336;
         this.LATITUDE_ORI = 48.849568465379264;
-        var R = 6378.137;
+        var R = 6378.137; //radius in kilometers
         var xtile = 0;
         var ytile = 0;
         var zoom = 0;
         var tileGroups;
         var tileGroup = [];
 
-        var defaultAlti = 150;
+        var defaultAlti = R * 1000;
         var geojsonLoader = new THREE.GeojsonLoader();
 
         var params = getSearchParameters();
