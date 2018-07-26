@@ -1,18 +1,21 @@
 {
-    "name": "open-earth-view-viewer-earth3",
-    "description": "Open Earth View project - Earth viewer 3",
-    "version": "0.0.2",
+    "name": "VRVisualization",
+    "version": "1.0.0",
+    "description": "",
+    "main": "./index.html",
+    "scripts": {
+        "gulp-public": "gulp default-public",
+        "gulp": "gulp",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Yikai Yang",
+    "license": "ISC",
     "dependencies": {
         "three": "",
-        "turf-centroid": ""
-    },
-    "main": "./index.html",
-    "author": "Clement IGONET <clement@igonet.fr>",
-    "keywords": [],
-    "repository": {
-        "type": "git",
-        "url": "git@git.framasoft.org:pizaninja/OpenEarthView.git"
-    },
-    "devDependencies": {},
-    "license": "MIT"
+        "turf-centroid": "",
+        "gulp": "^3.9.1",
+        "gulp-connect": "^5.5.0",
+        "gulp-open": "^3.0.1",
+        "npm": "^6.1.0"
+    }
 }

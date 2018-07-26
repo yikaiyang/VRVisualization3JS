@@ -26,17 +26,8 @@
     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
     OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     -->
-    <title>Open Earth View - viewer-earth</title>
-    <style>
-        body {
-            margin: 0;
-        }
-
-        canvas {
-            width: 100%;
-            height: 100%
-        }
-    </style>
+    <title>VR Visualization</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
 </head>
 
 <body>
@@ -119,7 +110,6 @@
 
         document.addEventListener("keydown", onDocumentKeyDown, false);
 
-        camera.position.z = altitude;
         camera.position.z = altitude;
 
         function onDocumentKeyDown(event) {
