@@ -37,8 +37,10 @@
     <script src="js/loaders/GeojsonLoader.js"></script>
     <script src="js/threejs-stats.js"></script>
     <script src="js/toolbox.js"></script>
-    <script src="libs/webVR.js" ></script>
+    <script src="libs/webVR.js"></script>
     <script>
+        var scene = new THREE.Scene();
+
         function initVR(renderer){
             renderer.vr.enabled = true;
             let vrButton = WEBVR.createButton(renderer);
@@ -87,13 +89,15 @@
 
         var params = getSearchParameters();
 
-        var rig = new THREE.Object3D();
-        rig.add(camera);
-
         var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100000000);
         camera.up.set(0, 0, 1);
         var renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
+
+        var rig = new THREE.PerspectiveCamera(); 
+        rig.add(camera);
+        rig.position.set(0,0,defaultAlti);
+        scene.add(rig);
 
        /*  renderer.shadowMapEnabled = true;
         renderer.shadowMapSoft = false;
@@ -115,7 +119,7 @@
         };
 
         var controls = new THREE.EarthControls(
-            camera,
+            rig,
             renderer.domElement,
             goUpdateSceneLazy, {
                 longitude: LONGITUDE_ORI,
@@ -125,7 +129,6 @@
         var lonStamp = 0;
         var latStamp = 0;
         var altitude = (params.alti) ? params.alti : defaultAlti;
-        var scene = new THREE.Scene();
 
         document.body.appendChild(renderer.domElement);
 
@@ -154,7 +157,6 @@
         window.addEventListener('resize', onWindowResize, false);
 
         function onWindowResize() {
-
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
 
@@ -162,14 +164,26 @@
             render();
         }
 
-        var render = function() {
+        function animate(){
+            renderer.setAnimationLoop(render);
+        }
+
+        function render() {
             stats.begin();
             renderer.render(scene, camera);
+            console.log('camera:' +
+            ' x: ' + ((camera||{}).position||{}).x + 
+            ' y: ' +  ((camera||{}).position||{}).y +
+            ' z: ' + ((camera||{}).position||{}).z +
+            ' rotationX: ' + ((camera||{}).rotation||{}).x +
+            ' rotationY: ' + ((camera||{}).rotation||{}).y +
+            ' rotationZ: ' + ((camera||{}).rotation||{}).z 
+            );
+
             stats.end();
         }
 
         var updateSceneLazy = function() {
-            requestAnimationFrame(render);
             ////////////////////////////////////////////////////////////
             var oldZoom = zoom;
             var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
@@ -210,6 +224,7 @@
         };
 
         updateSceneLazy();
+        animate();
 
         function updateScene(position) {
             console.log('position.lon:', position.lon);
