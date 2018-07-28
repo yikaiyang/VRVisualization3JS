@@ -71,3 +71,8 @@ typings/
 
 # Serverless directories
 .serverless
+
+###Custom ignores
+
+# Ignore distribution folder
+dist/

@@ -61,7 +61,7 @@
         initFPSCounter();
 
         //import {WEBVR} from './libs/webVR.js';
-        var proxy = '0.0.0.0';
+        var proxy = 'localhost';
         var proxyPort = '8484';
 
         var TILE_PROVIDER01 = '.tile.openstreetmap.org';
@@ -171,14 +171,14 @@
         function render() {
             stats.begin();
             renderer.render(scene, camera);
-            console.log('camera:' +
+          /*   console.log('camera:' +
             ' x: ' + ((camera||{}).position||{}).x + 
             ' y: ' +  ((camera||{}).position||{}).y +
             ' z: ' + ((camera||{}).position||{}).z +
             ' rotationX: ' + ((camera||{}).rotation||{}).x +
             ' rotationY: ' + ((camera||{}).rotation||{}).y +
             ' rotationZ: ' + ((camera||{}).rotation||{}).z 
-            );
+            ); */
 
             stats.end();
         }
