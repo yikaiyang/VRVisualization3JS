@@ -227,8 +227,8 @@ function init() {
     initPoints();
     
     initLighting();
-    initKeyboardControls();
-    //initVRControls();
+    //initKeyboardControls();
+    initVRControls();
 
     renderer = new THREE.WebGLRenderer( { antialias: ANTI_ALIAS , canvas: canvas } );
     renderer.setPixelRatio( window.devicePixelRatio );

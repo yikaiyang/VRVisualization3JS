@@ -143,7 +143,7 @@
             for (var i = 0; i < tiles.length; i++) {
                 var tile = tiles[i];
                 var aPlane = document.createElement('a-plane');
-                aPlane.setAttribute('src', 'http://a.tile.openstreetmap.org/' + tile.zoom + '/' + tile.xtile + '/' + tile.ytile + '.png');
+                aPlane.setAttribute('src', 'http://localhost:8484/a.tile.openstreetmap.org/' + tile.zoom + '/' + tile.xtile + '/' + tile.ytile + '.png');
                 aPlane.setAttribute('width', +width);
                 aPlane.setAttribute('height', width);
                 aPlane.setAttribute('position', '' + (tile.xtile - xtile) * width + ' ' + (ytile - tile.ytile) * width + ' 0 0');
