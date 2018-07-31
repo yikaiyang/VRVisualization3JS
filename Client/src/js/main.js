@@ -1,4 +1,10 @@
+import {WEBVR} from '../libs/webVR.js';
+
+
+
 var scene = new THREE.Scene();
+
+//http://localhost:8080/styles/osm-bright/8/133/89@2x.png
 
 function initVR(renderer){
     renderer.vr.enabled = true;
@@ -19,23 +25,15 @@ function initFPSCounter(){
 
 initFPSCounter();
 
-//import {WEBVR} from './libs/webVR.js';
 var proxy = 'localhost';
 var proxyPort = '8484';
 
-var TILE_PROVIDER01 = '.tile.openstreetmap.org';
-var TILE_PROVIDER01_RANDOM = ['a', 'b', 'c'];
-var TILE_PROVIDER01_FILE_EXT = 'png';
-var ZOOM_SHIFT_SIZE = 4;
-var ZOOM_MIN = 1;
-var MAX_TILEMESH = 400;
-var ZOOM_FLAT = 13;
-var tileMeshes = {};
-var tileMeshQueue = [];
+
+
 
 // UNESCO
-this.LONGITUDE_ORI = 2.3057599523656336;
-this.LATITUDE_ORI = 48.849568465379264;
+var LONGITUDE_ORI = 2.3057599523656336;
+var LATITUDE_ORI = 48.849568465379264;
 var R = 6378.137; //radius in kilometers
 var xtile = 0;
 var ytile = 0;
@@ -43,7 +41,7 @@ var zoom = 0;
 var tileGroups;
 var tileGroup = [];
 
-var defaultAlti = 150; //R * 1000;
+var defaultAlti = R * 1000;
 var geojsonLoader = new THREE.GeojsonLoader();
 
 var params = getSearchParameters();

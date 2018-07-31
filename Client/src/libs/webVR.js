@@ -11,7 +11,7 @@
  */
 
  //export const WEBVR
-const WEBVR = {
+export const WEBVR = {
 	createButton: function ( renderer, options ) {
 
 		function showEnterVR( device ) {
