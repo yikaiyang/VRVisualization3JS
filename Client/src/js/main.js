@@ -1,8 +1,23 @@
 import {WEBVR} from '../libs/webVR.js';
 
-
-
 var scene = new THREE.Scene();
+
+
+/* Variables */
+
+//Start position UNESCO
+var LONGITUDE_ORI = 2.3057599523656336;
+var LATITUDE_ORI = 48.849568465379264;
+
+var R = 6378.137; //radius in kilometers
+var xtile = 0;
+var ytile = 0;
+var zoom = 0;
+var tileGroups;
+var tileGroup = [];
+
+var defaultAlti = R * 1000;
+var geojsonLoader = new THREE.GeojsonLoader();
 
 //http://localhost:8080/styles/osm-bright/8/133/89@2x.png
 
@@ -13,6 +28,7 @@ function initVR(renderer){
         document.body.appendChild(vrButton);
     }
 }
+
 
 var stats;
 function initFPSCounter(){
@@ -25,24 +41,29 @@ function initFPSCounter(){
 
 initFPSCounter();
 
+function createCube(){
+    let x = 77020.5236429096;
+    let y = 451171.5632332376;
+    let z = 6361693.457738785;
+   
+    let position = new THREE.Vector3(0,0,0);
+
+    var geometry = new THREE.BoxGeometry(100000,100000,1000000);
+    var material = new THREE.MeshNormalMaterial();
+    var cube = new THREE.Mesh(geometry, material);
+    cube.position.set(position);
+    scene.add(cube);
+}
+
+createCube();
+
 var proxy = 'localhost';
 var proxyPort = '8484';
 
-
-
-
-// UNESCO
-var LONGITUDE_ORI = 2.3057599523656336;
-var LATITUDE_ORI = 48.849568465379264;
-var R = 6378.137; //radius in kilometers
-var xtile = 0;
-var ytile = 0;
-var zoom = 0;
-var tileGroups;
-var tileGroup = [];
-
-var defaultAlti = R * 1000;
-var geojsonLoader = new THREE.GeojsonLoader();
+var grid = new THREE.GridHelper(R * 1000);
+var axesHelper = new THREE.AxesHelper(R * 1000);
+scene.add(grid);
+scene.add(axesHelper);
 
 var params = getSearchParameters();
 
@@ -128,15 +149,15 @@ function animate(){
 function render() {
     stats.begin();
     renderer.render(scene, camera);
-  /*   console.log('camera:' +
-    ' x: ' + ((camera||{}).position||{}).x + 
-    ' y: ' +  ((camera||{}).position||{}).y +
-    ' z: ' + ((camera||{}).position||{}).z +
-    ' rotationX: ' + ((camera||{}).rotation||{}).x +
-    ' rotationY: ' + ((camera||{}).rotation||{}).y +
-    ' rotationZ: ' + ((camera||{}).rotation||{}).z 
-    ); */
-    rig.position.z += 10;
+   console.log('camera:' +
+    ' x: ' + ((rig||{}).position||{}).x + 
+    ' y: ' +  ((rig||{}).position||{}).y +
+    ' z: ' + ((rig||{}).position||{}).z +
+    ' rotationX: ' + ((rig||{}).rotation||{}).x +
+    ' rotationY: ' + ((rig||{}).rotation||{}).y +
+    ' rotationZ: ' + ((rig||{}).rotation||{}).z 
+    );
+    //rig.position.z += 10;
 
     stats.end();
 }
@@ -198,19 +219,19 @@ function updateScene(position) {
     earth.add(tileGroups);
     var oriGround = new THREE.Object3D();
     if (zoom >= ZOOM_FLAT) {
-        xtileOri = long2tile(position.lon, ZOOM_FLAT);
-        ytileOri = lat2tile(position.lat, ZOOM_FLAT);
+        var xtileOri = long2tile(position.lon, ZOOM_FLAT);
+        var ytileOri = lat2tile(position.lat, ZOOM_FLAT);
         var lonOri = tile2long(xtileOri, ZOOM_FLAT);
         var latOri = tile2lat(ytileOri, ZOOM_FLAT);
 
         // 3 - ground position
         oriGround.position.set(0, 0, R * 1000);
         // 2 - Latitude rotation
-        oriLatRot = new THREE.Object3D();
+        let oriLatRot = new THREE.Object3D();
         oriLatRot.rotation.set((-latOri) * Math.PI / 180, 0, 0);
         oriLatRot.add(oriGround);
         // 1 - Longitude rotation
-        oriLonRot = new THREE.Object3D();
+        let oriLonRot = new THREE.Object3D();
         oriLonRot.rotation.set(0, lonOri * Math.PI / 180, 0);
         oriLonRot.add(oriLatRot);
 

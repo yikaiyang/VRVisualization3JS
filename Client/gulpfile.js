@@ -1,6 +1,5 @@
 /**
  * Gulpfile 
- * based on: http://www.holgerkoenemann.de/gulp-basics-ein-einsteiger-tutorial/
  */
 
 var gulp = require('gulp');

@@ -8,6 +8,7 @@ var staticDependencies;
 
 var gulp = require('gulp');
 var connect = require('gulp-connect');
+var sourcemaps = require('gulp-sourcemaps');
 
 
 gulp.task('webserver', function(){
@@ -47,6 +48,8 @@ gulp.task('images', function(){
 
 gulp.task('js', function(){
     gulp.src('./src/scripts/**/*.js')
+        .pipe(sourcemaps.init())
+        .pipe(sourcemaps.write('./dist/maps/'))
         .pipe(gulp.dest('./dist/scripts/'))
         .pipe(connect.reload());
 });
