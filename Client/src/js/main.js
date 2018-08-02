@@ -1,13 +1,14 @@
 import {WEBVR} from '../libs/webVR.js';
+import GeoConversion from './util/geoconversions.js';
+import FileLoader from './util/fileloader.js';
 
 var scene = new THREE.Scene();
-
-
+var earth = new THREE.Object3D(); //create an empty container
 /* Variables */
 
-//Start position UNESCO
-var LONGITUDE_ORI = 2.3057599523656336;
-var LATITUDE_ORI = 48.849568465379264;
+//Start position
+var LONGITUDE_ORI = 0;
+var LATITUDE_ORI = 0;
 
 var R = 6378.137; //radius in kilometers
 var xtile = 0;
@@ -29,7 +30,7 @@ function initVR(renderer){
     }
 }
 
-
+//Initialize FPS Display
 var stats;
 function initFPSCounter(){
     stats = new Stats();
@@ -38,24 +39,47 @@ function initFPSCounter(){
         document.body.appendChild(stats.dom);
     }
 }
-
 initFPSCounter();
 
-function createCube(){
-    let x = 77020.5236429096;
-    let y = 451171.5632332376;
-    let z = 6361693.457738785;
-   
-    let position = new THREE.Vector3(0,0,0);
+ //Coordinates for vienna
+const latitude = 48.210033;
+const longitude = 16.363449;
+const color = new THREE.Color("rgb(187,57,70)");
 
-    var geometry = new THREE.BoxGeometry(100000,100000,1000000);
-    var material = new THREE.MeshNormalMaterial();
+
+function createCube(latitude, longitude){
+    let position = GeoConversion.WGStoGlobeCoord(latitude, longitude, R * 1000);
+    var geometry = new THREE.BoxGeometry(10,10,100);
+    var material = new THREE.MeshBasicMaterial({
+        color: color
+    });
     var cube = new THREE.Mesh(geometry, material);
-    cube.position.set(position);
-    scene.add(cube);
+    cube.position.set(position.x, position.y, position.z);
+    cube.lookAt(new THREE.Vector3(0,0,0));
+    earth.add(cube);
+    //scene.add(cube);
+}
+createCube(latitude, longitude);
+
+function loadStationData(){
+    FileLoader.parseFile('../data/haltestellen.csv', function(data){
+        let results = Papa.parse(data);
+        renderStations(results.data);
+    });
 }
 
-createCube();
+function renderStations(stationData){
+    const latIdx = 6;
+    const longIdx = 7;
+
+    for (let i = 0; i < stationData.length; i++){
+        let stationLat = stationData[i][latIdx];
+        let stationLong = stationData[i][longIdx];
+        createCube(stationLat, stationLong);
+    }
+}
+
+loadStationData();
 
 var proxy = 'localhost';
 var proxyPort = '8484';
@@ -67,7 +91,7 @@ scene.add(axesHelper);
 
 var params = getSearchParameters();
 
-var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100000000);
+var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 100, 100000000);
 camera.up.set(0, 0, 1);
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -110,7 +134,7 @@ var altitude = (params.alti) ? params.alti : defaultAlti;
 
 document.body.appendChild(renderer.domElement);
 
-var earth = new THREE.Object3D(); //create an empty container
+
 earth.position.set(0, 0, -R * 1000);
 scene.add(earth);
 
