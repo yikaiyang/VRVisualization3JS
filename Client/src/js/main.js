@@ -46,20 +46,32 @@ const latitude = 48.210033;
 const longitude = 16.363449;
 const color = new THREE.Color("rgb(187,57,70)");
 
+/**Drawing primitives based on stations of WL */
+let center = new THREE.Vector3(0,0,0)
+let cubeGeometry = new THREE.BoxGeometry(10,10,100);
+let cubeMaterial = new THREE.MeshBasicMaterial({
+    color: color
+});
+let mergedGeometry = new THREE.Geometry();
 
 function createCube(latitude, longitude){
     let position = GeoConversion.WGStoGlobeCoord(latitude, longitude, R * 1000);
-    var geometry = new THREE.BoxGeometry(10,10,100);
-    var material = new THREE.MeshBasicMaterial({
-        color: color
-    });
-    var cube = new THREE.Mesh(geometry, material);
-    cube.position.set(position.x, position.y, position.z);
-    cube.lookAt(new THREE.Vector3(0,0,0));
-    earth.add(cube);
+    if (position == undefined){
+        return;
+    }
+
+    let mesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    mesh.position.set(position.x, position.y, position.z);
+    mesh.lookAt(center);
+
+    //Merge geometries
+    mesh.updateMatrix();
+    mergedGeometry.merge(mesh.geometry, mesh.matrix);
+
+
+    //earth.add(mesh);
     //scene.add(cube);
 }
-createCube(latitude, longitude);
 
 function loadStationData(){
     FileLoader.parseFile('../data/haltestellen.csv', function(data){
@@ -77,6 +89,8 @@ function renderStations(stationData){
         let stationLong = stationData[i][longIdx];
         createCube(stationLat, stationLong);
     }
+    let cubes = new THREE.Mesh(mergedGeometry, cubeMaterial);
+    earth.add(cubes);
 }
 
 loadStationData();
