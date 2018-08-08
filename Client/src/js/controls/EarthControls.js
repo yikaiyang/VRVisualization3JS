@@ -41,21 +41,21 @@ THREE.EarthControls = function(object, domElement, render, coord) {
     this.target = new THREE.Vector3();
     // How far you can dolly in and out ( PerspectiveCamera only )
     // this.minDistance = 10;
-    this.minDistance = 1;
+    this.minDistance = 200;
     this.maxDistance = 20000000;
     // How far you can zoom in and out ( OrthographicCamera only )
     this.minZoom = 0;
     this.maxZoom = Infinity;
     // How far you can orbit vertically, upper and lower limits.
     // Range is 0 to Math.PI radians.
-    this.minPolarAngle = 0; // radians
+    this.minPolarAngle = 0; // radians // Default 0
     this.maxPolarAngle = 1.5; // radians
     // this.maxPolarAngle = 1.7; // radians
 
     // How far you can orbit horizontally, upper and lower limits.
     // If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
-    this.minAzimuthAngle = -Infinity; // radians
-    this.maxAzimuthAngle = Infinity; // radians
+    this.minAzimuthAngle = -Math.PI/2; // radians  Default Value : -Infinity
+    this.maxAzimuthAngle = Math.PI/2; // radians   Default Value : Infinity
     // this.minAzimuthAngle = -Math.PI/20; // radians
     // this.maxAzimuthAngle = +Math.PI/20; // radians
 

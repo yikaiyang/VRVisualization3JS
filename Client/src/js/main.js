@@ -67,10 +67,6 @@ function createCube(latitude, longitude){
     //Merge geometries
     mesh.updateMatrix();
     mergedGeometry.merge(mesh.geometry, mesh.matrix);
-
-
-    //earth.add(mesh);
-    //scene.add(cube);
 }
 
 function loadStationData(){
@@ -134,13 +130,17 @@ var goUpdateSceneLazy = function() {
     updateSceneLazy();
 };
 
-var controls = new THREE.EarthControls(
+/* var controls = new THREE.EarthControls(
     rig,
     renderer.domElement,
     goUpdateSceneLazy, {
         longitude: LONGITUDE_ORI,
         latitude: LATITUDE_ORI
-    });
+    }); */
+
+var controls = new THREE.OrbitControls(rig, undefined, goUpdateSceneLazy);
+
+
 
 var lonStamp = 0;
 var latStamp = 0;
