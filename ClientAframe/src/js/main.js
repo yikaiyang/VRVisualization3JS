@@ -99,8 +99,6 @@ var axesHelper = new THREE.AxesHelper(R * 1000);
 scene.add(grid);
 scene.add(axesHelper);
 
-/////
-
 var params = getSearchParameters();
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 100, 100000000);

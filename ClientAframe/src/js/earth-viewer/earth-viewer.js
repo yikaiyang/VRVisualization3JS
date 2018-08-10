@@ -1,15 +1,24 @@
-import {WEBVR} from '../libs/webVR.js';
-import GeoConversion from './util/geoconversions.js';
-import FileLoader from './util/fileloader.js';
+var scene = document.querySelector('a-scene').object3D;
+var earth = new THREE.Object3D();
 
-var scene = new THREE.Scene();
-var earth = new THREE.Object3D(); //create an empty container
-/* Variables */
+class Controls{
+    constructor(){
+        this.latitude = 48.210033;
+        this.longitude = 16.363449;
+    }
 
-//Start position
-var LONGITUDE_ORI = 0;
-var LATITUDE_ORI = 0;
+    getLatitude(){
+        return this.latitude;
+    }
 
+    getLongitude(){
+        return this.longitude;
+    }
+}
+
+var controls = new Controls();
+
+///Variables
 var R = 6378.137; //radius in kilometers
 var xtile = 0;
 var ytile = 0;
@@ -17,197 +26,45 @@ var zoom = 0;
 var tileGroups;
 var tileGroup = [];
 
+var TILE_PROVIDER01 = '.tile.openstreetmap.org';
+var TILE_PROVIDER01_RANDOM = ['a', 'b', 'c'];
+var TILE_PROVIDER01_FILE_EXT = 'png';
+
+var ZOOM_SHIFT_SIZE = 4;
+var ZOOM_MIN = 1;
+var MAX_TILEMESH = 400;
+var ZOOM_FLAT = 13;
+var tileMeshes = {};
+var tileMeshQueue = [];
+
+var ZOOM_SHIFT_SIZE = 4;
+var ZOOM_MIN = 1;
+var MAX_TILEMESH = 400;
+var ZOOM_FLAT = 13;
+var tileMeshes = {};
+var tileMeshQueue = [];
+
 var defaultAlti = R * 1000;
-var geojsonLoader = new THREE.GeojsonLoader();
 
-//http://localhost:8080/styles/osm-bright/8/133/89@2x.png
-
-function initVR(renderer){
-    renderer.vr.enabled = true;
-    let vrButton = WEBVR.createButton(renderer);
-    if (!!vrButton){
-        document.body.appendChild(vrButton);
-    }
-}
-
-//Initialize FPS Display
-var stats;
-function initFPSCounter(){
-    stats = new Stats();
-    if (!!stats){
-        stats.showPanel(0);
-        document.body.appendChild(stats.dom);
-    }
-}
-initFPSCounter();
-
- //Coordinates for vienna
-const latitude = 48.210033;
-const longitude = 16.363449;
-const color = new THREE.Color("rgb(187,57,70)");
-
-/**Drawing primitives based on stations of WL */
-let center = new THREE.Vector3(0,0,0)
-let cubeGeometry = new THREE.BoxGeometry(10,10,100);
-let cubeMaterial = new THREE.MeshBasicMaterial({
-    color: color
-});
-let mergedGeometry = new THREE.Geometry();
-
-function createCube(latitude, longitude){
-    let position = GeoConversion.WGStoGlobeCoord(latitude, longitude, R * 1000);
-    if (position == undefined){
-        return;
-    }
-
-    let mesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    mesh.position.set(position.x, position.y, position.z);
-    mesh.lookAt(center);
-
-    //Merge geometries
-    mesh.updateMatrix();
-    mergedGeometry.merge(mesh.geometry, mesh.matrix);
-}
-
-function loadStationData(){
-    FileLoader.parseFile('../data/haltestellen.csv', function(data){
-        let results = Papa.parse(data);
-        renderStations(results.data);
-    });
-}
-
-function renderStations(stationData){
-    const latIdx = 6;
-    const longIdx = 7;
-
-    for (let i = 0; i < stationData.length; i++){
-        let stationLat = stationData[i][latIdx];
-        let stationLong = stationData[i][longIdx];
-        createCube(stationLat, stationLong);
-    }
-    let cubes = new THREE.Mesh(mergedGeometry, cubeMaterial);
-    earth.add(cubes);
-}
-
-loadStationData();
-
-var proxy = 'localhost';
-var proxyPort = '8484';
-
-var grid = new THREE.GridHelper(R * 1000);
-var axesHelper = new THREE.AxesHelper(R * 1000);
-scene.add(grid);
-scene.add(axesHelper);
-
-/////
 
 var params = getSearchParameters();
-
-var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 100, 100000000);
-camera.up.set(0, 0, 1);
-var renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-
-var rig = new THREE.PerspectiveCamera(); 
-rig.add(camera);
-rig.position.set(0,0,defaultAlti);
-scene.add(rig);
-
-/*  renderer.shadowMapEnabled = true;
-renderer.shadowMapSoft = false;
-
-renderer.shadowCameraNear = 3;
-renderer.shadowCameraFar = camera.far;
-renderer.shadowCameraFov = 50;
-
-renderer.shadowMapBias = 0.0039;
-renderer.shadowMapDarkness = 0.5;
-renderer.shadowMapWidth = 1024;
-renderer.shadowMapHeight = 1024; */
-
-//enableVR
-initVR(renderer);
-
-var goUpdateSceneLazy = function() {
-    updateSceneLazy();
-};
-
-/* var controls = new THREE.EarthControls(
-    rig,
-    renderer.domElement,
-    goUpdateSceneLazy, {
-        longitude: LONGITUDE_ORI,
-        latitude: LATITUDE_ORI
-    }); */
-
-var controls = new THREE.OrbitControls(rig, undefined, goUpdateSceneLazy);
-
 var lonStamp = 0;
 var latStamp = 0;
 var altitude = (params.alti) ? params.alti : defaultAlti;
 
-document.body.appendChild(renderer.domElement);
-
-
 earth.position.set(0, 0, -R * 1000);
 scene.add(earth);
 
-var light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(10000, 15000, 20000);
-scene.add(light);
-
-var sphere = new THREE.SphereGeometry(R * 995, 64, 64);
-
-document.addEventListener("keydown", onDocumentKeyDown, false);
-
-camera.position.z = altitude;
-
-function onDocumentKeyDown(event) {
-    var keyCode = event.which;
-    if (keyCode == 70) {
-        console.log('F pressed!');
-    }
-}
-// ENDOF initialization //
-
-window.addEventListener('resize', onWindowResize, false);
-
-function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    render();
-}
-
-function animate(){
-    renderer.setAnimationLoop(render);
-}
-
-function render() {
-    stats.begin();
-    renderer.render(scene, camera);
-   console.log('camera:' +
-    ' x: ' + ((rig||{}).position||{}).x + 
-    ' y: ' +  ((rig||{}).position||{}).y +
-    ' z: ' + ((rig||{}).position||{}).z +
-    ' rotationX: ' + ((rig||{}).rotation||{}).x +
-    ' rotationY: ' + ((rig||{}).rotation||{}).y +
-    ' rotationZ: ' + ((rig||{}).rotation||{}).z 
-    );
-    //rig.position.z += 10;
-
-    stats.end();
-}
-
+var zoom = 4;
 var updateSceneLazy = function() {
     ////////////////////////////////////////////////////////////
     var oldZoom = zoom;
-    var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
-    var zoom__ = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(dist)), 19), 1));
-    if (zoom__ > ZOOM_MIN) {
+    //var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
+    //var zoom__ = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(dist)), 19), 1));
+
+   /*  if (zoom__ > ZOOM_MIN) {
         zoom = zoom__;
-    }
+    } */
 
     if (lonStamp != controls.getLongitude() || latStamp != controls.getLatitude()) {
         lonStamp = controls.getLongitude();
@@ -237,12 +94,10 @@ var updateSceneLazy = function() {
         });
     }
     ////////////////////////////////////////////////////////////
-    renderer.render(scene, camera);
+    //renderer.render(scene, camera);
 };
 
 updateSceneLazy();
-animate();
-
 
 var tilematerial = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 0.4, transparent: true } ); // new line
                        
@@ -353,26 +208,6 @@ function updateScene(position) {
                         tileSupport.position.set(xTileShift * widthUp, -yTileShift * widthSide, 0);
                         tileSupport.add(tileMesh)
                         oriGround.add(tileSupport);
-                        /* if (zoom >= 18 && zoom_ >= zoom - 1) {
-                            var defaultColor =
-                                ((13 * zoom) % 256) * 65536 +
-                                ((53 * (atile % modulus)) % 256) * 256 +
-                                ((97 * (btile % modulus)) % 256);
-                            var lod = Math.max(0, zoom_ - 14);
-                            (function(earth, myTile, zoom, xtile, ytile, lod, defaultColor) {
-                                var url = 'http://www.openearthview.net/3dtile.php?format=geojson&zoom=' + zoom + '&xtile=' + xtile + '&ytile=' + ytile;
-                                geojsonLoader.load(
-                                    url,
-                                    function(obj) {
-                                        myTile.add(obj);
-                                        render();
-                                    },
-                                    function() {},
-                                    function() {},
-                                    lod,
-                                    defaultColor);
-                            })(earth, tileSupport, zoom_, (atile % modulus), (btile % modulus), lod, defaultColor);
-                        } */
                     }
                     (function(yourTileMesh, yourZoom, yourXtile, yourYtile) {
                         textureFactory(
@@ -383,7 +218,7 @@ function updateScene(position) {
                                 yourTileMesh.material = new THREE.MeshBasicMaterial({
                                     map: texture
                                 });
-                                render();
+                                //render();
                             }
                         );
                     })(tileMesh, zoom_, atile % modulus, btile % modulus);
