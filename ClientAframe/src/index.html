@@ -14,9 +14,7 @@
     <script src="js/controls/EarthControls.js"></script>
     <script src="js/controls/OrbitControls.js"></script>
     <script src="js/controls/VRControls.js"></script>
-    <script src="js/loaders/GeojsonLoader.js"></script>-->
 
-    <!--
     <script src="js/threejs-stats.js"></script>
     <script src="js/variables.js"></script>
     <script src="libs/papaparse.min.js"></script>
@@ -24,21 +22,23 @@
     <script type="module" src="js/util/geoconversions.js"></script>
     <script type="module" src="libs/webVR.js"></script>
     <script type="module" src="js/main.js"></script>-->
+    <script src="js/earth-viewer/callbacktest.js"></script>
+    <script src="js/earth-viewer/callbackHelper.js"></script>
+    
     <script src="js/toolbox.js"></script>
     <script src="js/turf/v2.0.2/turf.min.js"></script>
     <script src="js/controls/AFrameOrbitControls.js"></script>
-   
-    
+       
     <a-scene>
     <!--<a-entity id="camera-rig" position="0 0 100" >
         <a-camera id="camera" fov="75" far="100000000" ></a-camera>
         </a-entity> -->
         <!--wasd-controls="acceleration: 1000000"-->
         <a-entity 
-            look-controls 
+          
             orbit-controls="target: 0 0 0; initialPosition: 0 0 6378000"
         >
-            <a-camera far="100000000" near="100" fov="75" position="0 0 10000"></a-camera>
+            <a-camera far="100000000" near="100" fov="75" position="0 0 6378000"></a-camera>
         </a-entity>
 
        <!--  <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
@@ -68,9 +68,7 @@
     </script>
 
     <script src="js/earth-viewer/earth-viewer.js"></script>
-
-
-   
+    
 </body>
 
 </html>

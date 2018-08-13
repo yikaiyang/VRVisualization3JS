@@ -1,4 +1,3 @@
-'use strict';
 /**
  * @author qiao / https://github.com/qiao
  * @author mrdoob / http://mrdoob.com
@@ -14,8 +13,6 @@
 //    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
 //    Pan - right mouse, or arrow keys / touch: three finger swipe
 
-let callbackHelper = App.callbackHelper;
-
 THREE.OrbitControls = function (object, domElement) {
 
 	///Manually overwrite near/far clipping properties. Since values from aframe are not adopted
@@ -28,13 +25,6 @@ THREE.OrbitControls = function (object, domElement) {
 	this.object.near = 250;
 	this.object.far = 100000000;
 	this.object.updateProjectionMatrix();
-
-	//Location information
-	this.defaultLatitude = 0.0;
-	this.defaultLongitude = 0.0;
-
-	this.latitude = this.defaultLatitude;
-	this.longitude = this.defaultLongitude;
 
 
 	this.domElement = (domElement !== undefined) ? domElement : document;
@@ -105,10 +95,6 @@ THREE.OrbitControls = function (object, domElement) {
 	//
 	// public methods
 	//
-
-	this.distanceToTarget = function (){
-		return new THREE.Vector3().copy(this.object.position).sub(this.target).length();
-	}
 
 	this.getPolarAngle = function () {
 
@@ -330,10 +316,10 @@ THREE.OrbitControls = function (object, domElement) {
 
 		return function panLeft(distance, objectMatrix) {
 
-			/* v.setFromMatrixColumn(objectMatrix, 0); // get X column of objectMatrix
+			v.setFromMatrixColumn(objectMatrix, 0); // get X column of objectMatrix
 			v.multiplyScalar(- distance);
 
-			panOffset.add(v); */
+			panOffset.add(v);
 
 		};
 
@@ -344,7 +330,7 @@ THREE.OrbitControls = function (object, domElement) {
 		var v = new THREE.Vector3();
 
 		return function panUp(distance, objectMatrix) {
-/* 
+
 			if (scope.screenSpacePanning === true) {
 
 				v.setFromMatrixColumn(objectMatrix, 1);
@@ -358,7 +344,7 @@ THREE.OrbitControls = function (object, domElement) {
 
 			v.multiplyScalar(distance);
 
-			panOffset.add(v); */
+			panOffset.add(v);
 
 		};
 
@@ -491,7 +477,8 @@ THREE.OrbitControls = function (object, domElement) {
 
 		rotateStart.copy(rotateEnd);
 
-		scope.update();		
+		scope.update();
+
 	}
 
 	function handleMouseMoveDolly(event) {
@@ -515,6 +502,7 @@ THREE.OrbitControls = function (object, domElement) {
 		dollyStart.copy(dollyEnd);
 
 		scope.update();
+
 	}
 
 	function handleMouseMovePan(event) {
@@ -530,7 +518,7 @@ THREE.OrbitControls = function (object, domElement) {
 		panStart.copy(panEnd);
 
 		scope.update();
-		(callbackHelper || {}).callback(scope.distanceToTarget());
+
 	}
 
 	function handleMouseUp(event) {

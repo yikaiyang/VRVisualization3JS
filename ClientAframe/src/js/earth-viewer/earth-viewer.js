@@ -1,5 +1,10 @@
+'use strict';
+var App = App || {};
+
 var scene = document.querySelector('a-scene').object3D;
 var earth = new THREE.Object3D();
+
+//Set callback to trigger manual rerendering of earth when a zoomlevel has changed.
 
 class Controls{
     constructor(){
@@ -56,7 +61,8 @@ earth.position.set(0, 0, -R * 1000);
 scene.add(earth);
 
 var zoom = 4;
-var updateSceneLazy = function() {
+var updateSceneLazy = function(altitude) {
+    alert('updateSceneLazy: altitude: ' + altitude);
     ////////////////////////////////////////////////////////////
     var oldZoom = zoom;
     //var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
@@ -98,6 +104,11 @@ var updateSceneLazy = function() {
 };
 
 updateSceneLazy();
+
+//Register re-render calback
+if (!!App.callbackHelper){
+    callbackHelper.setCallback(updateSceneLazy);
+}
 
 var tilematerial = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 0.4, transparent: true } ); // new line
                        
