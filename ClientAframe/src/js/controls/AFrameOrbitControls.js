@@ -24,17 +24,19 @@ THREE.OrbitControls = function (object, domElement) {
 		let x = 1;
 	}
 	//Overwrite camera settings
+	
 	this.object = object;
-	this.object.near = 250;
+	
+	this.object.near = 150;
 	this.object.far = 100000000;
 	this.object.updateProjectionMatrix();
 
 	//Location information
-	this.defaultLatitude = 0.0;
-	this.defaultLongitude = 0.0;
+	this.defaultLatitude = 48.210033;
+	this.defaultLongitude = 16.363449;
 
-	this.latitude = this.defaultLatitude;
-	this.longitude = this.defaultLongitude;
+	var latitude = this.defaultLatitude;
+	var longitude = this.defaultLongitude;
 
 
 	this.domElement = (domElement !== undefined) ? domElement : document;
@@ -47,7 +49,7 @@ THREE.OrbitControls = function (object, domElement) {
 
 	// How far you can dolly in and out ( PerspectiveCamera only )
 	this.minDistance = 0;
-	this.maxDistance = Infinity;
+	this.maxDistance = 10000000;
 
 	// How far you can zoom in and out ( OrthographicCamera only )
 	this.minZoom = 0;
@@ -335,6 +337,16 @@ THREE.OrbitControls = function (object, domElement) {
 
 			panOffset.add(v); */
 
+			var lonDelta = Math.cos(spherical.theta) * (distance / (1000 * R * Math.cos(latitude * Math.PI / 180))) * 180 / Math.PI;
+            longitude -= lonDelta;
+            var latDelta = -Math.sin(spherical.theta) * (distance / (R * 1000)) * 180 / Math.PI;
+            if (latitude + latDelta < 80 && latitude + latDelta > -80) {
+                latitude += latDelta;
+                // console.log('latitude:', latitude)
+			}
+			 // latitude = (latitude + 90) % 180 - 90;
+			 longitude = (longitude + 540) % 360 - 180;
+			console.log('latitude: ' + latitude + 'longitude: ' + longitude);
 		};
 
 	}();
@@ -359,6 +371,15 @@ THREE.OrbitControls = function (object, domElement) {
 			v.multiplyScalar(distance);
 
 			panOffset.add(v); */
+
+			var lonDelta = Math.sin(spherical.theta) * (distance / (1000 * R * Math.cos(latitude * Math.PI / 180))) * 180 / Math.PI;
+            longitude -= lonDelta;
+            var latDelta = Math.cos(spherical.theta) * (distance / (1000 * R)) * 180 / Math.PI;
+            if (latitude + latDelta < 80 && latitude + latDelta > -80) {
+                latitude += latDelta;
+            }
+            // latitude = (latitude + 90) % 180 - 90;
+            longitude = (longitude + 360) % 360;
 
 		};
 
@@ -515,6 +536,7 @@ THREE.OrbitControls = function (object, domElement) {
 		dollyStart.copy(dollyEnd);
 
 		scope.update();
+		
 	}
 
 	function handleMouseMovePan(event) {
@@ -530,7 +552,7 @@ THREE.OrbitControls = function (object, domElement) {
 		panStart.copy(panEnd);
 
 		scope.update();
-		(callbackHelper || {}).callback(scope.distanceToTarget());
+		(callbackHelper || {}).callback(scope.distanceToTarget(), latitude, longitude);
 	}
 
 	function handleMouseUp(event) {
@@ -554,7 +576,9 @@ THREE.OrbitControls = function (object, domElement) {
 		}
 
 		scope.update();
+		(callbackHelper || {}).callback(scope.distanceToTarget(), latitude, longitude);
 
+		
 	}
 
 	function handleKeyDown(event) {
@@ -1076,6 +1100,7 @@ AFRAME.registerComponent('orbit-controls', {
 	dependencies: ['camera'],
 
 	schema: {
+		enabled: {default: true},
 		/*  autoRotate: {type: 'boolean'},
 		 autoRotateSpeed: {default: 2},
 		 dampingFactor: {default: 0},
@@ -1106,19 +1131,23 @@ AFRAME.registerComponent('orbit-controls', {
 		var oldPosition;
 
 		let camera = el.getObject3D('camera');
-		this.controls = new THREE.OrbitControls(el.getObject3D('camera'),
+		this.controls = new THREE.OrbitControls(camera,
 			el.sceneEl.renderer.domElement);
 
 		oldPosition = new THREE.Vector3();
 
-		el.sceneEl.addEventListener('enter-vr', () => {
+	
+
+	/* 	el.sceneEl.addEventListener('enter-vr', () => {
 			if (!AFRAME.utils.device.checkHeadsetConnected() &&
 				!AFRAME.utils.device.isMobile()) { return; }
 			this.controls.enabled = false;
 			if (el.hasAttribute('look-controls')) {
 				el.setAttribute('look-controls', 'enabled', true);
 				oldPosition.copy(el.getObject3D('camera').position);
-				el.getObject3D('camera').position.set(0, 0, 0);
+				//camera.position.set(oldPosition.x, oldPosition.y, oldPosition.z);
+				rig.object3D.position.set(oldPosition.x, oldPosition.y, oldPosition.z);
+				console.log('camera: ' + camera);
 			}
 		});
 
@@ -1130,7 +1159,7 @@ AFRAME.registerComponent('orbit-controls', {
 			if (el.hasAttribute('look-controls')) {
 				el.setAttribute('look-controls', 'enabled', false);
 			}
-		});
+		}); */
 
 		document.body.style.cursor = 'grab';
 		/* document.addEventListener('mousedown', () => {
@@ -1154,7 +1183,6 @@ AFRAME.registerComponent('orbit-controls', {
 	   controls.autoRotate = data.autoRotate;
 	   controls.autoRotateSpeed = data.autoRotateSpeed;
 	   controls.dampingFactor = data.dampingFactor;
-	   controls.enabled = data.enabled;
 	   controls.enableDamping = data.enableDamping;
 	   controls.enableKeys = data.enableKeys;
 	   controls.enablePan = data.enablePan;

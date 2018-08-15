@@ -22,7 +22,6 @@
     <script type="module" src="js/util/geoconversions.js"></script>
     <script type="module" src="libs/webVR.js"></script>
     <script type="module" src="js/main.js"></script>-->
-    <script src="js/earth-viewer/callbacktest.js"></script>
     <script src="js/earth-viewer/callbackHelper.js"></script>
     
     <script src="js/toolbox.js"></script>
@@ -34,12 +33,29 @@
         <a-camera id="camera" fov="75" far="100000000" ></a-camera>
         </a-entity> -->
         <!--wasd-controls="acceleration: 1000000"-->
-        <a-entity 
-          
-            orbit-controls="target: 0 0 0; initialPosition: 0 0 6378000"
+      <!--   <a-entity 
+            orbit-controls="target: 0 0 0; initialPosition: 0 0 6378000; enabled: true"
         >
-            <a-camera far="100000000" near="100" fov="75" position="0 0 6378000"></a-camera>
+            <a-camera id="orbit-camera" far="100000000" near="150" fov="75" active="false"></a-camera>
+        </a-entity> -->
+
+        <!--<a-camera id="camera1" position="0 0 6378000"></a-camera>-->
+        
+        <!--   look-controls="enabled: true" -->
+        <a-entity
+            orbit-controls="target: 0 0 0; initialPosition: 0 0 6378000; enabled: true"
+        >
+            <a-camera
+            id="rig"
+            position = "0 0 637800"
+            active="false"
+            >
+                <a-camera id="vr-camera" far="100000000" near="150" fov="75" active="true"></a-camera>
+            </a-camera>
         </a-entity>
+         
+
+        <a-sky color="#0A0A0A" radius="10000000"></a-sky>
 
        <!--  <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
         <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane> -->

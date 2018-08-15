@@ -21,6 +21,9 @@ class Controls{
     }
 }
 
+var defaultLatitude = 48.210033;
+var defaultLongitude = 16.363449;
+
 var controls = new Controls();
 
 ///Variables
@@ -61,23 +64,28 @@ earth.position.set(0, 0, -R * 1000);
 scene.add(earth);
 
 var zoom = 4;
-var updateSceneLazy = function(altitude) {
-    alert('updateSceneLazy: altitude: ' + altitude);
+var updateSceneLazy = function(
+        altitude = R * 1000, 
+        latitude = defaultLatitude, 
+        longitude = defaultLongitude
+    ) 
+    {
+    //alert('updateSceneLazy: altitude: ' + altitude);
     ////////////////////////////////////////////////////////////
     var oldZoom = zoom;
     //var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
-    //var zoom__ = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(dist)), 19), 1));
+    var zoom__ = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(altitude)), 19), 1));
 
-   /*  if (zoom__ > ZOOM_MIN) {
+    if (zoom__ > ZOOM_MIN) {
         zoom = zoom__;
-    } */
+    }
 
-    if (lonStamp != controls.getLongitude() || latStamp != controls.getLatitude()) {
-        lonStamp = controls.getLongitude();
-        latStamp = controls.getLatitude();
+    if (lonStamp != longitude || latStamp != longitude) {
+        lonStamp = longitude;
+        latStamp = latitude;
         earth.rotation.set(
-            controls.getLatitude() * Math.PI / 180,
-            (-controls.getLongitude()) * Math.PI / 180,
+            latitude * Math.PI / 180,
+            (-longitude) * Math.PI / 180,
             0);
         var oldXtile = xtile;
         var oldYtile = ytile;
