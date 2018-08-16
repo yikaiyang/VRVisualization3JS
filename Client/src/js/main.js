@@ -1,15 +1,16 @@
 import {WEBVR} from '../libs/webVR.js';
 import GeoConversion from './util/geoconversions.js';
 import FileLoader from './util/fileloader.js';
+import Globals from './three-globals.js';
 
-var scene = new THREE.Scene();
+let globals = Globals.getInstance();
+
+let scene = globals.scene;
+
+//var scene = new THREE.Scene();
 var earth = new THREE.Object3D(); //create an empty container
+
 /* Variables */
-
-//Start position
-var LONGITUDE_ORI = 0;
-var LATITUDE_ORI = 0;
-
 var R = 6378.137; //radius in kilometers
 var xtile = 0;
 var ytile = 0;
@@ -18,9 +19,104 @@ var tileGroups;
 var tileGroup = [];
 
 var defaultAlti = R * 1000;
-var geojsonLoader = new THREE.GeojsonLoader();
 
 //http://localhost:8080/styles/osm-bright/8/133/89@2x.png
+
+///VR Controls
+function initVRControls(){
+    window.addEventListener('vr controller connected', function( event ){
+        //  Here it is, your VR controller instance.
+        //  It’s really a THREE.Object3D so you can just add it to your scene:
+
+        alert('Controller detected');
+
+        var controller = event.detail
+        scene.add( controller )
+
+
+        //  HEY HEY HEY! This is important. You need to make sure you do this.
+        //  For standing experiences (not seated) we need to set the standingMatrix
+        //  otherwise you’ll wonder why your controller appears on the floor
+        //  instead of in your hands! And for seated experiences this will have no
+        //  effect, so safe to do either way:
+
+        controller.standingMatrix = renderer.vr.getStandingMatrix()
+
+
+        //  And for 3DOF (seated) controllers you need to set the controller.head
+        //  to reference your camera. That way we can make an educated guess where
+        //  your hand ought to appear based on the camera’s rotation.
+
+        controller.head = window.camera
+
+
+        //  Right now your controller has no visual.
+        //  It’s just an empty THREE.Object3D.
+        //  Let’s fix that!
+
+        var
+        meshColorOff = 0xDB3236,//  Red.
+        meshColorOn  = 0xF4C20D,//  Yellow.
+        controllerMaterial = new THREE.MeshStandardMaterial({
+
+            color: meshColorOff
+        }),
+        controllerMesh = new THREE.Mesh(
+
+            new THREE.CylinderGeometry( 0.005, 0.05, 0.1, 6 ),
+            controllerMaterial
+        ),
+        handleMesh = new THREE.Mesh(
+
+            new THREE.BoxGeometry( 0.03, 0.1, 0.03 ),
+            controllerMaterial
+        )
+
+        controllerMaterial.flatShading = true
+        controllerMesh.rotation.x = -Math.PI / 2
+        handleMesh.position.y = -0.05
+        controllerMesh.add( handleMesh )
+        controller.userData.mesh = controllerMesh//  So we can change the color later.
+        controller.add( controllerMesh )
+        castShadows( controller )
+        receiveShadows( controller )
+
+
+        //  Allow this controller to interact with DAT GUI.
+
+        var guiInputHelper = dat.GUIVR.addInputObject( controller )
+        scene.add( guiInputHelper )
+
+
+        //  Button events. How easy is this?!
+        //  We’ll just use the “primary” button -- whatever that might be ;)
+        //  Check out the THREE.VRController.supported{} object to see
+        //  all the named buttons we’ve already mapped for you!
+
+        controller.addEventListener( 'primary press began', function( event ){
+
+            event.target.userData.mesh.material.color.setHex( meshColorOn )
+            guiInputHelper.pressed( true )
+        })
+        controller.addEventListener( 'primary press ended', function( event ){
+
+            event.target.userData.mesh.material.color.setHex( meshColorOff )
+            guiInputHelper.pressed( false )
+        })
+
+
+        //  Daddy, what happens when we die?
+
+        controller.addEventListener( 'disconnected', function( event ){
+
+            controller.parent.remove( controller )
+        })
+    });
+}
+
+initVRControls();
+
+///VR Controls
 
 function initVR(renderer){
     renderer.vr.enabled = true;
@@ -99,21 +195,19 @@ var axesHelper = new THREE.AxesHelper(R * 1000);
 scene.add(grid);
 scene.add(axesHelper);
 
-/////
-
-var params = getSearchParameters();
-
+//Create camera
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 100, 100000000);
 camera.up.set(0, 0, 1);
-var renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-
 var rig = new THREE.PerspectiveCamera(); 
 rig.add(camera);
 rig.position.set(0,0,defaultAlti);
 scene.add(rig);
 
-/*  renderer.shadowMapEnabled = true;
+//Create renderer
+var renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+renderer.shadowMapEnabled = true;
 renderer.shadowMapSoft = false;
 
 renderer.shadowCameraNear = 3;
@@ -123,59 +217,25 @@ renderer.shadowCameraFov = 50;
 renderer.shadowMapBias = 0.0039;
 renderer.shadowMapDarkness = 0.5;
 renderer.shadowMapWidth = 1024;
-renderer.shadowMapHeight = 1024; */
+renderer.shadowMapHeight = 1024; 
 
 //enableVR
 initVR(renderer);
+
+document.body.appendChild(renderer.domElement);
 
 var goUpdateSceneLazy = function() {
     updateSceneLazy();
 };
 
-/* var controls = new THREE.EarthControls(
-    rig,
-    renderer.domElement,
-    goUpdateSceneLazy, {
-        longitude: LONGITUDE_ORI,
-        latitude: LATITUDE_ORI
-    }); */
-
 var controls = new THREE.OrbitControls(rig, undefined, goUpdateSceneLazy);
 
-var lonStamp = 0;
-var latStamp = 0;
-var altitude = (params.alti) ? params.alti : defaultAlti;
-
-document.body.appendChild(renderer.domElement);
-
-
-earth.position.set(0, 0, -R * 1000);
-scene.add(earth);
-
-var light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(10000, 15000, 20000);
-scene.add(light);
-
-var sphere = new THREE.SphereGeometry(R * 995, 64, 64);
-
-document.addEventListener("keydown", onDocumentKeyDown, false);
-
-camera.position.z = altitude;
-
-function onDocumentKeyDown(event) {
-    var keyCode = event.which;
-    if (keyCode == 70) {
-        console.log('F pressed!');
-    }
-}
-// ENDOF initialization //
 
 window.addEventListener('resize', onWindowResize, false);
 
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-
     renderer.setSize(window.innerWidth, window.innerHeight);
     render();
 }
@@ -187,20 +247,47 @@ function animate(){
 function render() {
     stats.begin();
     renderer.render(scene, camera);
-   console.log('camera:' +
+    /**console.log('camera:' +
     ' x: ' + ((rig||{}).position||{}).x + 
     ' y: ' +  ((rig||{}).position||{}).y +
     ' z: ' + ((rig||{}).position||{}).z +
     ' rotationX: ' + ((rig||{}).rotation||{}).x +
     ' rotationY: ' + ((rig||{}).rotation||{}).y +
     ' rotationZ: ' + ((rig||{}).rotation||{}).z 
-    );
+    );**/
     //rig.position.z += 10;
 
     stats.end();
 }
 
-var updateSceneLazy = function() {
+
+
+////Earth stuff
+var lonStamp = 0;
+var latStamp = 0;
+var altitude = defaultAlti;
+
+
+
+
+earth.position.set(0, 0, -R * 1000);
+scene.add(earth);
+
+var light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(10000, 15000, 20000);
+scene.add(light);
+
+
+// ENDOF initialization //
+
+let defaultLatitude = 48.210033;
+let defaultLongitude = 16.363449;
+
+var updateSceneLazy = function(
+    alt = R * 1000,
+    lat = defaultLatitude,
+    long = defaultLongitude
+) {
     ////////////////////////////////////////////////////////////
     var oldZoom = zoom;
     var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
@@ -244,7 +331,7 @@ updateSceneLazy();
 animate();
 
 
-var tilematerial = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 0.4, transparent: true } ); // new line
+var tilematerial = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 1.0, transparent: false } ); // new line
                        
 function updateScene(position) {
     console.log('position.lon:', position.lon);
@@ -353,26 +440,6 @@ function updateScene(position) {
                         tileSupport.position.set(xTileShift * widthUp, -yTileShift * widthSide, 0);
                         tileSupport.add(tileMesh)
                         oriGround.add(tileSupport);
-                        /* if (zoom >= 18 && zoom_ >= zoom - 1) {
-                            var defaultColor =
-                                ((13 * zoom) % 256) * 65536 +
-                                ((53 * (atile % modulus)) % 256) * 256 +
-                                ((97 * (btile % modulus)) % 256);
-                            var lod = Math.max(0, zoom_ - 14);
-                            (function(earth, myTile, zoom, xtile, ytile, lod, defaultColor) {
-                                var url = 'http://www.openearthview.net/3dtile.php?format=geojson&zoom=' + zoom + '&xtile=' + xtile + '&ytile=' + ytile;
-                                geojsonLoader.load(
-                                    url,
-                                    function(obj) {
-                                        myTile.add(obj);
-                                        render();
-                                    },
-                                    function() {},
-                                    function() {},
-                                    lod,
-                                    defaultColor);
-                            })(earth, tileSupport, zoom_, (atile % modulus), (btile % modulus), lod, defaultColor);
-                        } */
                     }
                     (function(yourTileMesh, yourZoom, yourXtile, yourYtile) {
                         textureFactory(

@@ -1131,11 +1131,18 @@ AFRAME.registerComponent('orbit-controls', {
 		var oldPosition;
 
 		let camera = el.getObject3D('camera');
+		
 		this.controls = new THREE.OrbitControls(camera,
 			el.sceneEl.renderer.domElement);
 
 		oldPosition = new THREE.Vector3();
 
+		let threeScene = el.sceneEl.object3D;
+		let camera2 = document.querySelector('#vr-camera2').getObject3D('camera');
+
+		el.sceneEl.addEventListener('enter-vr', () => {
+			threeScene.activeCamera = camera2;
+		});
 	
 
 	/* 	el.sceneEl.addEventListener('enter-vr', () => {

@@ -3,15 +3,22 @@
  * @author Moar Technologies Corp / https://moar.io
  * @author Jeff Nusz / http://custom-logic.com
  * @author Data Arts Team / https://github.com/dataarts
+ * 
+ * 
+ * https://github.com/stewdio/THREE.VRController
  */
 
 
 
 
 /*
-    https://github.com/stewdio/THREE.VRController/blob/master/VRController.js
+
 
 	THREE.VRController
+
+
+
+
 	Why is this useful?
 	
 	1. This creates a THREE.Object3D() per connected Gamepad instance and 
@@ -25,6 +32,7 @@
 	   to use the buttons array indexes.
 	3. This one JS file explicitly supports several existing VR controllers,
 	   and implicitly supports any controllers that operate similarly!
+
 	
 	What do I have to do?
 	
@@ -36,6 +44,8 @@
 	   renderer.vr.getStandingMatrix(). If you are expecting a 3DOF controller
 	   you must set its head property equal to your camera.
 	3. Experiment and HAVE FUN!
+
+
 */
 
 
@@ -1032,6 +1042,7 @@ THREE.VRController.supported = {
 		],
 		primary: 'trigger'
 	},
+
 	'Oculus Touch (Left)': {
 
 		style: 'oculus',
@@ -1046,6 +1057,47 @@ THREE.VRController.supported = {
 		],
 		primary: 'trigger'
 	},
+
+	'Oculus Go Controller': {
+
+
+		style: 'oculus',
+
+
+		//  THUMBPAD
+		//  Oculus Go’s thumbpad has axes values and is also a button.
+		//  The Y-axis is “Regular”.
+		//
+		//              Top: Y = -1
+		//                   ↑
+		//    Left: X = -1 ←─┼─→ Right: X = +1
+		//                   ↓
+		//           Bottom: Y = +1
+
+		axes: [{ name: 'thumbpad', indexes: [ 0, 1 ]}],
+		buttons: [
+
+
+			//  THUMBPAD
+			//  --------------------------------------------------------------
+			//  value:     Binary 0 or 1, duplicates isPressed.
+			//  isTouched: YES has real touch detection.
+			//  isPressed: As expected.
+
+			'thumbpad',
+
+
+			//  TRIGGER
+			//  --------------------------------------------------------------
+			//  value:     Binary 0 or 1, duplicates isPressed.
+			//  isTouched: Duplicates isPressed.
+			//  isPressed: As expected.
+
+			'trigger'
+		],
+		primary: 'trigger'
+	},
+
 
 
 

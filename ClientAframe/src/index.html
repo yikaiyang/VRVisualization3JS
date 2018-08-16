@@ -42,6 +42,7 @@
         <!--<a-camera id="camera1" position="0 0 6378000"></a-camera>-->
         
         <!--   look-controls="enabled: true" -->
+        
         <a-entity
             orbit-controls="target: 0 0 0; initialPosition: 0 0 6378000; enabled: true"
         >
@@ -53,6 +54,14 @@
                 <a-camera id="vr-camera" far="100000000" near="150" fov="75" active="true"></a-camera>
             </a-camera>
         </a-entity>
+
+        <a-camera
+            id="rig2"
+            position = "0 0 637800"
+            active="false"
+        >
+            <a-camera id="vr-camera2" far="100000000" near="150" fov="75" active="true"></a-camera>
+        </a-camera>
          
 
         <a-sky color="#0A0A0A" radius="10000000"></a-sky>
