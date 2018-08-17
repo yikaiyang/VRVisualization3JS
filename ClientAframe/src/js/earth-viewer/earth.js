@@ -8,6 +8,8 @@ var earth = new THREE.Object3D();
 var defaultLatitude = 48.210033;
 var defaultLongitude = 16.363449;
 
+var controls = new Controls();
+
 ///Variables
 var R = 6378.137; //radius in kilometers
 var xtile = 0;
@@ -55,6 +57,7 @@ var updateSceneLazy = function(
     //alert('updateSceneLazy: altitude: ' + altitude);
     ////////////////////////////////////////////////////////////
     var oldZoom = zoom;
+    //var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
     var zoom__ = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(altitude)), 19), 1));
 
     if (zoom__ > ZOOM_MIN) {

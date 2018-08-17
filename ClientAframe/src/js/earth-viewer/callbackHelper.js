@@ -22,22 +22,3 @@ function myCallback(){
 
 var App = App || {};
 App.callbackHelper = new CallbackHelper();
-//App.callbackHelper.setCallback(myCallback);
-
-
-//App.callbackHelper.callback();
-
-/* var App = App || {};
-if (!App.CallbackHelper){
-    App.CallbackHelper = function(){
-        var cb = class CallbackHelper{
-            test(){
-                alert('Hello');
-            }
-        }
-
-        return {
-            cb
-        }
-    }
-} */

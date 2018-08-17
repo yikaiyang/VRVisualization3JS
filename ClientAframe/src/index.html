@@ -11,11 +11,7 @@
 <body>
     <!--<script src="js/three.min.js"></script>
     <script src="js/turf/v2.0.2/turf.min.js"></script>
-    <script src="js/controls/EarthControls.js"></script>
-    <script src="js/controls/OrbitControls.js"></script>
-    <script src="js/controls/VRControls.js"></script>
 
-    <script src="js/threejs-stats.js"></script>
     <script src="js/variables.js"></script>
     <script src="libs/papaparse.min.js"></script>
     <script type="module" src="js/util/fileloader.js"></script>
@@ -23,18 +19,12 @@
     <script type="module" src="libs/webVR.js"></script>
     <script type="module" src="js/main.js"></script>-->
     <script src="js/earth-viewer/callbackHelper.js"></script>
-    
-    <script src="js/toolbox.js"></script>
+    <script src="js/toolbox.js"></script> 
     <script src="js/turf/v2.0.2/turf.min.js"></script>
     <!-- <script src="js/controls/aframe-orbit-controls-component.js"></script> -->
     <script src="js/controls/AFrameOrbitControls.js"></script>
        
     <a-scene>
-    <!--<a-entity id="camera-rig" position="0 0 100" >
-        <a-camera id="camera" fov="75" far="100000000" ></a-camera>
-        </a-entity> -->
-        <!--wasd-controls="acceleration: 1000000"-->
-
         <a-entity id="camera-rig">
             <a-entity
                 id="camera"
@@ -47,14 +37,6 @@
 
         <a-sky color="#0A0A0A" radius="10000000"></a-sky>
 
-       <!--  <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
-        <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane> -->
-
-        <!-- <a-cylinder id="xAxe" position="100 0 0" rotation="0 0 -90" color="#0000FF" height="200" radius="0.1"></a-cylinder>
-        <a-cylinder id="yAxe" position="0 100 0" rotation="0 0 0" color="#00FF00" height="200" radius="0.1"></a-cylinder>
-        <a-cylinder id="zAxe" position="0 0 100" rotation="-90 0 0" color="#FF0000" height="200" radius="0.1"></a-cylinder>
-    -->
-        <!--<a-sky color="#ECECEC" radius="1000000"></a-sky>-->
     </a-scene>
 
     <script>
@@ -65,15 +47,9 @@
         let gridHelper = new THREE.GridHelper(R * 1000);
         scene.add(axesHelper);
         scene.add(gridHelper);
-        
-        let sphereGeometry = new THREE.SphereGeometry(R * 1000, 64, 64);
-        let material = new THREE.MeshBasicMaterial({color: 0xffff00});
-        let sphere = new THREE.Mesh(sphereGeometry, material);
-        sphere.position.set(0,0,-R * 1000);
-        //scene.add(sphere);
     </script>
 
-    <script src="js/earth-viewer/earth-viewer.js"></script>
+    <script  src="js/earth-viewer/earth-viewer.js"></script>
     
 </body>
 
