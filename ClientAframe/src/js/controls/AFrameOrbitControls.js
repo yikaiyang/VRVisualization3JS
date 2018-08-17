@@ -27,8 +27,8 @@ THREE.OrbitControls = function (object, domElement) {
 	
 	this.object = object;
 	
-	this.object.near = 150;
-	this.object.far = 100000000;
+	this.object.near = 0.05;
+	this.object.far = 10000000;
 	this.object.updateProjectionMatrix();
 
 	//Location information
@@ -1145,7 +1145,7 @@ AFRAME.registerComponent('orbit-controls', {
 	 	el.sceneEl.addEventListener('enter-vr', () => {
 			if (!AFRAME.utils.device.checkHeadsetConnected() &&
 				!AFRAME.utils.device.isMobile()) { return; }
-			//this.controls.enabled = false;
+			this.controls.enabled = false;
 			if (el.hasAttribute('look-controls')) {
 				el.setAttribute('look-controls', 'enabled', true);
 				oldPosition.copy(camera.position);
