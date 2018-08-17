@@ -1,3 +1,4 @@
+
 /**
  * Singleton storing threejs global variables
  * https://en.wikipedia.org/wiki/Immediately-invoked_function_expression

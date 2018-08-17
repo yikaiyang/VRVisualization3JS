@@ -137,9 +137,6 @@ function initFPSCounter(){
 }
 initFPSCounter();
 
- //Coordinates for vienna
-const latitude = 48.210033;
-const longitude = 16.363449;
 const color = new THREE.Color("rgb(187,57,70)");
 
 /**Drawing primitives based on stations of WL */

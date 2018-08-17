@@ -8,6 +8,13 @@
   <body>
     <a-scene>
       <a-entity supercraft-loader="name: icky-snake"></a-entity>
-      <a-entity id="camera" camera look-controls orbit-controls="target: 0 1.6 -0.5; minDistance: 0.5; maxDistance: 180; initialPosition: 0 5 15; enabled: true"></a-entity>
+      <a-entity id="camera-rig">
+        <a-entity 
+          id="camera" 
+          camera 
+          look-controls 
+          orbit-controls="target: 0 1.6 -0.5; minDistance: 0.5; maxDistance: 180; initialPosition: 0 5 15; enabled: true">
+        </a-entity>
+      </a-entity>
     </a-scene>
   </body>

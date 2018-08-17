@@ -26,6 +26,7 @@
     
     <script src="js/toolbox.js"></script>
     <script src="js/turf/v2.0.2/turf.min.js"></script>
+    <!-- <script src="js/controls/aframe-orbit-controls-component.js"></script> -->
     <script src="js/controls/AFrameOrbitControls.js"></script>
        
     <a-scene>
@@ -33,36 +34,16 @@
         <a-camera id="camera" fov="75" far="100000000" ></a-camera>
         </a-entity> -->
         <!--wasd-controls="acceleration: 1000000"-->
-      <!--   <a-entity 
-            orbit-controls="target: 0 0 0; initialPosition: 0 0 6378000; enabled: true"
-        >
-            <a-camera id="orbit-camera" far="100000000" near="150" fov="75" active="false"></a-camera>
-        </a-entity> -->
 
-        <!--<a-camera id="camera1" position="0 0 6378000"></a-camera>-->
-        
-        <!--   look-controls="enabled: true" -->
-        
-        <a-entity
-            orbit-controls="target: 0 0 0; initialPosition: 0 0 6378000; enabled: true"
-        >
-            <a-camera
-            id="rig"
-            position = "0 0 637800"
-            active="false"
+        <a-entity id="camera-rig">
+            <a-entity
+                id="camera"
+                camera="far: 100000000; near: 150; fov: 75"
+                look-controls="enabled: false"
+                orbit-controls="target: 0 0 0; initialPosition: 0 0 6378000; enabled: true"
             >
-                <a-camera id="vr-camera" far="100000000" near="150" fov="75" active="true"></a-camera>
-            </a-camera>
-        </a-entity>
-
-        <a-camera
-            id="rig2"
-            position = "0 0 637800"
-            active="false"
-        >
-            <a-camera id="vr-camera2" far="100000000" near="150" fov="75" active="true"></a-camera>
-        </a-camera>
-         
+            </a-entity>
+        </a-entity>          
 
         <a-sky color="#0A0A0A" radius="10000000"></a-sky>
 

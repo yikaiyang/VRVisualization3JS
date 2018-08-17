@@ -1079,14 +1079,11 @@ Object.defineProperties(THREE.OrbitControls.prototype, {
 	dynamicDampingFactor: {
 
 		get: function () {
-
 			console.warn('THREE.OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.');
 			return this.dampingFactor;
-
 		},
 
 		set: function (value) {
-
 			console.warn('THREE.OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.');
 			this.dampingFactor = value;
 
@@ -1101,27 +1098,27 @@ AFRAME.registerComponent('orbit-controls', {
 
 	schema: {
 		enabled: {default: true},
-		/*  autoRotate: {type: 'boolean'},
-		 autoRotateSpeed: {default: 2},
-		 dampingFactor: {default: 0},
-		 enabled: {default: true},
-		 enableDamping: {default: true},
-		 enableKeys: {default: true},
-		 enablePan: {default: true},
-		 enableRotate: {default: true},
-		 enableZoom: {default: true}, */
+		autoRotate: {type: 'boolean'},
+		autoRotateSpeed: {default: 2},
+		dampingFactor: {default: 0.25},
+		enabled: {default: true},
+		enableDamping: {default: false},
+		enableKeys: {default: true},
+		enablePan: {default: true},
+		enableRotate: {default: true},
+		enableZoom: {default: true}, 
 		initialPosition: { type: 'vec3' },
-		/*  keyPanSpeed: {default: 7},
-		 minAzimuthAngle: {type: 'number', default: -Math.PI},
-		 maxAzimuthAngle: {type: 'number', default: Math.PI},
-		 maxDistance: {default: Infinity},
-		 maxPolarAngle: {default: AFRAME.utils.device.isMobile() ? 90 : 120},
-		 minDistance: {default: 150},
-		 minPolarAngle: {default: 0},
-		 minZoom: {default: 0},
-		 panSpeed: {default: 1},
-		 rotateSpeed: {default: 0.0},
-		 screenSpacePanning: {default: false},*/
+		keyPanSpeed: {default: 7},
+		minAzimuthAngle: {type: 'number', default: -Math.PI},
+		maxAzimuthAngle: {type: 'number', default: Math.PI},
+		maxDistance: {default: Infinity},
+		maxPolarAngle: {default: AFRAME.utils.device.isMobile() ? 90 : 120},
+		minDistance: {default: 150},
+		minPolarAngle: {default: 0},
+		minZoom: {default: 0},
+		panSpeed: {default: 1},
+		rotateSpeed: {default: 0.0},
+		screenSpacePanning: {default: false},
 		target: { type: 'vec3' },
 		zoomSpeed: { default: 1.0 }
 	},
@@ -1131,6 +1128,10 @@ AFRAME.registerComponent('orbit-controls', {
 		var oldPosition;
 
 		let camera = el.getObject3D('camera');
+		let rig = document.querySelector('#camera-rig');
+
+		//let threeCamera = document.querySelector('#camera[camera]').components.camera.camera;
+		//let rigCamera = document.querySelector('#camera-rig').components.camera.camera;
 		
 		this.controls = new THREE.OrbitControls(camera,
 			el.sceneEl.renderer.domElement);
@@ -1138,20 +1139,16 @@ AFRAME.registerComponent('orbit-controls', {
 		oldPosition = new THREE.Vector3();
 
 		let threeScene = el.sceneEl.object3D;
-		let camera2 = document.querySelector('#vr-camera2').getObject3D('camera');
-
-		el.sceneEl.addEventListener('enter-vr', () => {
-			threeScene.activeCamera = camera2;
-		});
+		//let camera2 = document.querySelector('#vr-camera2').getObject3D('camera');
 	
 
-	/* 	el.sceneEl.addEventListener('enter-vr', () => {
+	 	el.sceneEl.addEventListener('enter-vr', () => {
 			if (!AFRAME.utils.device.checkHeadsetConnected() &&
 				!AFRAME.utils.device.isMobile()) { return; }
-			this.controls.enabled = false;
+			//this.controls.enabled = false;
 			if (el.hasAttribute('look-controls')) {
 				el.setAttribute('look-controls', 'enabled', true);
-				oldPosition.copy(el.getObject3D('camera').position);
+				oldPosition.copy(camera.position);
 				//camera.position.set(oldPosition.x, oldPosition.y, oldPosition.z);
 				rig.object3D.position.set(oldPosition.x, oldPosition.y, oldPosition.z);
 				console.log('camera: ' + camera);
@@ -1163,18 +1160,19 @@ AFRAME.registerComponent('orbit-controls', {
 				!AFRAME.utils.device.isMobile()) { return; }
 			this.controls.enabled = true;
 			el.getObject3D('camera').position.copy(oldPosition);
+			rig.object3D.position.set(0,0,0);
 			if (el.hasAttribute('look-controls')) {
 				el.setAttribute('look-controls', 'enabled', false);
 			}
-		}); */
+		}); 
 
 		document.body.style.cursor = 'grab';
-		/* document.addEventListener('mousedown', () => {
+		document.addEventListener('mousedown', () => {
 			document.body.style.cursor = 'grabbing';
 		});
 		document.addEventListener('mouseup', () => {
 			document.body.style.cursor = 'grab';
-		}); */
+		}); 
 
 		this.target = new THREE.Vector3();
 		el.getObject3D('camera').position.copy(this.data.initialPosition);
