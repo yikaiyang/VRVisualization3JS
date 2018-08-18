@@ -116,3 +116,5 @@ class Toolbox {
         return new THREE.Mesh(geoTiles[id]);
     }
 }
+
+export default Toolbox;
