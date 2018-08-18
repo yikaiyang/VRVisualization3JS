@@ -1,10 +1,13 @@
 'use strict';
-var App = App || {};
+import Toolbox from '../earth-viewer/util/toolbox-class.js'
+
+var App = window.App || {};
+var callbackHelper = App.callbackHelper;
 
 var scene = document.querySelector('a-scene').object3D;
 var earth = new THREE.Object3D();
 
-//Set callback to trigger manual rerendering of earth when a zoomlevel has changed.
+
 var defaultLatitude = 48.210033;
 var defaultLongitude = 16.363449;
 
@@ -15,7 +18,6 @@ var ytile = 0;
 var zoom = 0;
 var tileGroups;
 var tileGroup = [];
-
 
 var ZOOM_SHIFT_SIZE = 4;
 var ZOOM_MIN = 1;
@@ -32,14 +34,15 @@ var tileMeshQueue = [];
 
 var defaultAlti = R * 1000;
 var altitude = defaultAlti;
+var lonStamp, latStamp;
 
 earth.position.set(0, 0, -R * 1000);
 scene.add(earth);
 
 var zoom = 4;
 var updateSceneLazy = function(
-        altitude = R * 1000, 
-        latitude = defaultLatitude, 
+        altitude = R * 1000,
+        latitude = defaultLatitude,
         longitude = defaultLongitude
     ) 
     {
@@ -79,14 +82,12 @@ var updateSceneLazy = function(
             'alti': altitude
         });
     }
-    ////////////////////////////////////////////////////////////
-    //renderer.render(scene, camera);
 };
 
 updateSceneLazy();
 
-//Register re-render calback
-if (!!App.callbackHelper){
+//Set callback to trigger manual rerendering of earth when a zoomlevel has changed.
+if (!!callbackHelper){
     callbackHelper.setCallback(updateSceneLazy);
 }
 
