@@ -22,6 +22,21 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+
+class Toolbox {
+    
+
+}
+
+Toolbox.instance = function (){
+    if (!Toolbox.toolbox) {
+        Toolbox.toolbox = new Toolbox();
+    }
+    return Toolbox.toolbox;
+}
+
+export default Toolbox;
+
 const geoTiles = {};
 const geoTileQueue = [];
 const MAX_TEXTURE_REQUEST = 10;
@@ -290,3 +305,4 @@ function latOffsetMeter2lat(lat, y) {
     var R = 6378.137;
     return (y / R) + lat;
 }
+
