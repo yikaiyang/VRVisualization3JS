@@ -74,3 +74,6 @@ typings/
 
 #Ignore all distribution folders
 dist/
+
+#ignore idea
+.idea/
