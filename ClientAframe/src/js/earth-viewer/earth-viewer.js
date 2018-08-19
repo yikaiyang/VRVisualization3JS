@@ -4,6 +4,8 @@ import Toolbox from '../earth-viewer/util/toolbox-class.js'
 var App = window.App || {};
 var callbackHelper = App.callbackHelper;
 
+let toolbox = new Toolbox();
+
 var scene = document.querySelector('a-scene').object3D;
 var earth = new THREE.Object3D();
 
