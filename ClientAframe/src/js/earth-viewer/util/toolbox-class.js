@@ -1,3 +1,6 @@
+/**
+ * Toolbox class for open earth viewer
+ */
 
 const MAX_TEXTURE_REQUEST = 10;
 const MAX_TILEMESH = 400;

@@ -1,6 +1,5 @@
 'use strict';
 var App = App || {};
-
 var scene = document.querySelector('a-scene').object3D;
 var earth = new THREE.Object3D();
 

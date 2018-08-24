@@ -25,8 +25,6 @@ var ZOOM_SHIFT_SIZE = 4;
 var ZOOM_MIN = 1;
 
 var ZOOM_FLAT = 13;
-var tileMeshes = {};
-var tileMeshQueue = [];
 
 var ZOOM_SHIFT_SIZE = 4;
 var ZOOM_MIN = 1;
@@ -35,7 +33,7 @@ var tileMeshes = {};
 var tileMeshQueue = [];
 
 var defaultAlti = R * 1000;
-var altitude = defaultAlti;
+var altitude = defaultAlti ;
 var lonStamp, latStamp;
 
 earth.position.set(0, 0, -R * 1000);
