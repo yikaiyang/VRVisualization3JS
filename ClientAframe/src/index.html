@@ -9,30 +9,35 @@
 </head>
 
 <body>
-    <!--<script src="js/three.min.js"></script>
+    <!--
     <script src="js/turf/v2.0.2/turf.min.js"></script>
-
     <script src="js/variables.js"></script>
     <script src="libs/papaparse.min.js"></script>
     <script type="module" src="js/util/fileloader.js"></script>
     <script type="module" src="js/util/geoconversions.js"></script>
-    <script type="module" src="libs/webVR.js"></script>
     <script type="module" src="js/main.js"></script>-->
     <script src="js/earth-viewer/callbackHelper.js"></script>
     <script src="js/toolbox.js"></script> 
     <script src="js/turf/v2.0.2/turf.min.js"></script>
     <script src="js/controls/AFrameOrbitControls.js"></script>
-
+    <!--<script src="js/controls/ViveControls.js"></script>-->
+    <!--<script src="js/controls/my-vive-controls.js"></script>-->
+    <script src="js/controls/ViveControls.js"></script>
        
     <a-scene>
         <a-entity id="camera-rig">
-            <a-entity laser-controls id="liney"  line="color: red; opacity: 0.75" >
+            <a-entity 
+                laser-controls 
+                id="liney"  
+                line="color: red; opacity: 0.75" 
+            >
                 <a-cursor color="lavender" opacity="0.5"></a-cursor>
             </a-entity>
             <a-entity
                 id="camera"
                 camera="far: 100000000; near: 0.05; fov: 75"
                 look-controls="enabled: false"
+                vive-wasd-controls="enabled: true"
                 orbit-controls="target: 0 0 0; initialPosition: 0 0 6378000; enabled: true"
             > 
             </a-entity>
@@ -40,6 +45,7 @@
         <a-sky color="#FFFFFFF" radius="10000000"></a-sky>
     </a-scene>
 
+    <!-- Adds coordinate axis at the front of the easrth for orientation-->
     <script>
         var R = 6378.137;
         var scene = document.querySelector('a-scene').object3D;
@@ -52,7 +58,7 @@
 
     <script type="module" src="./js/earth-viewer/util/toolbox-class.js"></script>
     <script type="module" src="js/earth-viewer/earth-viewer.js"></script>
-    
+    <script type="module" src="js/earth-viewer/visualization/wienerlinienlayer.js"></script>
 </body>
 
 </html>

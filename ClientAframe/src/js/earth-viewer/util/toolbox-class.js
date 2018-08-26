@@ -120,4 +120,8 @@ class Toolbox {
     }
 }
 
+class TextureLoader {
+    
+}
+
 export default Toolbox;

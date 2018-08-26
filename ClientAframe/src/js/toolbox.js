@@ -215,7 +215,7 @@ function textureFactory(zoom, xtile, ytile, onLoaded) {
             url = 'http://' + baseurl;
         }
         
-        console.error(url);
+        console.debug(url);
         textureRequestsCount = textureRequestsCount + (textureRequests.hasOwnProperty(id) ? 0 : 1);
         textureRequests[id] = {
             url: url,

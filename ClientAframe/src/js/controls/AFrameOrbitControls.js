@@ -19,7 +19,6 @@ var callbackHelper = App.callbackHelper;
 THREE.OrbitControls = function (object, domElement) {
 
 	///Manually overwrite near/far clipping properties. Since values from aframe are not adopted
-	//TODO: SOMEHOW FIX IT
 	if (object instanceof THREE.PerspectiveCamera) {
 		let x = 1;
 	}
@@ -27,7 +26,7 @@ THREE.OrbitControls = function (object, domElement) {
 	
 	this.object = object;
 	
-	this.object.near = 150;
+	this.object.near = 250;
 	this.object.far = 10000000;
 	this.object.updateProjectionMatrix();
 
@@ -450,9 +449,7 @@ THREE.OrbitControls = function (object, domElement) {
 	function dollyOut(dollyScale) {
 
 		if (scope.object.isPerspectiveCamera) {
-
 			scale *= dollyScale;
-
 		} else if (scope.object.isOrthographicCamera) {
 
 			scope.object.zoom = Math.max(scope.minZoom, Math.min(scope.maxZoom, scope.object.zoom / dollyScale));
@@ -564,6 +561,8 @@ THREE.OrbitControls = function (object, domElement) {
 	function handleMouseWheel(event) {
 
 		// console.log( 'handleMouseWheel' );
+
+		console.debug('mouse wheel: deltaY: ' + event.deltaY + ' zoomScale: ' + getZoomScale());
 
 		if (event.deltaY < 0) {
 
