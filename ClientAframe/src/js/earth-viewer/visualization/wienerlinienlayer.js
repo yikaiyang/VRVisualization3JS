@@ -1,6 +1,8 @@
 import FileLoader from '../../util/fileloader.js';
 import GeoConversion from '../../util/geoconversion.js';
 
+var App = App || {};
+var callbackHelper = App.callbackHelper;
 class WienerLinienLayer {
     constructor(scene, earth){
         this.scene = scene;
