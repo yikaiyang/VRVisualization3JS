@@ -1,5 +1,6 @@
 'use strict';
 import Toolbox from '../earth-viewer/util/toolbox-class.js'
+import WienerLinienLayer from './visualization/wienerlinienlayer.js'
 
 var App = window.App || {};
 var callbackHelper = App.callbackHelper;
@@ -9,6 +10,8 @@ let toolbox = new Toolbox();
 var scene = document.querySelector('a-scene').object3D;
 var earth = new THREE.Object3D();
 
+let visLayer = new WienerLinienLayer(scene,earth);
+visLayer.load();
 
 var defaultLatitude = 48.210033;
 var defaultLongitude = 16.363449;

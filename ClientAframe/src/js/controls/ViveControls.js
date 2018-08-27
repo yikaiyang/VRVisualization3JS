@@ -27,7 +27,8 @@ var CLAMP_VELOCITY = 0.00001;
 var MAX_DELTA = 0.2;
 var KEYS = [
   'KeyW', 'KeyA', 'KeyS', 'KeyD',
-  'ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'
+  'ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown',
+  'MoveFrwd', 'MoveBwrd'
 ];
 
 var pressedKeys = {};
@@ -45,8 +46,8 @@ AFRAME.registerComponent('vive-wasd-controls', {
     adInverted: {default: false},
     easing: {default: 20},
     enabled: {default: true},
-    maxDistance: {default: 10000000},
-    minDistance: {default: 100},
+    maxDistance: {default: 6378000},
+    minDistance: {default: 200},
     fly: {default: false},
     wsAxis: {default: 'z', oneOf: ['x', 'y', 'z']},
     wsEnabled: {default: true},
@@ -70,6 +71,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
     this.onKeyUp = bind(this.onKeyUp, this);
     this.onVisibilityChange = bind(this.onVisibilityChange, this);**/
     this.attachKeyEventListeners();
+    this.attachViveKeyEventListeners();
   },
 
   tick: function (time, delta) {
@@ -83,6 +85,10 @@ AFRAME.registerComponent('vive-wasd-controls', {
     var velocity = this.velocity;
 
     var camera = el.getObject3D('camera');
+    if (camera === undefined){
+      //If there is no camera element in the current element, move the position of the current element instead.
+      camera = el.object3D;
+    }
 
     if (!velocity[data.adAxis] && !velocity[data.wsAxis] &&
         isEmptyObject(pressedKeys)) { return; }
@@ -93,7 +99,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
 
     if (!velocity[data.adAxis] && !velocity[data.wsAxis]) { return; }
 
-    // Get movement vector and translate position.
+   
     currentPosition = camera.position;
     
     console.log('current position: '
@@ -103,7 +109,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
                 + ' minDistance: ' + data.minDistance
                 + ' maxDistance: ' + data.maxDistance
               );
-
+    // Get movement vector and translate position.
     movementVector = this.getMovementVector(delta);
     position.x = currentPosition.x + movementVector.x;
     position.y = currentPosition.y + movementVector.y;
@@ -121,15 +127,17 @@ AFRAME.registerComponent('vive-wasd-controls', {
     }
 
     // Check if current position has already reached boundaries
-/*     if (position.z > data.maxDistance){
+    if (position.z > data.maxDistance){
       position.z = data.maxDistance;
     } 
 
     if (position.z < data.minDistance){
       position.z = data.minDistance;
-    } */
+    }
 
-    //el.setAttribute('position', posidtion);
+    //el.setAttribute('position', position);
+
+    //Use threejs camera object to prevent interferences with orbit controls
     camera.position.set(position.x, position.y, position.z);
   },
 
@@ -239,11 +247,29 @@ AFRAME.registerComponent('vive-wasd-controls', {
     window.addEventListener('focus', this.onFocus);
     document.addEventListener('visibilitychange', this.onVisibilityChange);
   },
-
+  
   removeVisibilityEventListeners: function () {
     window.removeEventListener('blur', this.onBlur);
     window.removeEventListener('focus', this.onFocus);
     document.removeEventListener('visibilitychange', this.onVisibilityChange);
+  },
+
+  attachViveKeyEventListeners: function() {
+    window.addEventListener('triggerup', this.triggerUp);
+    window.addEventListener('triggerdown', this.triggerDown);
+    window.addEventListener('trackpaddown', this.trackpadDown);
+    window.addEventListener('trackpadup', this.trackpadUp);
+    window.addEventListener('trackpadchanged', this.trackpadChanged);
+    window.addEventListener('axismoved', this.axisMoved);
+  },
+
+  removeViveKeyEventListeners: function(){
+    window.removeEventListener('triggerup', this.triggerUp);
+    window.removeEventListener('triggerdown', this.triggerDown);
+    window.removeEventListener('trackpaddown', this.trackpadDown);
+    window.removeEventListener('trackpadup', this.trackpadUp);
+    window.removeEventListener('trackpadchanged', this.trackpadChanged);
+    window.removeEventListener('axismoved', this.axisMoved);
   },
 
   attachKeyEventListeners: function () {
@@ -285,6 +311,32 @@ AFRAME.registerComponent('vive-wasd-controls', {
     var code;
     code = event.code || KEYCODE_TO_CODE[event.keyCode];
     delete pressedKeys[code];
+  },
+
+  /** HTC Vive controller event handlers */
+  triggerUp: function (event) {
+    // console.log("trigger up!");
+    // this.data.moveFrw = false;
+  },
+  triggerDown: function (event) {
+      // console.log("triggerdown!");
+      // console.log(this);
+      //vive_keys.moveFrw = true;
+      // this.data.moveFrw = true;
+  },
+  trackpadDown: function (event) {
+      // console.log("trackpaddown!");
+  },
+  trackpadUp: function (event) {
+      // console.log("trackpadup!");
+  },
+  trackpadChanged: function (event) {
+      // console.log("trackpadchanged!");
+  },
+
+  axisMoved: function(event) {
+      // console.log(event.detail.axis);
+      vive_axis = event.detail.axis;
   }
 });
 
