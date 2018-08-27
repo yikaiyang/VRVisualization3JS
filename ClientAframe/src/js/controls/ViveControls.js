@@ -7,6 +7,9 @@ var bind = utils.bind;
 var shouldCaptureKeyEvent = utils.shouldCaptureKeyEvent;
 */
 
+var App = App || {};
+var callbackHelper = App.callbackHelper;
+
 var shouldCaptureKeyEvent = function (event) {
   if (event.metaKey) { return false; }
   return document.activeElement === document.body;
@@ -34,6 +37,14 @@ var KEYS = [
 var pressedKeys = {};
 var zoomScale = 1;
 var spherical = new THREE.Spherical(6378000, 0, 0);
+
+//Location information
+var defaultLatitude = 48.210033;
+var defaultLongitude = 16.363449;
+
+var ctrl_latitude = this.defaultLatitude;
+var ctrl_longitude = this.defaultLongitude;
+
 
 /**
  * WASD component to control entities using WASD keys.
@@ -118,12 +129,13 @@ AFRAME.registerComponent('vive-wasd-controls', {
     var scaleFactor = 0.98;
 
     //Enable non linear zooming.
-    if (pressedKeys.KeyW || pressedKeys.ArrowUp) { 
+    if (pressedKeys.KeyW || pressedKeys.ArrowUp || pressedKeys.MoveFrwKeyCode) { 
       //Zoom into the earth. Reduce acceleration the closer the position is to earth.
-      position.z = currentPosition.z * 0.98;
+      position.z = currentPosition.z * scaleFactor;
+      this.rerenderEarth(position.z, ctrl_latitude, ctrl_longitude);
     }
     if (pressedKeys.KeyS || pressedKeys.ArrowDown) { 
-      position.z = currentPosition.z / 0.98;
+      position.z = currentPosition.z / scaleFactor;
     }
 
     // Check if current position has already reached boundaries
@@ -153,6 +165,83 @@ AFRAME.registerComponent('vive-wasd-controls', {
   pause: function () {
     pressedKeys = {};
     this.removeKeyEventListeners();
+  },
+  /**
+   * Pan left funciton similar to AframeOrbitControls.
+   */
+  panLeft: function (distance) {
+    //Assume thetha is 0
+    let theta = 0;
+    let R = 6370; // Radius of earth
+    var lonDelta = Math.cos(theta) * (distance / (1000 * R * Math.cos(latitude * Math.PI / 180))) * 180 / Math.PI;
+    longitude -= lonDelta;
+    var latDelta = -Math.sin(theta) * (distance / (R * 1000)) * 180 / Math.PI;
+    
+    console.log('panLeft: lonDelta: ' + lonDelta 
+    + ' latDelta: ' + latDelta
+    + ' lonDelta: ' + lonDelta 
+    + ' latitude: ' + latitude 
+    + ' longitude: ' + longitude 
+    + ' tetha: ' + theta);
+    if (latitude + latDelta < 80 && latitude + latDelta > -80) {
+      latitude += latDelta;
+      // console.log('latitude:', latitude)
+    }
+     // latitude = (latitude + 90) % 180 - 90;
+    longitude = (longitude + 540) % 360 - 180;
+    console.log('latitude: ' + latitude + 'longitude: ' + longitude);
+  },
+
+  panRight: function (distance) {
+    //Assume thetha is 0
+    let theta = 0;
+    let R = 6370; // Radius of earth
+
+    var lonDelta = Math.sin(theta) * (distance / (1000 * R * Math.cos(latitude * Math.PI / 180))) * 180 / Math.PI;
+    longitude -= lonDelta;
+    var latDelta = Math.cos(theta) * (distance / (1000 * R)) * 180 / Math.PI;
+
+
+    console.log('panUp: lonDelta: ' + lonDelta 
+    + ' latDelta: ' + latDelta 
+    + ' lonDelta: ' + lonDelta 
+    + ' latitude: ' + latitude 
+    + ' longitude: ' + longitude 
+    + ' tetha: ' + spherical.theta);
+
+    if (latitude + latDelta < 80 && latitude + latDelta > -80) {
+            latitude += latDelta;
+        }
+        // latitude = (latitude + 90) % 180 - 90;
+        longitude = (longitude + 360) % 360;
+  },
+
+  pan: function(deltaX, deltaY) {
+   /*  var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
+
+			if (scope.object.isPerspectiveCamera) {
+
+				// perspective
+				var position = scope.object.position;
+				offset.copy(position).sub(scope.target);
+				var targetDistance = offset.length();
+
+				// half of the fov is center to top of screen
+				targetDistance *= Math.tan((scope.object.fov / 2) * Math.PI / 180.0);
+
+				// we use only clientHeight here so aspect ratio does not distort speed
+				panLeft(2 * deltaX * targetDistance / element.clientHeight, scope.object.matrix);
+				panUp(2 * deltaY * targetDistance / element.clientHeight, scope.object.matrix);
+
+			} else if (scope.object.isOrthographicCamera) {
+				// orthographic
+				panLeft(deltaX * (scope.object.right - scope.object.left) / scope.object.zoom / element.clientWidth, scope.object.matrix);
+				panUp(deltaY * (scope.object.top - scope.object.bottom) / scope.object.zoom / element.clientHeight, scope.object.matrix);
+			} else {
+				// camera neither orthographic nor perspective
+				console.warn('WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.');
+				scope.enablePan = false;
+			} */
   },
 
   updateVelocity: function (delta) {
@@ -193,16 +282,21 @@ AFRAME.registerComponent('vive-wasd-controls', {
     acceleration = data.acceleration;
     if (data.adEnabled) {
       adSign = data.adInverted ? -1 : 1;
-      if (keys.KeyA || keys.ArrowLeft) { velocity[adAxis] -= adSign * acceleration * delta; }
-      if (keys.KeyD || keys.ArrowRight) { velocity[adAxis] += adSign * acceleration * delta; }
+      if (keys.KeyA || keys.ArrowLeft) 
+      { 
+        velocity[adAxis] -= adSign * acceleration * delta; 
+      }
+      if (keys.KeyD || keys.ArrowRight) 
+      {
+         velocity[adAxis] += adSign * acceleration * delta; 
+      }
     }
     if (data.wsEnabled) {
       wsSign = data.wsInverted ? -1 : 1;
 
       let scaleFactor = 1;
      
-      //Enable non linear zooming.
-      if (keys.KeyW || keys.ArrowUp) { 
+      if (keys.KeyW || keys.ArrowUp || keys.moveFrwdVive) { 
         //Zoom into the earth. Reduce acceleration the closer the position is to earth.
         zoomScale = zoomScale * scaleFactor;
         velocity[wsAxis] -= wsSign * acceleration * zoomScale * delta; 
@@ -216,6 +310,10 @@ AFRAME.registerComponent('vive-wasd-controls', {
 
       
     }
+  },
+  /** Updates zoom level and rerenders earth if needed */
+  rerenderEarth: function(altitude, latitude, longitude){
+    (callbackHelper || {}).callback(altitude, latitude, longitude);
   },
 
   getMovementVector: (function () {
@@ -317,12 +415,13 @@ AFRAME.registerComponent('vive-wasd-controls', {
   triggerUp: function (event) {
     // console.log("trigger up!");
     // this.data.moveFrw = false;
+    pressedKeys.MoveFrwdVive = false;
+    
   },
   triggerDown: function (event) {
       // console.log("triggerdown!");
       // console.log(this);
-      //vive_keys.moveFrw = true;
-      // this.data.moveFrw = true;
+    pressedKeys.MoveFrwdVive = true;
   },
   trackpadDown: function (event) {
       // console.log("trackpaddown!");

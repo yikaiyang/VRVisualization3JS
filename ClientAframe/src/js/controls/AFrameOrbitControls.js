@@ -26,7 +26,7 @@ THREE.OrbitControls = function (object, domElement) {
 	
 	this.object = object;
 	
-	this.object.near = 250;
+	this.object.near = 300;
 	this.object.far = 10000000;
 	this.object.updateProjectionMatrix();
 
@@ -339,13 +339,22 @@ THREE.OrbitControls = function (object, domElement) {
 			var lonDelta = Math.cos(spherical.theta) * (distance / (1000 * R * Math.cos(latitude * Math.PI / 180))) * 180 / Math.PI;
             longitude -= lonDelta;
             var latDelta = -Math.sin(spherical.theta) * (distance / (R * 1000)) * 180 / Math.PI;
-            if (latitude + latDelta < 80 && latitude + latDelta > -80) {
+			
+			console.debug('panLeft:'
+			+ 'distance: ' + distance
+			+ 'lonDelta: ' + lonDelta 
+			+ ' latDelta: ' + latDelta 
+			+ ' lonDelta: ' + lonDelta 
+			+ ' latitude: ' + latitude 
+			+ ' longitude: ' + longitude 
+			+ ' tetha: ' + spherical.theta);
+			if (latitude + latDelta < 80 && latitude + latDelta > -80) {
                 latitude += latDelta;
                 // console.log('latitude:', latitude)
 			}
 			 // latitude = (latitude + 90) % 180 - 90;
 			 longitude = (longitude + 540) % 360 - 180;
-			console.log('latitude: ' + latitude + 'longitude: ' + longitude);
+			//console.log('latitude: ' + latitude + 'longitude: ' + longitude);
 		};
 
 	}();
@@ -374,7 +383,16 @@ THREE.OrbitControls = function (object, domElement) {
 			var lonDelta = Math.sin(spherical.theta) * (distance / (1000 * R * Math.cos(latitude * Math.PI / 180))) * 180 / Math.PI;
             longitude -= lonDelta;
             var latDelta = Math.cos(spherical.theta) * (distance / (1000 * R)) * 180 / Math.PI;
-            if (latitude + latDelta < 80 && latitude + latDelta > -80) {
+			
+				
+			console.log('panUp: lonDelta: ' + lonDelta 
+			+ ' latDelta: ' + latDelta 
+			+ ' lonDelta: ' + lonDelta 
+			+ ' latitude: ' + latitude 
+			+ ' longitude: ' + longitude 
+			+ ' tetha: ' + spherical.theta);
+			
+			if (latitude + latDelta < 80 && latitude + latDelta > -80) {
                 latitude += latDelta;
             }
             // latitude = (latitude + 90) % 180 - 90;
@@ -1110,9 +1128,9 @@ AFRAME.registerComponent('orbit-controls', {
 		keyPanSpeed: {default: 7},
 		minAzimuthAngle: {type: 'number', default: -Math.PI},
 		maxAzimuthAngle: {type: 'number', default: Math.PI},
-		maxDistance: {default: Infinity},
+		maxDistance: {default: 6378000},
 		maxPolarAngle: {default: AFRAME.utils.device.isMobile() ? 90 : 120},
-		minDistance: {default: 150},
+		minDistance: {default: 250},
 		minPolarAngle: {default: 0},
 		minZoom: {default: 0},
 		panSpeed: {default: 1},
@@ -1193,9 +1211,9 @@ AFRAME.registerComponent('orbit-controls', {
 	   controls.enableRotate = data.enableRotate;
 	   controls.enableZoom = data.enableZoom;
 	   controls.keyPanSpeed = data.keyPanSpeed;
-	   controls.maxPolarAngle = THREE.Math.degToRad(data.maxPolarAngle);
+	   controls.maxPolarAngle = THREE.Math.degToRad(data.maxPolarAngle);*/
 	   controls.maxDistance = data.maxDistance;
-	   controls.minDistance = data.minDistance;
+	   controls.minDistance = data.minDistance;/*
 	   controls.minPolarAngle = THREE.Math.degToRad(data.minPolarAngle);
 	   controls.minZoom = data.minZoom;
 	   controls.panSpeed = data.panSpeed;
