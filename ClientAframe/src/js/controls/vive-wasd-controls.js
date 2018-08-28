@@ -8,8 +8,14 @@ var bind = utils.bind;
 var shouldCaptureKeyEvent = utils.shouldCaptureKeyEvent;
 */
 
+/**
+ * @author Yikai Yang
+ * Custom wasd / htc vive controls which is used to navigation in the earth viewer
+ */
+
 var App = App || {};
 var callbackHelper = App.callbackHelper;
+var userPosition = App.UserPosition;
 
 var shouldCaptureKeyEvent = function (event) {
   if (event.metaKey) { return false; }
@@ -52,6 +58,8 @@ var defaultLongitude = 16.363449;
 var ctrl_latitude = this.defaultLatitude;
 var ctrl_longitude = this.defaultLongitude;
 
+ctrl_latitude = userPosition.latitude;
+ctrl_longitude = userPosition.longitude;
 
 /**
  * WASD component to control entities using WASD keys.
@@ -130,11 +138,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
       + ' minDistance: ' + data.minDistance
       + ' maxDistance: ' + data.maxDistance
     );
-    // Get movement vector and translate position.
-    //movementVector = this.getMovementVector(delta);
-    //position.x = currentPosition.x + movementVector.x;
-    //position.y = currentPosition.y + movementVector.y;
-    //position.z = currentPosition.z + movementVector.z;
+
     position = currentPosition;
 
     var scaleFactor = 0.98;  //Factor by which the earth is enlarged when zoomed in/out.
@@ -151,7 +155,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
 
       let panScale = panAcceleration * this.altitude / height;
       this.pan(-x * panScale, y * panScale);
-      this.rerenderEarth(this.altitude, ctrl_latitude, ctrl_longitude);
+      this.rerender();
   
     }
 
@@ -161,35 +165,35 @@ AFRAME.registerComponent('vive-wasd-controls', {
       //Zoom into the earth. Reduce acceleration the closer the position is to earth.
       position.z = currentPosition.z * scaleFactor;
       this.altitude = this.altitude * scaleFactor;
-      this.rerenderEarth(this.altitude, ctrl_latitude, ctrl_longitude);
+      this.rerender();
     }
 
     if (pressedKeys.KeyG) {
       position.z = currentPosition.z / scaleFactor;
       this.altitude = this.altitude / scaleFactor;
-      this.rerenderEarth(this.altitude, ctrl_latitude, ctrl_longitude);
+      this.rerender();
     }
 
     //Pan earth
 
     if (pressedKeys.KeyW || pressedKeys.ArrowUp) {
       this.panUp(panAcceleration * this.altitude / height);
-      this.rerenderEarth(this.altitude, ctrl_latitude, ctrl_longitude);
+      this.rerender();
     }
 
     if (pressedKeys.KeyS || pressedKeys.ArrowDown) {
       this.panUp(-panAcceleration * this.altitude / height);
-      this.rerenderEarth(this.altitude, ctrl_latitude, ctrl_longitude);
+      this.rerender();
     }
 
     if (pressedKeys.KeyA || pressedKeys.ArrowLeft) {
       this.panLeft(panAcceleration * this.altitude / height);
-      this.rerenderEarth(this.altitude, ctrl_latitude, ctrl_longitude);
+      this.rerender();
     }
 
     if (pressedKeys.KeyD || pressedKeys.ArrowRight) {
       this.panLeft(panAcceleration * -this.altitude / height);
-      this.rerenderEarth(this.altitude, ctrl_latitude, ctrl_longitude);
+      this.rerender();
     }
 
     // Limit camera position by defined max / min distance.
@@ -270,31 +274,6 @@ AFRAME.registerComponent('vive-wasd-controls', {
   pan: function (distanceX, distanceY) {
     this.panLeft(distanceX);
     this.panUp(distanceY);
-    /*  var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
- 
-       if (scope.object.isPerspectiveCamera) {
- 
-         // perspective
-         var position = scope.object.position;
-         offset.copy(position).sub(scope.target);
-         var targetDistance = offset.length();
- 
-         // half of the fov is center to top of screen
-         targetDistance *= Math.tan((scope.object.fov / 2) * Math.PI / 180.0);
- 
-         // we use only clientHeight here so aspect ratio does not distort speed
-         panLeft(2 * deltaX * targetDistance / element.clientHeight, scope.object.matrix);
-         panUp(2 * deltaY * targetDistance / element.clientHeight, scope.object.matrix);
- 
-       } else if (scope.object.isOrthographicCamera) {
-         // orthographic
-         panLeft(deltaX * (scope.object.right - scope.object.left) / scope.object.zoom / element.clientWidth, scope.object.matrix);
-         panUp(deltaY * (scope.object.top - scope.object.bottom) / scope.object.zoom / element.clientHeight, scope.object.matrix);
-       } else {
-         // camera neither orthographic nor perspective
-         console.warn('WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.');
-         scope.enablePan = false;
-       } */
   },
 
   updateVelocity: function (delta) {
@@ -362,6 +341,11 @@ AFRAME.registerComponent('vive-wasd-controls', {
 
     }
   },
+
+  rerender: function(){
+    (callbackHelper || {}).callback(this.altitude, ctrl_latitude, ctrl_longitude);
+  },
+
   /** Updates zoom level and rerenders earth if needed */
   rerenderEarth: function (altitude, latitude, longitude) {
     (callbackHelper || {}).callback(altitude, latitude, longitude);

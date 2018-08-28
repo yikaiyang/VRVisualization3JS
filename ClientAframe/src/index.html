@@ -16,6 +16,7 @@
     <script type="module" src="js/util/geoconversions.js"></script>
     <script type="module" src="js/main.js"></script>-->
     <script src="libs/papaparse.min.js"></script>
+    <script src="js/earth-viewer/user-position.js"></script>
     <script src="js/earth-viewer/callbackHelper.js"></script>
     <script src="js/toolbox.js"></script> 
     <script src="js/turf/v2.0.2/turf.min.js"></script>
@@ -34,7 +35,7 @@
                 laser-controls="hand: left"
             >
 
-            <!-- Right controller / Navigation on the map-->
+            <!-- Right controller / Navigation of map-->
             <a-entity  
                 laser-controls="hand: right" 
                 id="liney"  
@@ -55,7 +56,7 @@
         <a-sky color="#000914" radius="10000000"></a-sky>
     </a-scene>
 
-    <!-- Adds coordinate axis at the front of the easrth for orientation-->
+    <!-- Adds coordinate axis system to the earth for orientation-->
     <script>
         var R = 6378.137;
         var scene = document.querySelector('a-scene').object3D;

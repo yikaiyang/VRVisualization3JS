@@ -15,10 +15,5 @@ class CallbackHelper {
     }
 }
 
-function myCallback(){
-    console.log('callback');
-    alert('callback');
-}
-
 var App = App || {};
 App.callbackHelper = new CallbackHelper();
