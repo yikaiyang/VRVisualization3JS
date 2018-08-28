@@ -93,7 +93,8 @@ if (!!callbackHelper){
     callbackHelper.setCallback(updateSceneLazy);
 }
 
-var tilematerial = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 0.4, transparent: true } ); // new line
+//Custom tilematerial which is using during loading of tiles
+var tilematerial = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 1, transparent: false } ); // new line
                        
 function updateScene(position) {
     console.log('position.lon:', position.lon);
