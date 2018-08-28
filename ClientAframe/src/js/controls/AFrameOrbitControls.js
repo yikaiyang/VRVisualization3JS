@@ -25,8 +25,7 @@ THREE.OrbitControls = function (object, domElement) {
 	//Overwrite camera settings
 	
 	this.object = object;
-	
-	this.object.near = 300;
+	this.object.near = 0.05;
 	this.object.far = 10000000;
 	this.object.updateProjectionMatrix();
 
@@ -424,7 +423,6 @@ THREE.OrbitControls = function (object, domElement) {
 				// we use only clientHeight here so aspect ratio does not distort speed
 
 				console.log('client height: ' + element.clientHeight);
-
 				console.log('left: ' + 2 * deltaX * targetDistance / element.clientHeight);
 				console.log('up: ' +  2 * deltaY * targetDistance / element.clientHeight);
 

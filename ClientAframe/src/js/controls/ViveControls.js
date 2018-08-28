@@ -26,20 +26,22 @@ var KEYCODE_TO_CODE = {
   '83': 'KeyS',
   '68': 'KeyD',
   '84': 'KeyT',
-  '71': 'KeyG'
+  '71': 'KeyG',
+  '69': 'KeyE',
+  '81': 'KeyQ'
 }
 
 var CLAMP_VELOCITY = 0.00001;
 var MAX_DELTA = 0.2;
 var KEYS = [
   'KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyT', 'KeyG',
+  'KeyE', 'KeyQ',
   'ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown',
   'MoveFrwd', 'MoveBwrd'
 ];
 
 var pressedKeys = {};
 var zoomScale = 1;
-var spherical = new THREE.Spherical(6378000, 0, 0);
 
 //Location information
 var defaultLatitude = 48.210033;
@@ -77,7 +79,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
     this.position = {};
     this.velocity = new THREE.Vector3();
 
-    this.altitude;
+    this.altitude = 6378000;
 
     // Bind methods and add event listeners.
     /**
@@ -96,24 +98,25 @@ AFRAME.registerComponent('vive-wasd-controls', {
     var el = this.el;
     let scene = el.sceneEl;
     let height = scene.clientHeight;
-    var movementVector;
+    //var movementVector;
     var position = this.position;
-    var velocity = this.velocity;
+    //var velocity = this.velocity;
 
     var camera = el.getObject3D('camera');
     if (camera === undefined){
       //If there is no camera element in the current element, move the position of the current element instead.
       camera = el.object3D;
     }
+    if (isEmptyObject(pressedKeys)) { return; } 
 
-    if (!velocity[data.adAxis] && !velocity[data.wsAxis] &&
-        isEmptyObject(pressedKeys)) { return; }
+/*     if (!velocity[data.adAxis] && !velocity[data.wsAxis] &&
+        isEmptyObject(pressedKeys)) { return; } */
 
     // Update velocity.
     delta = delta / 1000;
-    this.updateVelocity(delta);
+    //this.updateVelocity(delta);
 
-    if (!velocity[data.adAxis] && !velocity[data.wsAxis]) { return; }
+    //if (!velocity[data.adAxis] && !velocity[data.wsAxis]) { return; }
 
     currentPosition = camera.position;
     
@@ -134,34 +137,35 @@ AFRAME.registerComponent('vive-wasd-controls', {
     var scaleFactor = 0.98;  //Factor by which the earth is enlarged when zoomed in/out.
 
 
-    ///Zoom in / out
+    console.log(pressedKeys);
+
+    // Zoom in / out
     if (pressedKeys.KeyT) { 
+      console.log('KeyT handled');
       //Zoom into the earth. Reduce acceleration the closer the position is to earth.
       position.z = currentPosition.z * scaleFactor;
-      this.altitude = position.z;
-      this.rerenderEarth(position.z, ctrl_latitude, ctrl_longitude);
+      this.altitude = this.altitude * scaleFactor;
+      this.rerenderEarth(this.altitude, ctrl_latitude, ctrl_longitude);
     }
+    
     if (pressedKeys.KeyG) { 
       position.z = currentPosition.z / scaleFactor;
-      this.altitude = position.z;
-      this.rerenderEarth(position.z, ctrl_latitude, ctrl_longitude);
+      this.altitude = this.altitude / scaleFactor;
+      this.rerenderEarth(this.altitude, ctrl_latitude, ctrl_longitude);
     }
-
-    let panAcceleration = 10;
 
     //Pan earth
+    let panAcceleration = 10;
+
     if (pressedKeys.KeyW || pressedKeys.ArrowUp) { 
-      //Zoom into the earth. Reduce acceleration the closer the position is to earth.
-      position.z = currentPosition.z * scaleFactor;
-      this.altitude = position.z;
-      this.rerenderEarth(position.z, ctrl_latitude, ctrl_longitude);
-    }
-    if (pressedKeys.KeyS || pressedKeys.ArrowDown) { 
-      position.z = currentPosition.z / scaleFactor;
-      this.altitude = position.z;
-      this.rerenderEarth(position.z, ctrl_latitude, ctrl_longitude);
+      this.panUp(panAcceleration* this.altitude / height);
+      this.rerenderEarth(this.altitude, ctrl_latitude, ctrl_longitude);
     }
 
+    if (pressedKeys.KeyS || pressedKeys.ArrowDown) { 
+      this.panUp(-panAcceleration* this.altitude / height);
+      this.rerenderEarth(this.altitude, ctrl_latitude, ctrl_longitude);
+    }
 
     if (pressedKeys.KeyA || pressedKeys.ArrowLeft) 
     { 
@@ -175,7 +179,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
       this.rerenderEarth(this.altitude, ctrl_latitude, ctrl_longitude);
     }
 
-    // Check if current position has already reached boundaries
+    // Limit camera position by defined max / min distance.
     if (position.z > data.maxDistance){
       position.z = data.maxDistance;
     } 
@@ -230,25 +234,24 @@ AFRAME.registerComponent('vive-wasd-controls', {
   },
 
   panUp: function(distance) {
-    let tetha = 0;
+    let theta = 0;
     let R = 6370;
 
-    var lonDelta = Math.sin(theta) * (distance / (1000 * R * Math.cos(latitude * Math.PI / 180))) * 180 / Math.PI;
-    longitude -= lonDelta;
+    var lonDelta = Math.sin(theta) * (distance / (1000 * R * Math.cos(ctrl_latitude * Math.PI / 180))) * 180 / Math.PI;
+    ctrl_longitude -= lonDelta;
     var latDelta = Math.cos(theta) * (distance / (1000 * R)) * 180 / Math.PI;
 
     console.log('panUp: lonDelta: ' + lonDelta 
     + ' latDelta: ' + latDelta 
     + ' lonDelta: ' + lonDelta 
-    + ' latitude: ' + latitude 
-    + ' longitude: ' + longitude 
-    + ' tetha: ' + spherical.theta);
+    + ' latitude: ' + ctrl_latitude 
+    + ' longitude: ' + ctrl_longitude);
 
-    if (latitude + latDelta < 80 && latitude + latDelta > -80) {
-      latitude += latDelta;
+    if (ctrl_latitude + latDelta < 80 && ctrl_latitude + latDelta > -80) {
+      ctrl_latitude += latDelta;
     }
     // latitude = (latitude + 90) % 180 - 90;
-    longitude = (longitude + 360) % 360;
+    ctrl_longitude = (ctrl_longitude + 360) % 360;
   },
 
   pan: function(deltaX, deltaY) {
@@ -433,9 +436,13 @@ AFRAME.registerComponent('vive-wasd-controls', {
 
   onKeyDown: function (event) {
     var code;
-    if (!shouldCaptureKeyEvent(event)) { return; }
+    if (!shouldCaptureKeyEvent(event)) 
+    { 
+      return; 
+    }
     code = event.code || KEYCODE_TO_CODE[event.keyCode];
     if (KEYS.indexOf(code) !== -1) { 
+      console.log('keyDown: ' + code);
       pressedKeys[code] = true; 
     }
   },
@@ -443,6 +450,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
   onKeyUp: function (event) {
     var code;
     code = event.code || KEYCODE_TO_CODE[event.keyCode];
+    console.debug('keyUp: ' + code)
     delete pressedKeys[code];
   },
 
