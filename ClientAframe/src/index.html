@@ -29,11 +29,19 @@
             id="camera-rig"
             vive-wasd-controls="enabled: false"
         >
+            <!-- Left controller / Controls the camera -->
             <a-entity 
-                laser-controls 
-                id="liney"  
-                line="color: red; opacity: 0.75" 
+                laser-controls="hand: left"
             >
+
+            <!-- Right controller / Navigation on the map-->
+            <a-entity 
+              
+                laser-controls="hand: right" 
+                id="liney"  
+                line="color: blue; opacity: 0.75" 
+            >
+
                 <a-cursor color="lavender" opacity="0.5"></a-cursor>
             </a-entity>
             <a-entity
