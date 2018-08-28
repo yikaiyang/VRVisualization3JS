@@ -1,3 +1,4 @@
+'use strict';
 /* var KEYCODE_TO_CODE = require('../constants').keyboardevent.KEYCODE_TO_CODE;
 var registerComponent = require('../core/component').registerComponent;
 var THREE = require('../lib/three');
@@ -23,13 +24,15 @@ var KEYCODE_TO_CODE = {
   '87': 'KeyW',
   '65': 'KeyA',
   '83': 'KeyS',
-  '68': 'KeyD'
+  '68': 'KeyD',
+  '84': 'KeyT',
+  '71': 'KeyG'
 }
 
 var CLAMP_VELOCITY = 0.00001;
 var MAX_DELTA = 0.2;
 var KEYS = [
-  'KeyW', 'KeyA', 'KeyS', 'KeyD',
+  'KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyT', 'KeyG',
   'ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown',
   'MoveFrwd', 'MoveBwrd'
 ];
@@ -74,6 +77,8 @@ AFRAME.registerComponent('vive-wasd-controls', {
     this.position = {};
     this.velocity = new THREE.Vector3();
 
+    this.altitude;
+
     // Bind methods and add event listeners.
     /**
     this.onBlur = bind(this.onBlur, this);
@@ -86,11 +91,11 @@ AFRAME.registerComponent('vive-wasd-controls', {
   },
 
   tick: function (time, delta) {
-
-    //console.log('t:'  + time);
     var currentPosition;
     var data = this.data;
     var el = this.el;
+    let scene = el.sceneEl;
+    let height = scene.clientHeight;
     var movementVector;
     var position = this.position;
     var velocity = this.velocity;
@@ -110,7 +115,6 @@ AFRAME.registerComponent('vive-wasd-controls', {
 
     if (!velocity[data.adAxis] && !velocity[data.wsAxis]) { return; }
 
-   
     currentPosition = camera.position;
     
     console.log('current position: '
@@ -121,21 +125,54 @@ AFRAME.registerComponent('vive-wasd-controls', {
                 + ' maxDistance: ' + data.maxDistance
               );
     // Get movement vector and translate position.
-    movementVector = this.getMovementVector(delta);
-    position.x = currentPosition.x + movementVector.x;
-    position.y = currentPosition.y + movementVector.y;
+    //movementVector = this.getMovementVector(delta);
+    //position.x = currentPosition.x + movementVector.x;
+    //position.y = currentPosition.y + movementVector.y;
     //position.z = currentPosition.z + movementVector.z;
+    position = currentPosition;
+    
+    var scaleFactor = 0.98;  //Factor by which the earth is enlarged when zoomed in/out.
 
-    var scaleFactor = 0.98;
 
-    //Enable non linear zooming.
-    if (pressedKeys.KeyW || pressedKeys.ArrowUp || pressedKeys.MoveFrwKeyCode) { 
+    ///Zoom in / out
+    if (pressedKeys.KeyT) { 
       //Zoom into the earth. Reduce acceleration the closer the position is to earth.
       position.z = currentPosition.z * scaleFactor;
+      this.altitude = position.z;
+      this.rerenderEarth(position.z, ctrl_latitude, ctrl_longitude);
+    }
+    if (pressedKeys.KeyG) { 
+      position.z = currentPosition.z / scaleFactor;
+      this.altitude = position.z;
+      this.rerenderEarth(position.z, ctrl_latitude, ctrl_longitude);
+    }
+
+    let panAcceleration = 10;
+
+    //Pan earth
+    if (pressedKeys.KeyW || pressedKeys.ArrowUp) { 
+      //Zoom into the earth. Reduce acceleration the closer the position is to earth.
+      position.z = currentPosition.z * scaleFactor;
+      this.altitude = position.z;
       this.rerenderEarth(position.z, ctrl_latitude, ctrl_longitude);
     }
     if (pressedKeys.KeyS || pressedKeys.ArrowDown) { 
       position.z = currentPosition.z / scaleFactor;
+      this.altitude = position.z;
+      this.rerenderEarth(position.z, ctrl_latitude, ctrl_longitude);
+    }
+
+
+    if (pressedKeys.KeyA || pressedKeys.ArrowLeft) 
+    { 
+      this.panLeft(panAcceleration* this.altitude / height);
+      this.rerenderEarth(this.altitude, ctrl_latitude, ctrl_longitude);
+    }
+    
+    if (pressedKeys.KeyD || pressedKeys.ArrowRight) 
+    {
+      this.panLeft(panAcceleration * -this.altitude / height);
+      this.rerenderEarth(this.altitude, ctrl_latitude, ctrl_longitude);
     }
 
     // Check if current position has already reached boundaries
@@ -173,34 +210,32 @@ AFRAME.registerComponent('vive-wasd-controls', {
     //Assume thetha is 0
     let theta = 0;
     let R = 6370; // Radius of earth
-    var lonDelta = Math.cos(theta) * (distance / (1000 * R * Math.cos(latitude * Math.PI / 180))) * 180 / Math.PI;
-    longitude -= lonDelta;
+    var lonDelta = Math.cos(theta) * (distance / (1000 * R * Math.cos(ctrl_latitude * Math.PI / 180))) * 180 / Math.PI;
+    ctrl_longitude -= lonDelta;
     var latDelta = -Math.sin(theta) * (distance / (R * 1000)) * 180 / Math.PI;
     
     console.log('panLeft: lonDelta: ' + lonDelta 
     + ' latDelta: ' + latDelta
     + ' lonDelta: ' + lonDelta 
-    + ' latitude: ' + latitude 
-    + ' longitude: ' + longitude 
+    + ' latitude: ' + ctrl_latitude 
+    + ' longitude: ' + ctrl_longitude 
     + ' tetha: ' + theta);
-    if (latitude + latDelta < 80 && latitude + latDelta > -80) {
-      latitude += latDelta;
+    if (ctrl_latitude + latDelta < 80 && ctrl_latitude + latDelta > -80) {
+      ctrl_latitude += latDelta;
       // console.log('latitude:', latitude)
     }
      // latitude = (latitude + 90) % 180 - 90;
-    longitude = (longitude + 540) % 360 - 180;
-    console.log('latitude: ' + latitude + 'longitude: ' + longitude);
+    ctrl_longitude = (ctrl_longitude + 540) % 360 - 180;
+    console.log('latitude: ' + ctrl_latitude + 'longitude: ' + ctrl_longitude);
   },
 
-  panRight: function (distance) {
-    //Assume thetha is 0
-    let theta = 0;
-    let R = 6370; // Radius of earth
+  panUp: function(distance) {
+    let tetha = 0;
+    let R = 6370;
 
     var lonDelta = Math.sin(theta) * (distance / (1000 * R * Math.cos(latitude * Math.PI / 180))) * 180 / Math.PI;
     longitude -= lonDelta;
     var latDelta = Math.cos(theta) * (distance / (1000 * R)) * 180 / Math.PI;
-
 
     console.log('panUp: lonDelta: ' + lonDelta 
     + ' latDelta: ' + latDelta 
@@ -210,10 +245,10 @@ AFRAME.registerComponent('vive-wasd-controls', {
     + ' tetha: ' + spherical.theta);
 
     if (latitude + latDelta < 80 && latitude + latDelta > -80) {
-            latitude += latDelta;
-        }
-        // latitude = (latitude + 90) % 180 - 90;
-        longitude = (longitude + 360) % 360;
+      latitude += latDelta;
+    }
+    // latitude = (latitude + 90) % 180 - 90;
+    longitude = (longitude + 360) % 360;
   },
 
   pan: function(deltaX, deltaY) {

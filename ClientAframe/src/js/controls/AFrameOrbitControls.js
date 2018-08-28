@@ -422,6 +422,12 @@ THREE.OrbitControls = function (object, domElement) {
 				targetDistance *= Math.tan((scope.object.fov / 2) * Math.PI / 180.0);
 
 				// we use only clientHeight here so aspect ratio does not distort speed
+
+				console.log('client height: ' + element.clientHeight);
+
+				console.log('left: ' + 2 * deltaX * targetDistance / element.clientHeight);
+				console.log('up: ' +  2 * deltaY * targetDistance / element.clientHeight);
+
 				panLeft(2 * deltaX * targetDistance / element.clientHeight, scope.object.matrix);
 				panUp(2 * deltaY * targetDistance / element.clientHeight, scope.object.matrix);
 
