@@ -47,7 +47,7 @@ var updateSceneLazy = function(
         altitude = R * 1000,
         latitude = defaultLatitude,
         longitude = defaultLongitude
-    ) 
+    )
     {
     //alert('updateSceneLazy: altitude: ' + altitude);
     ////////////////////////////////////////////////////////////
