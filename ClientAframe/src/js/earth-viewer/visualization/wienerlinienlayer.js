@@ -93,8 +93,6 @@ class WienerLinienLayer {
         //Merge geometries
         this.mergedGeometry.merge(mesh.geometry, mesh.matrix);
     }
-
-
 }
 
 export default WienerLinienLayer;

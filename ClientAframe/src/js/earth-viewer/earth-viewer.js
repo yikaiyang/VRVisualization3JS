@@ -35,8 +35,7 @@ var ZOOM_FLAT = 13;
 var tileMeshes = {};
 var tileMeshQueue = [];
 
-var defaultAlti = R * 1000;
-var altitude = defaultAlti ;
+var defaultAltitude = R * 1000;
 var lonStamp, latStamp;
 
 earth.position.set(0, 0, -R * 1000);
@@ -44,7 +43,7 @@ scene.add(earth);
 
 var zoom = 4;
 var updateSceneLazy = function(
-        altitude = R * 1000,
+        altitude = defaultAltitude,
         latitude = defaultLatitude,
         longitude = defaultLongitude
     )
