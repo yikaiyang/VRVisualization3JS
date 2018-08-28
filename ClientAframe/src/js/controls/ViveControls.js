@@ -150,7 +150,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
       let y = viveAxisValues.y;
 
       let panScale = panAcceleration * this.altitude / height;
-      this.pan(x * panScale, y * panScale);
+      this.pan(-x * panScale, y * panScale);
       this.rerenderEarth(this.altitude, ctrl_latitude, ctrl_longitude);
   
     }
