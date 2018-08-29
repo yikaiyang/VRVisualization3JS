@@ -96,6 +96,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
     let scene = el.sceneEl;
     let height = scene.clientHeight;
     this.height = height;
+    let cameraRig;
     //var movementVector;
     //var position = this.position;
 
@@ -106,9 +107,13 @@ AFRAME.registerComponent('vive-wasd-controls', {
     } //Check whether control is enabled. Do nothing if control is disabled
     if (isEmptyObject(pressedKeys)) { return; }
 
-    //Check if camera rig identifier is provided
-    
 
+    if (data.cameraRigIdentifier){
+      //cameraRig = document.query
+      //alert('cameraRigIdentifier: ' + data.cameraRigIdentifier);
+    }
+
+    //Check if camera rig identifier is provided
     var camera = el.getObject3D('camera');
     if (camera === undefined) {
       //If there is no camera element in the current element, move the position of the current element instead.
@@ -160,13 +165,11 @@ AFRAME.registerComponent('vive-wasd-controls', {
     if (pressedKeys.KeyT || pressedKeys.MoveFrwdVive) {
       console.log('KeyT handled');
       //Zoom into the earth. Reduce acceleration the closer the position is to earth.
-      position.z = currentPosition.z * scaleFactor;
       userPosition.altitude = userPosition.altitude * scaleFactor;
       this.rerender();
     }
 
     if (pressedKeys.KeyG) {
-      position.z = currentPosition.z / scaleFactor;
       userPosition.altitude = userPosition.altitude / scaleFactor;
       this.rerender();
     }
@@ -194,18 +197,17 @@ AFRAME.registerComponent('vive-wasd-controls', {
     }
 
     // Limit camera position by defined max / min distance.
-    if (position.z > data.maxDistance) {
-      position.z = data.maxDistance;
+    if (userPosition.altitude > data.maxDistance) {
+      userPosition.altitude = data.maxDistance;
     }
 
-    if (position.z < data.minDistance) {
-      position.z = data.minDistance;
+    if (userPosition.altitude < data.minDistance) {
+      userPosition.altitude = data.minDistance;
     }
 
     //el.setAttribute('position', position);
 
     //Use threejs camera object to prevent interferences with orbit controls
-    console.error('altitude: ' + userPosition.altitude + ' userAltitude: ' + userPosition.altitude +   ' position.z: ' + position.z);
     camera.position.set(position.x, position.y, userPosition.altitude);
   },
 
