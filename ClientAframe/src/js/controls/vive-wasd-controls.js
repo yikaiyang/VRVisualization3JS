@@ -10,7 +10,8 @@ var shouldCaptureKeyEvent = utils.shouldCaptureKeyEvent;
 
 /**
  * @author Yikai Yang
- * Custom wasd / htc vive controls which is used to navigation in the earth viewer
+ * Custom wasd / htc vive controls which is used for navigation in the earth viewer
+ * based on aframe wasd controls
  */
 
 var App = App || {};
@@ -55,11 +56,11 @@ var zoomScale = 1;
 var defaultLatitude = 48.210033;
 var defaultLongitude = 16.363449;
 
-var ctrl_latitude = this.defaultLatitude;
-var ctrl_longitude = this.defaultLongitude;
+//var userPosition.latitude = this.defaultLatitude;
+//var userPosition.longitude = this.defaultLongitude;
 
-ctrl_latitude = userPosition.latitude;
-ctrl_longitude = userPosition.longitude;
+userPosition.latitude = userPosition.latitude;
+//ctrl_longitude = userPosition.longitude;
 
 /**
  * WASD component to control entities using WASD keys.
@@ -225,50 +226,50 @@ AFRAME.registerComponent('vive-wasd-controls', {
     this.removeKeyEventListeners();
   },
   /**
-   * Pan left funciton similar to AframeOrbitControls.
+   * Pan left function with functionality similar to AframeOrbitControls.
    */
   panLeft: function (distance) {
     //Assume thetha is 0
     let theta = 0;
     let R = 6370; // Radius of earth
-    var lonDelta = Math.cos(theta) * (distance / (1000 * R * Math.cos(ctrl_latitude * Math.PI / 180))) * 180 / Math.PI;
-    ctrl_longitude -= lonDelta;
+    var lonDelta = Math.cos(theta) * (distance / (1000 * R * Math.cos(userPosition.latitude * Math.PI / 180))) * 180 / Math.PI;
+    userPosition.longitude -= lonDelta;
     var latDelta = -Math.sin(theta) * (distance / (R * 1000)) * 180 / Math.PI;
 
     console.log('panLeft: lonDelta: ' + lonDelta
       + ' latDelta: ' + latDelta
       + ' lonDelta: ' + lonDelta
-      + ' latitude: ' + ctrl_latitude
-      + ' longitude: ' + ctrl_longitude
+      + ' latitude: ' + userPosition.latitude
+      + ' longitude: ' + userPosition.longitude
       + ' tetha: ' + theta);
-    if (ctrl_latitude + latDelta < 80 && ctrl_latitude + latDelta > -80) {
-      ctrl_latitude += latDelta;
+    if (userPosition.latitude + latDelta < 80 && userPosition.latitude + latDelta > -80) {
+      userPosition.latitude += latDelta;
       // console.log('latitude:', latitude)
     }
     // latitude = (latitude + 90) % 180 - 90;
-    ctrl_longitude = (ctrl_longitude + 540) % 360 - 180;
-    console.log('latitude: ' + ctrl_latitude + 'longitude: ' + ctrl_longitude);
+    userPosition.longitude = (userPosition.longitude + 540) % 360 - 180;
+    console.log('latitude: ' + userPosition.latitude + 'longitude: ' + userPosition.longitude);
   },
 
   panUp: function (distance) {
     let theta = 0;
     let R = 6370;
 
-    var lonDelta = Math.sin(theta) * (distance / (1000 * R * Math.cos(ctrl_latitude * Math.PI / 180))) * 180 / Math.PI;
-    ctrl_longitude -= lonDelta;
+    var lonDelta = Math.sin(theta) * (distance / (1000 * R * Math.cos(userPosition.latitude * Math.PI / 180))) * 180 / Math.PI;
+    userPosition.longitude -= lonDelta;
     var latDelta = Math.cos(theta) * (distance / (1000 * R)) * 180 / Math.PI;
 
     console.log('panUp: lonDelta: ' + lonDelta
       + ' latDelta: ' + latDelta
       + ' lonDelta: ' + lonDelta
-      + ' latitude: ' + ctrl_latitude
-      + ' longitude: ' + ctrl_longitude);
+      + ' latitude: ' + userPosition.latitude
+      + ' longitude: ' + userPosition.longitude);
 
-    if (ctrl_latitude + latDelta < 80 && ctrl_latitude + latDelta > -80) {
-      ctrl_latitude += latDelta;
+    if (userPosition.latitude + latDelta < 80 && userPosition.latitude + latDelta > -80) {
+      userPosition.latitude += latDelta;
     }
     // latitude = (latitude + 90) % 180 - 90;
-    ctrl_longitude = (ctrl_longitude + 360) % 360;
+    userPosition.longitude = (userPosition.longitude + 360) % 360;
   },
 
   pan: function (distanceX, distanceY) {
@@ -337,13 +338,11 @@ AFRAME.registerComponent('vive-wasd-controls', {
         velocity[wsAxis] += wsSign * acceleration * zoomScale * delta;
         console.log('zoomScale: ' + zoomScale);
       }
-
-
     }
   },
 
   rerender: function(){
-    (callbackHelper || {}).callback(this.altitude, ctrl_latitude, ctrl_longitude);
+    (callbackHelper || {}).callback(this.altitude, userPosition.latitude, userPosition.longitude);
   },
 
   /** Updates zoom level and rerenders earth if needed */

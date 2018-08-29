@@ -15,6 +15,7 @@
 //    Pan - right mouse, or arrow keys / touch: three finger swipe
 var App = App || {};
 var callbackHelper = App.callbackHelper;
+var userPosition = App.UserPosition;
 
 THREE.OrbitControls = function (object, domElement) {
 
