@@ -198,7 +198,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
       this.rerender();
     }
 
-    if (pressedKeys.KeyG) {
+    if (pressedKeys.KeyG || pressedKeys.MoveBwrdVive) {
       userPosition.altitude = userPosition.altitude / scaleFactor;
       this.rerender();
     }
@@ -496,8 +496,18 @@ AFRAME.registerComponent('vive-wasd-controls', {
     console.debug('trigger down');
     // console.log("triggerdown!");
     // console.log(this);
-    console.log(event);
-    pressedKeys.MoveFrwdVive = true;
+    console.log(event.target);
+
+    let hand = event.target.getAttribute('laser-controls').hand;
+    console.error(hand);
+    if (hand === 'left'){
+      pressedKeys.MoveFrwdVive = true;
+    } else if (hand === 'right'){
+      pressedKeys.MoveBrwdVive = true;
+    }
+    //Find out which trigger has been pressed.
+    
+    //pressedKeys.MoveFrwdVive = true;
   },
   trackpadUp: function (event) {
     console.debug('trackpad up');
