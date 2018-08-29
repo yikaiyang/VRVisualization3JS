@@ -38,7 +38,7 @@
             <!-- Right controller / Navigation of map-->
             <a-entity  
                 laser-controls="hand: right" 
-                id="liney"  
+                id="liney"
                 line="color: blue; opacity: 0.75" 
             >
                 <a-cursor color="lavender" opacity="0.5"></a-cursor>
@@ -48,7 +48,7 @@
                 id="camera"
                 camera="far: 100000000; near: 0.05; fov: 75"
                 look-controls="enabled: false"
-                vive-wasd-controls="enabled: true"
+                vive-wasd-controls="enabled: true; cameraRigIdentifier: camera-rig"
                 orbit-controls="target: 0 0 0; initialPosition: 0 0 6378000; enabled: true"
             > 
             </a-entity>

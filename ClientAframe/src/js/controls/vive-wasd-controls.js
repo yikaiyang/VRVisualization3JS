@@ -52,14 +52,6 @@ let viveAxisValues = {}; //Stores vive trackpad values
 
 var zoomScale = 1;
 
-//Location information
-var defaultLatitude = 48.210033;
-var defaultLongitude = 16.363449;
-
-//var userPosition.latitude = this.defaultLatitude;
-//var userPosition.longitude = this.defaultLongitude;
-//ctrl_longitude = userPosition.longitude;
-
 /**
  * WASD component to control entities using WASD keys.
  */
@@ -69,6 +61,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
     adAxis: { default: 'x', oneOf: ['x', 'y', 'z'] },
     adEnabled: { default: true },
     adInverted: { default: false },
+    cameraRigIdentifier: { type: 'string'},
     easing: { default: 20 },
     enabled: { default: false },
     maxDistance: { default: 6378000 },
@@ -112,6 +105,9 @@ AFRAME.registerComponent('vive-wasd-controls', {
       return; 
     } //Check whether control is enabled. Do nothing if control is disabled
     if (isEmptyObject(pressedKeys)) { return; }
+
+    //Check if camera rig identifier is provided
+    
 
     var camera = el.getObject3D('camera');
     if (camera === undefined) {
