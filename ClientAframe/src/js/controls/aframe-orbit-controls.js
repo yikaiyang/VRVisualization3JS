@@ -18,12 +18,8 @@ var callbackHelper = App.callbackHelper;
 var userPosition = App.UserPosition;
 
 THREE.OrbitControls = function (object, domElement) {
-
-	///Manually overwrite near/far clipping properties. Since values from aframe are not adopted
-	if (object instanceof THREE.PerspectiveCamera) {
-		let x = 1;
-	}
 	//Overwrite camera settings
+	///Manually overwrite near/far clipping properties. Since values from aframe are not adopted somehow???
 	
 	this.object = object;
 	this.object.near = 0.05;
@@ -34,8 +30,8 @@ THREE.OrbitControls = function (object, domElement) {
 	this.defaultLatitude = 48.210033;
 	this.defaultLongitude = 16.363449;
 
-	var latitude = this.defaultLatitude;
-	var longitude = this.defaultLongitude;
+	//var userPosition.latitude = this.defaultLatitude;
+	//var userPosition.longitude = this.defaultLongitude;
 
 
 	this.domElement = (domElement !== undefined) ? domElement : document;
@@ -108,7 +104,9 @@ THREE.OrbitControls = function (object, domElement) {
 	//
 
 	this.distanceToTarget = function (){
-		return new THREE.Vector3().copy(this.object.position).sub(this.target).length();
+		let altitude = new THREE.Vector3().copy(this.object.position).sub(this.target).length();
+		userPosition.altitude = altitude
+		return altitude;
 	}
 
 	this.getPolarAngle = function () {
@@ -336,8 +334,8 @@ THREE.OrbitControls = function (object, domElement) {
 
 			panOffset.add(v); */
 
-			var lonDelta = Math.cos(spherical.theta) * (distance / (1000 * R * Math.cos(latitude * Math.PI / 180))) * 180 / Math.PI;
-            longitude -= lonDelta;
+			var lonDelta = Math.cos(spherical.theta) * (distance / (1000 * R * Math.cos(userPosition.latitude * Math.PI / 180))) * 180 / Math.PI;
+            userPosition.longitude -= lonDelta;
             var latDelta = -Math.sin(spherical.theta) * (distance / (R * 1000)) * 180 / Math.PI;
 			
 			console.debug('panLeft:'
@@ -345,15 +343,15 @@ THREE.OrbitControls = function (object, domElement) {
 			+ 'lonDelta: ' + lonDelta 
 			+ ' latDelta: ' + latDelta 
 			+ ' lonDelta: ' + lonDelta 
-			+ ' latitude: ' + latitude 
-			+ ' longitude: ' + longitude 
+			+ ' latitude: ' + userPosition.latitude 
+			+ ' longitude: ' + userPosition.longitude 
 			+ ' tetha: ' + spherical.theta);
-			if (latitude + latDelta < 80 && latitude + latDelta > -80) {
-                latitude += latDelta;
+			if (userPosition.latitude + latDelta < 80 && userPosition.latitude + latDelta > -80) {
+                userPosition.latitude += latDelta;
                 // console.log('latitude:', latitude)
 			}
 			 // latitude = (latitude + 90) % 180 - 90;
-			 longitude = (longitude + 540) % 360 - 180;
+			 userPosition.longitude = (userPosition.longitude + 540) % 360 - 180;
 			//console.log('latitude: ' + latitude + 'longitude: ' + longitude);
 		};
 
@@ -380,23 +378,23 @@ THREE.OrbitControls = function (object, domElement) {
 
 			panOffset.add(v); */
 
-			var lonDelta = Math.sin(spherical.theta) * (distance / (1000 * R * Math.cos(latitude * Math.PI / 180))) * 180 / Math.PI;
-            longitude -= lonDelta;
+			var lonDelta = Math.sin(spherical.theta) * (distance / (1000 * R * Math.cos(userPosition.latitude * Math.PI / 180))) * 180 / Math.PI;
+            userPosition.longitude -= lonDelta;
             var latDelta = Math.cos(spherical.theta) * (distance / (1000 * R)) * 180 / Math.PI;
 			
 				
 			console.log('panUp: lonDelta: ' + lonDelta 
 			+ ' latDelta: ' + latDelta 
 			+ ' lonDelta: ' + lonDelta 
-			+ ' latitude: ' + latitude 
-			+ ' longitude: ' + longitude 
+			+ ' latitude: ' + userPosition.latitude 
+			+ ' longitude: ' + userPosition.longitude 
 			+ ' tetha: ' + spherical.theta);
 			
-			if (latitude + latDelta < 80 && latitude + latDelta > -80) {
-                latitude += latDelta;
+			if (userPosition.latitude + latDelta < 80 && userPosition.latitude + latDelta > -80) {
+                userPosition.latitude += latDelta;
             }
             // latitude = (latitude + 90) % 180 - 90;
-            longitude = (longitude + 360) % 360;
+            userPosition.longitude = (userPosition.longitude + 360) % 360;
 
 		};
 
@@ -572,7 +570,7 @@ THREE.OrbitControls = function (object, domElement) {
 		panStart.copy(panEnd);
 
 		scope.update();
-		(callbackHelper || {}).callback(scope.distanceToTarget(), latitude, longitude);
+		(callbackHelper || {}).callback(scope.distanceToTarget(), userPosition.latitude, userPosition.longitude);
 	}
 
 	function handleMouseUp(event) {
@@ -598,7 +596,7 @@ THREE.OrbitControls = function (object, domElement) {
 		}
 
 		scope.update();
-		(callbackHelper || {}).callback(scope.distanceToTarget(), latitude, longitude);
+		(callbackHelper || {}).callback(scope.distanceToTarget(), userPosition.latitude, userPosition.longitude);
 
 		
 	}
@@ -1207,23 +1205,23 @@ AFRAME.registerComponent('orbit-controls', {
 		controls.enabled = data.enabled;
 		controls.target = this.target.copy(data.target);
 		/*
-	   controls.autoRotate = data.autoRotate;
-	   controls.autoRotateSpeed = data.autoRotateSpeed;
-	   controls.dampingFactor = data.dampingFactor;
-	   controls.enableDamping = data.enableDamping;
-	   controls.enableKeys = data.enableKeys;
-	   controls.enablePan = data.enablePan;
-	   controls.enableRotate = data.enableRotate;
-	   controls.enableZoom = data.enableZoom;
-	   controls.keyPanSpeed = data.keyPanSpeed;
-	   controls.maxPolarAngle = THREE.Math.degToRad(data.maxPolarAngle);*/
-	   controls.maxDistance = data.maxDistance;
-	   controls.minDistance = data.minDistance;/*
-	   controls.minPolarAngle = THREE.Math.degToRad(data.minPolarAngle);
-	   controls.minZoom = data.minZoom;
-	   controls.panSpeed = data.panSpeed;
-	   controls.rotateSpeed = data.rotateSpeed;
-	   controls.screenSpacePanning = data.screenSpacePanning;*/
+		controls.autoRotate = data.autoRotate;
+		controls.autoRotateSpeed = data.autoRotateSpeed;
+		controls.dampingFactor = data.dampingFactor;
+		controls.enableDamping = data.enableDamping;
+		controls.enableKeys = data.enableKeys;
+		controls.enablePan = data.enablePan;
+		controls.enableRotate = data.enableRotate;
+		controls.enableZoom = data.enableZoom;
+		controls.keyPanSpeed = data.keyPanSpeed;
+		controls.maxPolarAngle = THREE.Math.degToRad(data.maxPolarAngle);*/
+		controls.maxDistance = data.maxDistance;
+		controls.minDistance = data.minDistance;/*
+		controls.minPolarAngle = THREE.Math.degToRad(data.minPolarAngle);
+		controls.minZoom = data.minZoom;
+		controls.panSpeed = data.panSpeed;
+		controls.rotateSpeed = data.rotateSpeed;
+		controls.screenSpacePanning = data.screenSpacePanning;*/
 		controls.zoomSpeed = data.zoomSpeed;
 	},
 

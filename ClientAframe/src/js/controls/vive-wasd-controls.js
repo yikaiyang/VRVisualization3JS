@@ -58,8 +58,6 @@ var defaultLongitude = 16.363449;
 
 //var userPosition.latitude = this.defaultLatitude;
 //var userPosition.longitude = this.defaultLongitude;
-
-userPosition.latitude = userPosition.latitude;
 //ctrl_longitude = userPosition.longitude;
 
 /**
@@ -72,7 +70,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
     adEnabled: { default: true },
     adInverted: { default: false },
     easing: { default: 20 },
-    enabled: { default: true },
+    enabled: { default: false },
     maxDistance: { default: 6378000 },
     minDistance: { default: 200 },
     fly: { default: false },
@@ -82,16 +80,12 @@ AFRAME.registerComponent('vive-wasd-controls', {
   },
 
   init: function () {
-
     console.log('ViveControls initialized');
     // To keep track of the pressed keys.
     pressedKeys = {};
 
     this.position = {};
     this.velocity = new THREE.Vector3();
-
-    this.altitude = 6378000;
-
     // Bind methods and add event listeners.
     /**
     this.onBlur = bind(this.onBlur, this);
@@ -104,22 +98,28 @@ AFRAME.registerComponent('vive-wasd-controls', {
   },
 
   tick: function (time, delta) {
-    var currentPosition;
     var data = this.data;
     var el = this.el;
     let scene = el.sceneEl;
     let height = scene.clientHeight;
     this.height = height;
     //var movementVector;
-    var position = this.position;
+    //var position = this.position;
+
     //var velocity = this.velocity;
+
+    if (!data.enabled) { 
+      return; 
+    } //Check whether control is enabled. Do nothing if control is disabled
+    if (isEmptyObject(pressedKeys)) { return; }
 
     var camera = el.getObject3D('camera');
     if (camera === undefined) {
       //If there is no camera element in the current element, move the position of the current element instead.
+      // In this case vive-wasd-controls is placed in the #camera-rig element
       camera = el.object3D;
     }
-    if (isEmptyObject(pressedKeys)) { return; }
+ 
 
     /*     if (!velocity[data.adAxis] && !velocity[data.wsAxis] &&
             isEmptyObject(pressedKeys)) { return; } */
@@ -130,7 +130,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
 
     //if (!velocity[data.adAxis] && !velocity[data.wsAxis]) { return; }
 
-    currentPosition = camera.position;
+    let currentPosition = camera.position;
 
     console.log('current position: '
       + ' x: ' + currentPosition.x
@@ -140,7 +140,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
       + ' maxDistance: ' + data.maxDistance
     );
 
-    position = currentPosition;
+    let position = currentPosition;
 
     var scaleFactor = 0.98;  //Factor by which the earth is enlarged when zoomed in/out.
 
@@ -154,7 +154,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
       let x = viveAxisValues.x;
       let y = viveAxisValues.y;
 
-      let panScale = panAcceleration * this.altitude / height;
+      let panScale = panAcceleration * userPosition.altitude / height;
       this.pan(-x * panScale, y * panScale);
       this.rerender();
   
@@ -165,35 +165,35 @@ AFRAME.registerComponent('vive-wasd-controls', {
       console.log('KeyT handled');
       //Zoom into the earth. Reduce acceleration the closer the position is to earth.
       position.z = currentPosition.z * scaleFactor;
-      this.altitude = this.altitude * scaleFactor;
+      userPosition.altitude = userPosition.altitude * scaleFactor;
       this.rerender();
     }
 
     if (pressedKeys.KeyG) {
       position.z = currentPosition.z / scaleFactor;
-      this.altitude = this.altitude / scaleFactor;
+      userPosition.altitude = userPosition.altitude / scaleFactor;
       this.rerender();
     }
 
     //Pan earth
 
     if (pressedKeys.KeyW || pressedKeys.ArrowUp) {
-      this.panUp(panAcceleration * this.altitude / height);
+      this.panUp(panAcceleration * userPosition.altitude / height);
       this.rerender();
     }
 
     if (pressedKeys.KeyS || pressedKeys.ArrowDown) {
-      this.panUp(-panAcceleration * this.altitude / height);
+      this.panUp(-panAcceleration * userPosition.altitude / height);
       this.rerender();
     }
 
     if (pressedKeys.KeyA || pressedKeys.ArrowLeft) {
-      this.panLeft(panAcceleration * this.altitude / height);
+      this.panLeft(panAcceleration * userPosition.altitude / height);
       this.rerender();
     }
 
     if (pressedKeys.KeyD || pressedKeys.ArrowRight) {
-      this.panLeft(panAcceleration * -this.altitude / height);
+      this.panLeft(panAcceleration * -userPosition.altitude / height);
       this.rerender();
     }
 
@@ -209,7 +209,8 @@ AFRAME.registerComponent('vive-wasd-controls', {
     //el.setAttribute('position', position);
 
     //Use threejs camera object to prevent interferences with orbit controls
-    camera.position.set(position.x, position.y, position.z);
+    console.error('altitude: ' + userPosition.altitude + ' userAltitude: ' + userPosition.altitude +   ' position.z: ' + position.z);
+    camera.position.set(position.x, position.y, userPosition.altitude);
   },
 
   remove: function () {
@@ -276,7 +277,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
     this.panLeft(distanceX);
     this.panUp(distanceY);
   },
-
+  /* 
   updateVelocity: function (delta) {
     var acceleration;
     var adAxis;
@@ -339,10 +340,10 @@ AFRAME.registerComponent('vive-wasd-controls', {
         console.log('zoomScale: ' + zoomScale);
       }
     }
-  },
+  }, */
 
   rerender: function(){
-    (callbackHelper || {}).callback(this.altitude, userPosition.latitude, userPosition.longitude);
+    (callbackHelper || {}).callback(userPosition.altitude, userPosition.latitude, userPosition.longitude);
   },
 
   /** Updates zoom level and rerenders earth if needed */
@@ -452,19 +453,19 @@ AFRAME.registerComponent('vive-wasd-controls', {
   /** HTC Vive controller event handlers */
   triggerUp: function (event) {
     // console.log("trigger up!");
-    console.error('trigger up');
+    console.debug('trigger up');
     // this.data.moveFrw = false;
     delete pressedKeys.MoveFrwdVive;
 
   },
   triggerDown: function (event) {
-    console.error('trigger down');
+    console.debug('trigger down');
     // console.log("triggerdown!");
     // console.log(this);
     pressedKeys.MoveFrwdVive = true;
   },
   trackpadUp: function (event) {
-    console.error('trackpad up');
+    console.debug('trackpad up');
     delete pressedKeys.TrackpadDown;
     delete viveAxisValues.x;
     delete viveAxisValues.y;
@@ -472,7 +473,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
     // console.log("trackpadup!");
   },
   trackpadDown: function (event) {
-    console.error('trackpad down');
+    console.debug('trackpad down');
     pressedKeys.TrackpadDown = true;
     // console.log("trackpaddown!");
   },
@@ -482,18 +483,13 @@ AFRAME.registerComponent('vive-wasd-controls', {
   },
 
   axisMove: function (event) {
-    // console.log(event.detail.axis);
-    //console.log(event);
-    console.log(event.detail.axis);
+    //console.log(event.detail.axis);
     let x = event.detail.axis[0];
     let y = event.detail.axis[1];
     viveAxisValues.x = x;
     viveAxisValues.y = y;
 
-    //console.log(this);
     //console.log(typeof this.panLeft);
-  
-    //vive_axis = event.detail.axis;
   }
 });
 
