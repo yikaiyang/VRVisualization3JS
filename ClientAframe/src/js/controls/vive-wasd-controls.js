@@ -67,6 +67,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
     maxDistance: { default: 6378000 },
     minDistance: { default: 200 },
     fly: { default: false },
+    vrEnabled: {default: false}, ///When VrEnabled is set to true. 
     wsAxis: { default: 'z', oneOf: ['x', 'y', 'z'] },
     wsEnabled: { default: true },
     wsInverted: { default: false }
@@ -78,7 +79,8 @@ AFRAME.registerComponent('vive-wasd-controls', {
     pressedKeys = {};
 
     this.position = {};
-    this.velocity = new THREE.Vector3();
+    this.isVREnabled = false;
+    //this.velocity = new THREE.Vector3();
     // Bind methods and add event listeners.
     /**
     this.onBlur = bind(this.onBlur, this);
@@ -88,6 +90,24 @@ AFRAME.registerComponent('vive-wasd-controls', {
     this.onVisibilityChange = bind(this.onVisibilityChange, this);**/
     this.attachKeyEventListeners();
     this.attachViveKeyEventListeners();
+
+    ///Handle transition to camera rig 
+    this.el.sceneEl.addEventListener('enter-vr', (event) => {
+			if (!AFRAME.utils.device.checkHeadsetConnected() &&
+        !AFRAME.utils.device.isMobile()) { return; }
+        this.isVREnabled = true;
+        //alert('yay VR ' + this.isVREnabled);
+        //console.log('yay VR ' + event.target);
+        //vrEnabled = true;
+		});
+
+	  this.el.sceneEl.addEventListener('exit-vr', () => {
+			if (!AFRAME.utils.device.checkHeadsetConnected() &&
+        !AFRAME.utils.device.isMobile()) { return; }
+        this.isVREnabled = false;
+        //alert('bye VR ' + this.isVREnabled);
+        ///vrEnabled = false;
+    });
   },
 
   tick: function (time, delta) {
@@ -99,18 +119,28 @@ AFRAME.registerComponent('vive-wasd-controls', {
     let cameraRig;
     //var movementVector;
     //var position = this.position;
-
     //var velocity = this.velocity;
+
+    /**
+     * Example how to set position when in camera rig mode
+     * 
+     * document.querySelector('#camera-rig').object3D.position.set(0,0,10000)
+     */
 
     if (!data.enabled) { 
       return; 
     } //Check whether control is enabled. Do nothing if control is disabled
     if (isEmptyObject(pressedKeys)) { return; }
 
+    let cameraRigId = data.cameraRigIdentifier;
 
-    if (data.cameraRigIdentifier){
+    if (cameraRigId){
       //cameraRig = document.query
       //alert('cameraRigIdentifier: ' + data.cameraRigIdentifier);
+      cameraRig = document.querySelector('#camera-rig');
+      if (cameraRig !== undefined){
+        cameraRig = cameraRig.object3D;
+      }
     }
 
     //Check if camera rig identifier is provided
@@ -133,7 +163,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
 
     let currentPosition = camera.position;
 
-    console.log('current position: '
+    console.log('current camera position: '
       + ' x: ' + currentPosition.x
       + ' y: ' + currentPosition.y
       + ' z: ' + currentPosition.z
@@ -158,7 +188,6 @@ AFRAME.registerComponent('vive-wasd-controls', {
       let panScale = panAcceleration * userPosition.altitude / height;
       this.pan(-x * panScale, y * panScale);
       this.rerender();
-  
     }
 
     // Zoom in / out
@@ -208,7 +237,14 @@ AFRAME.registerComponent('vive-wasd-controls', {
     //el.setAttribute('position', position);
 
     //Use threejs camera object to prevent interferences with orbit controls
-    camera.position.set(position.x, position.y, userPosition.altitude);
+    if (!this.isVREnabled){
+      //Move the 'traditional' camera object when not in VR mode. 
+      camera.position.set(position.x, position.y, userPosition.altitude);
+    } else {
+      //Move the outer camera rig element object when in VR mode. (Camera position will be overriden by the VR Headset)
+      cameraRig.position.set(position.x, position.y, userPosition.altitude);
+    }
+   
   },
 
   remove: function () {
@@ -460,6 +496,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
     console.debug('trigger down');
     // console.log("triggerdown!");
     // console.log(this);
+    console.log(event);
     pressedKeys.MoveFrwdVive = true;
   },
   trackpadUp: function (event) {
