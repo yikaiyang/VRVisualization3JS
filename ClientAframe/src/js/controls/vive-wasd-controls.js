@@ -191,7 +191,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
     }
 
     // Zoom in / out
-    if (pressedKeys.KeyT || pressedKeys.MoveFrwdVive) {
+    if (pressedKeys.KeyT || pressedKeys.MoveFwdVive) {
       console.log('KeyT handled');
       //Zoom into the earth. Reduce acceleration the closer the position is to earth.
       userPosition.altitude = userPosition.altitude * scaleFactor;
@@ -488,39 +488,35 @@ AFRAME.registerComponent('vive-wasd-controls', {
   triggerUp: function (event) {
     // console.log("trigger up!");
     console.debug('trigger up');
-    // this.data.moveFrw = false;
-    delete pressedKeys.MoveFrwdVive;
+    delete pressedKeys.MoveFwdVive;
     delete pressedKeys.MoveBwdVive;
 
   },
   triggerDown: function (event) {
     console.debug('trigger down');
-    // console.log("triggerdown!");
-    // console.log(this);
     console.log(event.target);
 
+    /***
+     * Find out on which controller (left/right) the trigger was activated
+     */
     let hand = event.target.getAttribute('laser-controls').hand;
-    console.error(hand);
-    
-    if (hand === 'left'){
+    if (hand === undefined) {
+      console.error('The trigger of the controller has been activated. But the type of the controller (left/right) is unknown. Please specify the type of controller (hand:left/hand:right)');
+    } else if (hand === 'left'){
       /**
        * Dirty bugfixing: For unknown reason the left trigger is always triggered
        * after the right trigger has been activated.
        * Solution: Ignore the left trigger when the right trigger has been activated.
        */
-      if (pressedKeys.MoveBwdVive === true){
+      if (pressedKeys.MoveFwdVive === true){
         return; //Right trigger is active. Ignore the left trigger event
       }
       console.error('left trigger');
-      pressedKeys.MoveFrwdVive = true;
-    } else if (hand === 'right'){
-      
-      console.error('right trigger');
       pressedKeys.MoveBwdVive = true;
-    }
-    //Find out which trigger has been pressed.
-    
-    //pressedKeys.MoveFrwdVive = true;
+    } else if (hand === 'right'){
+      console.error('right trigger');
+      pressedKeys.MoveFwdVive = true;
+    }    
   },
   trackpadUp: function (event) {
     console.debug('trackpad up');
@@ -532,7 +528,29 @@ AFRAME.registerComponent('vive-wasd-controls', {
   },
   trackpadDown: function (event) {
     console.debug('trackpad down');
-    pressedKeys.TrackpadDown = true;
+
+    console.log(event.target);
+
+    
+    /***
+     * Find out on which controller (left/right) the trigger was activated
+     */
+    let hand = event.target.getAttribute('laser-controls').hand;
+    if (hand === undefined) {
+      console.error('The trigger of the controller has been activated. But the type of the controller (left/right) is unknown. Please specify the type of controller (hand:left/hand:right)');
+    } else if (hand === 'left'){
+      /**
+       * Dirty bugfixing: For unknown reason the left trigger is always triggered
+       * after the right trigger has been activated.
+       * Solution: Ignore the left trigger when the right trigger has been activated.
+       */
+      if (pressedKeys.TrackpadDown === true){
+        return; //Right trigger is active. Ignore the left trigger event
+      }
+    } else if (hand === 'right'){
+      pressedKeys.TrackpadDown = true;
+    }    
+  
     // console.log("trackpaddown!");
   },
   trackpadChanged: function (event) {
