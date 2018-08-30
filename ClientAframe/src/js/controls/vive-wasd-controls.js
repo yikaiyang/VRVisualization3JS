@@ -163,19 +163,19 @@ AFRAME.registerComponent('vive-wasd-controls', {
 
     let currentPosition = camera.position;
 
-    console.log('current camera position: '
+ /*    console.log('current camera position: '
       + ' x: ' + currentPosition.x
       + ' y: ' + currentPosition.y
       + ' z: ' + currentPosition.z
       + ' minDistance: ' + data.minDistance
       + ' maxDistance: ' + data.maxDistance
-    );
+    ); */
 
     let position = currentPosition;
 
     var scaleFactor = 0.98;  //Factor by which the earth is enlarged when zoomed in/out.
 
-    console.log(pressedKeys);
+    // console.log(pressedKeys);
 
     let panAcceleration = 10;
 
@@ -198,7 +198,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
       this.rerender();
     }
 
-    if (pressedKeys.KeyG || pressedKeys.MoveBwrdVive) {
+    if (pressedKeys.KeyG || pressedKeys.MoveBwdVive) {
       userPosition.altitude = userPosition.altitude / scaleFactor;
       this.rerender();
     }
@@ -271,12 +271,12 @@ AFRAME.registerComponent('vive-wasd-controls', {
     userPosition.longitude -= lonDelta;
     var latDelta = -Math.sin(theta) * (distance / (R * 1000)) * 180 / Math.PI;
 
-    console.log('panLeft: lonDelta: ' + lonDelta
+    /* console.log('panLeft: lonDelta: ' + lonDelta
       + ' latDelta: ' + latDelta
       + ' lonDelta: ' + lonDelta
       + ' latitude: ' + userPosition.latitude
       + ' longitude: ' + userPosition.longitude
-      + ' tetha: ' + theta);
+      + ' tetha: ' + theta); */
     if (userPosition.latitude + latDelta < 80 && userPosition.latitude + latDelta > -80) {
       userPosition.latitude += latDelta;
       // console.log('latitude:', latitude)
@@ -294,11 +294,11 @@ AFRAME.registerComponent('vive-wasd-controls', {
     userPosition.longitude -= lonDelta;
     var latDelta = Math.cos(theta) * (distance / (1000 * R)) * 180 / Math.PI;
 
-    console.log('panUp: lonDelta: ' + lonDelta
+ /*    console.log('panUp: lonDelta: ' + lonDelta
       + ' latDelta: ' + latDelta
       + ' lonDelta: ' + lonDelta
       + ' latitude: ' + userPosition.latitude
-      + ' longitude: ' + userPosition.longitude);
+      + ' longitude: ' + userPosition.longitude); */
 
     if (userPosition.latitude + latDelta < 80 && userPosition.latitude + latDelta > -80) {
       userPosition.latitude += latDelta;
@@ -490,6 +490,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
     console.debug('trigger up');
     // this.data.moveFrw = false;
     delete pressedKeys.MoveFrwdVive;
+    delete pressedKeys.MoveBwdVive;
 
   },
   triggerDown: function (event) {
@@ -500,10 +501,22 @@ AFRAME.registerComponent('vive-wasd-controls', {
 
     let hand = event.target.getAttribute('laser-controls').hand;
     console.error(hand);
+    
     if (hand === 'left'){
+      /**
+       * Dirty bugfixing: For unknown reason the left trigger is always triggered
+       * after the right trigger has been activated.
+       * Solution: Ignore the left trigger when the right trigger has been activated.
+       */
+      if (pressedKeys.MoveBwdVive === true){
+        return; //Right trigger is active. Ignore the left trigger event
+      }
+      console.error('left trigger');
       pressedKeys.MoveFrwdVive = true;
     } else if (hand === 'right'){
-      pressedKeys.MoveBrwdVive = true;
+      
+      console.error('right trigger');
+      pressedKeys.MoveBwdVive = true;
     }
     //Find out which trigger has been pressed.
     

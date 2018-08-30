@@ -31,14 +31,15 @@
         >
         <!-- vive-wasd-controls="enabled: false" -->
             <!-- Left controller / Controls the camera -->
-            <a-entity 
+            <a-entity
+                id="left-controller" 
                 laser-controls="hand: left"
             >
 
             <!-- Right controller / Navigation of map-->
-            <a-entity  
+            <a-entity
                 laser-controls="hand: right" 
-                id="liney"
+                id="right-controller"
                 line="color: blue; opacity: 0.75" 
             >
                 <a-cursor color="lavender" opacity="0.5"></a-cursor>
