@@ -31,12 +31,28 @@
     <a-scene>
         <!--orbit-controls="target: 0 0 0; minDistance: 0.5; maxDistance: 180; initialPosition: 0 5 15; enabled: true"
     -->
+
         <a-entity
             id="rig"
-            look-controls="enabled: true"
+            
             >
+            <a-entity
+                id="left-controller" 
+                laser-controls="hand: left"
+            >
+            <a-entity
+                laser-controls="hand: right" 
+                id="right-controller"
+                line="color: blue; opacity: 0.75" 
+            >
+     <!--        <a-entity vive-controls="hand: left"></a-entity>
+            <a-entity vive-controls="hand: right"></a-entity> -->
             <a-camera id="camera"  fov="75" active="false"></a-camera>
         </a-entity>
+
+        <a-sky color="#4CC3D9" radius="200">
+
+        </a-sky>
 
         <!-- <a-entity
         id="rig2"
