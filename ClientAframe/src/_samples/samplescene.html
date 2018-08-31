@@ -9,44 +9,22 @@
 </head>
 
 <body>
-    <!--<script src="js/three.min.js"></script>
-    <script src="js/turf/v2.0.2/turf.min.js"></script>
-    <script src="js/controls/EarthControls.js"></script>
-    <script src="js/controls/OrbitControls.js"></script>
-    <script src="js/controls/VRControls.js"></script>
-
-    <script src="js/threejs-stats.js"></script>
-    <script src="js/variables.js"></script>
-    <script src="libs/papaparse.min.js"></script>
-    <script type="module" src="js/util/fileloader.js"></script>
-    <script type="module" src="js/util/geoconversions.js"></script>
-    <script type="module" src="libs/webVR.js"></script>
-    <script type="module" src="js/main.js"></script>
-    <script src="https://unpkg.com/aframe-orbit-controls@1.0.0/dist/aframe-orbit-controls.min.js"></script>-->
-   
- 
-    <script src="js/controls/OriginalAframeOrbitControls.js">
-    </script>
-       
     <a-scene>
-        <!--orbit-controls="target: 0 0 0; minDistance: 0.5; maxDistance: 180; initialPosition: 0 5 15; enabled: true"
-    -->
 
-        <a-entity
-            id="rig"
-            
+            <a-entity
+                id="rig"
             >
+            
             <a-entity
                 id="left-controller" 
-                laser-controls="hand: left"
+                vive-controls
             >
             <a-entity
                 laser-controls="hand: right" 
                 id="right-controller"
                 line="color: blue; opacity: 0.75" 
             >
-     <!--        <a-entity vive-controls="hand: left"></a-entity>
-            <a-entity vive-controls="hand: right"></a-entity> -->
+            
             <a-camera id="camera"  fov="75" active="false"></a-camera>
         </a-entity>
 
@@ -54,30 +32,12 @@
 
         </a-sky>
 
-        <!-- <a-entity
-        id="rig2"
-        position="0 0 50"
-        look-controls="enabled: true"
-        >
-            <a-camera id="camera2" active="true"  fov="75"></a-camera>
-        </a-entity> -->
 
         <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9" shadow></a-box>
         <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E" shadow></a-sphere>
         <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D" shadow></a-cylinder>
         <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4" shadow></a-plane>
-
-       <!--  <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
-        <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane> -->
-
-        <!-- <a-cylinder id="xAxe" position="100 0 0" rotation="0 0 -90" color="#0000FF" height="200" radius="0.1"></a-cylinder>
-        <a-cylinder id="yAxe" position="0 100 0" rotation="0 0 0" color="#00FF00" height="200" radius="0.1"></a-cylinder>
-        <a-cylinder id="zAxe" position="0 0 100" rotation="-90 0 0" color="#FF0000" height="200" radius="0.1"></a-cylinder>
-    -->
-        <!--<a-sky color="#ECECEC" radius="1000000"></a-sky>-->
     </a-scene>
-
-  
 </body>
 
 </html>

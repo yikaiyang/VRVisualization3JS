@@ -5,7 +5,7 @@
     <meta charset=utf-8>
     <title>AFrame</title>
     <link rel="stylesheet" type="text/css" href="styles/main.css">
-    <script src="https://aframe.io/releases/0.8.0/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
 </head>
 
 <body>
@@ -32,13 +32,14 @@
         <!-- vive-wasd-controls="enabled: false" -->
             <!-- Left controller / Controls the camera -->
             <a-entity
-                id="left-controller" 
+                id="left-controller"
                 laser-controls="hand: left"
             >
+            <!--laser-controls="hand: left" -->
 
             <!-- Right controller / Navigation of map-->
             <a-entity
-                laser-controls="hand: right" 
+                laser-controls="hand: right"
                 id="right-controller"
                 line="color: blue; opacity: 0.75" 
             >

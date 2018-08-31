@@ -59,11 +59,18 @@ gulp.task('css', function(){
         .pipe(connect.reload());
 })
 
+gulp.task('samples', function() {
+    gulp.src('./src/_samples/*')
+        .pipe(gulp.dest('./dist/samples/'))
+        .pipe(connect.reload());
+});
+
 gulp.task('watch', function(){
     gulp.watch('./src/*.html',['html']);
     gulp.watch('./src/js/**/*.js', ['js']);
     gulp.watch('./src/libs/*.js', ['libs']);
     gulp.watch('./src/styles/*.css', ['css']);
+    gulp.watch('./src/_samples/*.html', ['samples']);
 })
 
 /* gulp.task('open', function(){
@@ -71,6 +78,6 @@ gulp.task('watch', function(){
         .pipe(open({uri: 'http://localhost'}));
 }) */
 
-gulp.task('default', ['html', 'css', 'js', 'libs', 'data', 'webserver', 'watch', 'images']);
+gulp.task('default', ['html', 'css', 'js', 'libs', 'data', 'webserver', 'watch', 'images', 'samples']);
 
-gulp.task('default-public', ['html', 'css', 'js', 'libs', 'data', 'webserver', 'webserver-public', 'watch', 'images']);
+gulp.task('default-public', ['html', 'css', 'js', 'libs', 'data', 'webserver', 'webserver-public', 'watch', 'images', 'samples']);
