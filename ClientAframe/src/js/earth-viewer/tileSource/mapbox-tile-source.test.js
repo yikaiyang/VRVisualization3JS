@@ -15,7 +15,6 @@ test('Builds valid HTTP Request', () => {
 });
 
 test('Build successful HTTP Request without specifying file format', () => {
-    const baseUrl = 'https://api.mapbox.com/v4/mapbox.mapbox-streets-v7';
     const acceessToken = '114324324'
     const zoom = 1;
     const tileX = 0;

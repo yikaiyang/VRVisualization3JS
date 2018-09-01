@@ -1,0 +1,5 @@
+Some information which may be useful somehow later:
+
+
+To be able to execute jest (unit test framework) a babel (JS Transpiler) config '.babelrc' must be configured 
+https://stackoverflow.com/questions/49656706/test-es6-modules-with-jest

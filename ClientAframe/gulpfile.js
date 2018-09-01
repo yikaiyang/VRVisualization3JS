@@ -6,6 +6,7 @@ const gulp = require('gulp');
 const connect = require('gulp-connect');
 const qunit = require('gulp-qunit');
 
+
 /**
  * Starts a local webserver
  */
@@ -30,7 +31,7 @@ gulp.task('webserver-public', function(){
 });
 
 /**
- * Starts qunit tests in PhantomJS
+ * Starts QUnit tests in PhantomJS
  */
 gulp.task('test', () => {
     return gulp.src('./test/testrunner.html').pipe(qunit());
