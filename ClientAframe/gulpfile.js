@@ -1,11 +1,14 @@
 /**
- * Gulpfile 
+ * Gulpfile for task automation
  */
 
-var gulp = require('gulp');
-var connect = require('gulp-connect');
+const gulp = require('gulp');
+const connect = require('gulp-connect');
+const qunit = require('gulp-qunit');
 
-
+/**
+ * Starts a local webserver
+ */
 gulp.task('webserver', function(){
     connect.server({
         port: 8888,
@@ -14,6 +17,9 @@ gulp.task('webserver', function(){
     });
 });
 
+/**
+ * Starts a local webservre with binding on '0.0.0.0' which allows public access
+ */
 gulp.task('webserver-public', function(){
     connect.server({
         host: '0.0.0.0',
@@ -22,6 +28,13 @@ gulp.task('webserver-public', function(){
         livereload: true
     });
 });
+
+/**
+ * Starts qunit tests in PhantomJS
+ */
+gulp.task('test', () => {
+    return gulp.src('./test/testrunner.html').pipe(qunit());
+})
 
 gulp.task('data',function(){
     gulp.src('./src/data/*')
@@ -59,6 +72,9 @@ gulp.task('css', function(){
         .pipe(connect.reload());
 })
 
+/**
+ * Monitors and detects changes in file structure and reloads page
+ */
 gulp.task('watch', function(){
     gulp.watch('./src/*.html',['html']);
     gulp.watch('./src/js/**/*.js', ['js']);
