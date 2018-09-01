@@ -6,7 +6,8 @@
     "scripts": {
         "gulp-public": "gulp default-public",
         "gulp": "gulp",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "jest": "jest"
     },
     "author": "Yikai Yang",
     "license": "ISC",
@@ -14,10 +15,12 @@
         "@types/aframe": "^0.7.2",
         "@types/qunit": "^2.5.2",
         "@types/three": "^0.92.14",
+        "babel-cli": "^6.26.0",
         "gulp": "^3.9.1",
         "gulp-connect": "^5.5.0",
         "gulp-open": "^3.0.1",
         "gulp-qunit": "^2.0.1",
+        "jest": "^23.5.0",
         "npm": "^6.1.0",
         "papaparse": "^4.5.1",
         "three": "",
