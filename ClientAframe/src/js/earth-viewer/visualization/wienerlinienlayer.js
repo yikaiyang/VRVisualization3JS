@@ -1,5 +1,5 @@
 import FileLoader from '../../util/fileloader.js';
-import GeoConversion from '../../util/geoconversion.js';
+import GeoConversion from '../util/geoconversion.js';
 
 var App = App || {};
 var callbackHelper = App.callbackHelper;

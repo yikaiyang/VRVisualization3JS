@@ -1,5 +1,5 @@
 import {WEBVR} from '../libs/webVR.js';
-import GeoConversion from './util/geoconversions.js';
+import GeoConversion from './earth-viewer/util/geoconversion.js'
 import FileLoader from './util/fileloader.js';
 
 var scene = new THREE.Scene();

@@ -33,7 +33,7 @@ gulp.task('webserver-public', function(){
 /**
  * Starts QUnit tests in PhantomJS
  */
-gulp.task('test', () => {
+gulp.task('qunit', () => {
     return gulp.src('./test/testrunner.html').pipe(qunit());
 })
 

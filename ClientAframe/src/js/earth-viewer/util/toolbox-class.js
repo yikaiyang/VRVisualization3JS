@@ -2,14 +2,6 @@
  * Toolbox class for open earth viewer
  */
 
-const MAX_TEXTURE_REQUEST = 10;
-const MAX_TILEMESH = 400;
-
-const TILE_PROVIDER01 = '.tile.openstreetmap.org';
-const TILE_PROVIDER01_RANDOM = ['a', 'b', 'c'];
-const TILE_PROVIDER01_FILE_EXT = 'png';
-
-
 class Constants {};
 Constants.TILE_PROVIDER01 = '.tile.openstreetmap.org';
 Constants.TILE_PROVIDER01_RANDOM = ['a', 'b', 'c'];
@@ -121,7 +113,9 @@ class Toolbox {
 }
 
 class TextureLoader {
-    
+   constructor(){
+
+   }
 }
 
 export default Toolbox;

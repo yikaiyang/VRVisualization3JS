@@ -175,7 +175,7 @@ function updateScene(position) {
                         var tileEarth = new THREE.Object3D(); //create an empty container
                         tileEarth.rotation.set(0, (lon1 + 180) * Math.PI / 180, 0);
                         tileGroup[zShift].add(tileEarth);
-                        tileMesh = getTileMesh(R, zoom_, btile, Math.max(9 - zoom_, 0));
+                        tileMesh = toolbox.getTileMesh(R, zoom_, btile, Math.max(9 - zoom_, 0));
                         tileEarth.add(tileMesh);
                     } else {
                         var tileShape = new THREE.Shape();

@@ -32,16 +32,7 @@ const TILE_PROVIDER01_RANDOM = ['a', 'b', 'c'];
 const TILE_PROVIDER01_FILE_EXT = 'png';
 
 
-getTileMesh = function(r, zoom, ytile, power) {
-    var id = 'tile_' + zoom + '_' + ytile + '_' + factor;
-    if (!(geoTiles.hasOwnProperty(id))) {
-        geoTiles[id] = new THREE.Geometry();
-        var myGeometry = geoTiles[id];
-        geoTileQueue.push(id);
-        if (geoTileQueue.length > MAX_TILEMESH) {
-            delete geoTiles[geoTileQueue.shift()];
-        }
-        /*************************
+/*       *************************
          *            ^ Y         *
          *            |           *
          *            |           *
@@ -58,6 +49,17 @@ getTileMesh = function(r, zoom, ytile, power) {
          *                          *
          *      A          D        *
          ***************************/
+/* 
+getTileMesh = function(r, zoom, ytile, power) {
+    var id = 'tile_' + zoom + '_' + ytile + '_' + factor;
+    if (!(geoTiles.hasOwnProperty(id))) {
+        geoTiles[id] = new THREE.Geometry();
+        var myGeometry = geoTiles[id];
+        geoTileQueue.push(id);
+        if (geoTileQueue.length > MAX_TILEMESH) {
+            delete geoTiles[geoTileQueue.shift()];
+        }
+      
         var lonStart = tile2long(0, zoom);
         var latStart = tile2lat(ytile, zoom);
         var lonEnd = tile2long(1, zoom);
@@ -124,10 +126,9 @@ getTileMesh = function(r, zoom, ytile, power) {
         myGeometry.uvsNeedUpdate = true;
     }
     return new THREE.Mesh(geoTiles[id]);
-}
+} */
 
 assignUVs = function(geometry) {
-
     geometry.computeBoundingBox();
 
     var max = geometry.boundingBox.max;
@@ -247,11 +248,6 @@ function cancelOtherRequests(currentIds) {
 //
 var materials = {};
 var materialQueue = [];
-
-function getSearchParameters() {
-    var prmstr = window.location.search.substr(1);
-    return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
-}
 
 function long2tile(lon, zoom) {
     return (Math.floor((lon + 180) / 360 * Math.pow(2, zoom)));
