@@ -1,3 +1,4 @@
+'use strict'
 // TOOLBOX //
 /**
 Open Earth View - viewer-threejs
@@ -22,14 +23,14 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-const geoTiles = {};
+/* const geoTiles = {};
 const geoTileQueue = [];
 const MAX_TEXTURE_REQUEST = 10;
 const MAX_TILEMESH = 400;
 
 const TILE_PROVIDER01 = '.tile.openstreetmap.org';
 const TILE_PROVIDER01_RANDOM = ['a', 'b', 'c'];
-const TILE_PROVIDER01_FILE_EXT = 'png';
+const TILE_PROVIDER01_FILE_EXT = 'png'; */
 
 
 /*       *************************
@@ -127,7 +128,7 @@ getTileMesh = function(r, zoom, ytile, power) {
     }
     return new THREE.Mesh(geoTiles[id]);
 } */
-
+/* 
 assignUVs = function(geometry) {
     geometry.computeBoundingBox();
 
@@ -153,8 +154,8 @@ assignUVs = function(geometry) {
     }
     geometry.uvsNeedUpdate = true;
 }
-
-var textureLoader = new THREE.TextureLoader();
+ */
+/* var textureLoader = new THREE.TextureLoader();
 textureLoader.crossOrigin = '';
 var textures = {};
 var textureRequests = {};
@@ -210,6 +211,7 @@ function textureFactory(zoom, xtile, ytile, onLoaded) {
             ((zoom > 0) ? (xtile % Math.pow(2, zoom)) : 0) + '/' +
             ((zoom > 0) ? (ytile % Math.pow(2, zoom)) : 0) + '.' + TILE_PROVIDER01_FILE_EXT;
 
+        let url;
         if (typeof(proxy) !== 'undefined' && typeof(proxyPort) !== 'undefined' && proxy && proxyPort){
             url = 'http://' + proxy +':' + proxyPort + '/' + baseurl;
         } else {
@@ -243,46 +245,9 @@ function cancelOtherRequests(currentIds) {
         }
     }
     loadNextTexture();
-}
+} */
 
 //
-var materials = {};
-var materialQueue = [];
+/* var materials = {};
+var materialQueue = []; */
 
-function long2tile(lon, zoom) {
-    return (Math.floor((lon + 180) / 360 * Math.pow(2, zoom)));
-}
-
-function lat2tile(lat, zoom) {
-    return (Math.floor((1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom)));
-}
-
-function tile2long(x, z) {
-    return ((x / Math.pow(2, z) * 360 - 180) + 540) % 360 - 180;
-}
-
-function tile2lat(y, z) {
-    var n = Math.PI - 2 * Math.PI * y / Math.pow(2, z);
-    return (180 / Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n))));
-}
-
-function measure(lat1, lon1, lat2, lon2) { // generally used geo measurement function
-    // var R = 6378.137; // Radius of earth in KM
-    var dLat = (lat2 - lat1) * Math.PI / 180;
-    var dLon = (lon2 - lon1) * Math.PI / 180;
-    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    var d = R * c;
-    return d * 1000; // meters
-}
-
-function lonOffsetMeter2lon(lon, lat, x) {
-    return x / (R * Math.cos(lat)) + lon;
-}
-
-function latOffsetMeter2lat(lat, y) {
-    var R = 6378.137;
-    return (y / R) + lat;
-}

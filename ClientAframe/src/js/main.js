@@ -7,8 +7,6 @@ var earth = new THREE.Object3D(); //create an empty container
 /* Variables */
 
 //Start position
-var LONGITUDE_ORI = 0;
-var LATITUDE_ORI = 0;
 
 var R = 6378.137; //radius in kilometers
 var xtile = 0;

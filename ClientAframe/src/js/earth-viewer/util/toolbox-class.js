@@ -2,14 +2,21 @@
  * Toolbox class for open earth viewer
  */
 
+import GeoConversion from './geoconversion.js'
+import OSMTileSource from '../tileSource/osm-tile-source.js'
+import {MapboxTileSource, MapboxOptions} from '../tileSource/mapbox-tile-source.js'
+
+
 class Constants {};
 Constants.TILE_PROVIDER01 = '.tile.openstreetmap.org';
 Constants.TILE_PROVIDER01_RANDOM = ['a', 'b', 'c'];
 Constants.TILE_PROVIDER01_FILE_EXT = 'png';
 Constants.MAX_TEXTURE_REQUEST = 10;
 Constants.MAX_TILEMESH = 400;
-Object.freeze(Constants);
 
+//TODO: Store access token somewhere safe
+Constants.MAPBOX_KEY = 'pk.eyJ1IjoieWlrYWl5YW5nIiwiYSI6ImNqaXJ5eXd6MDBhOGwzcGxvMmUwZGxsaDkifQ.Czx2MTe4B6ynlMbpW52Svw';
+Object.freeze(Constants);
 
 class Toolbox {
     constructor(){
@@ -19,12 +26,12 @@ class Toolbox {
 
     getTileMesh (r, zoom, ytile, power) {
         var id = 'tile_' + zoom + '_' + ytile + '_' + factor;
-        if (!(geoTiles.hasOwnProperty(id))) {
-            geoTiles[id] = new THREE.Geometry();
-            var myGeometry = geoTiles[id];
-            geoTileQueue.push(id);
-            if (geoTileQueue.length > MAX_TILEMESH) {
-                delete geoTiles[geoTileQueue.shift()];
+        if (!(this.geoTiles.hasOwnProperty(id))) {
+            this.geoTiles[id] = new THREE.Geometry();
+            var myGeometry = this.geoTiles[id];
+            this.geoTileQueue.push(id);
+            if (this.geoTileQueue.length > Constants.MAX_TILEMESH) {
+                delete this.geoTiles[this.geoTileQueue.shift()];
             }
             /*************************
              *            ^ Y         *
@@ -43,10 +50,10 @@ class Toolbox {
              *                          *
              *      A          D        *
              ***************************/
-            var lonStart = tile2long(0, zoom);
-            var latStart = tile2lat(ytile, zoom);
-            var lonEnd = tile2long(1, zoom);
-            var latEnd = tile2lat(ytile + 1, zoom);
+            var lonStart = GeoConversion.tile2long(0, zoom);
+            var latStart = GeoConversion.tile2lat(ytile, zoom);
+            var lonEnd = GeoConversion.tile2long(1, zoom);
+            var latEnd = GeoConversion.tile2lat(ytile + 1, zoom);
             var factor = Math.pow(2, power);
             var lonStep = (lonEnd - lonStart) / factor;
             var latStep = (latEnd - latStart) / factor;
@@ -108,14 +115,129 @@ class Toolbox {
             }
             myGeometry.uvsNeedUpdate = true;
         }
-        return new THREE.Mesh(geoTiles[id]);
+        return new THREE.Mesh(this.geoTiles[id]);
+    }
+
+    static assignUVs(geometry){
+        geometry.computeBoundingBox();
+
+        var max = geometry.boundingBox.max;
+        var min = geometry.boundingBox.min;
+
+        var offset = new THREE.Vector2(0 - min.x, 0 - min.y);
+        var range = new THREE.Vector2(max.x - min.x, max.y - min.y);
+
+        geometry.faceVertexUvs[0] = [];
+        var faces = geometry.faces;
+
+        for (let i = 0; i < geometry.faces.length; i++) {
+            var v1 = geometry.vertices[faces[i].a];
+            var v2 = geometry.vertices[faces[i].b];
+            var v3 = geometry.vertices[faces[i].c];
+
+            geometry.faceVertexUvs[0].push([
+                new THREE.Vector2((v1.x + offset.x) / range.x, (v1.y + offset.y) / range.y),
+                new THREE.Vector2((v2.x + offset.x) / range.x, (v2.y + offset.y) / range.y),
+                new THREE.Vector2((v3.x + offset.x) / range.x, (v3.y + offset.y) / range.y)
+            ]);
+        }
+        geometry.uvsNeedUpdate = true;
     }
 }
 
 class TextureLoader {
    constructor(){
-
+       this.textureLoader = new THREE.TextureLoader();
+       this.textureLoader.crossOrigin = '';
+       this.textures = {};
+       this.textureRequests = {};
+       this.textureAliveRequests = {};
+       this.textureAliveRequestsCount = 0;
+       this.textureRequestsCount = 0;
+       
+       //Initialize Tile Source Provider
+       this.tileSource = new MapboxTileSource(Constants.MAPBOX_KEY,undefined, MapboxOptions.StreetV1,'mapbox://styles/yikaiyang/cjljkon0224u72rmqfyvybx1e');
+       //this.tileSource = new OSMTileSource(); Uncomment this if tiles from OSM shall be used.
    }
+
+   loadNextTexture(){
+        // console.log('this.textureAliveRequestsCount:', this.textureAliveRequestsCount, '/textureRequestsCount:', textureRequestsCount);
+        while (this.textureAliveRequestsCount < Constants.MAX_TEXTURE_REQUEST && this.textureRequestsCount > 0) {
+            var ids = Object.keys(this.textureRequests);
+            var id = ids[ids.length - 1];
+            this.textureAliveRequestsCount = this.textureAliveRequestsCount + (this.textureAliveRequests.hasOwnProperty(id) ? 0 : 1);
+            this.textureAliveRequests[id] = this.textureRequests[id];
+            var url = this.textureAliveRequests[id].url;
+            delete this.textureRequests[id];
+            this.textureRequestsCount--;
+
+            (function(scope, url, id) {
+                //Loads a texture by using the url and saves it to the textures array.
+                //TODO Find out why this is an IIFE
+                scope.textureAliveRequests[id].request = scope.textureLoader.load(url,
+                    function(texture) {
+                        scope.textures[id] = texture;
+                        if (scope.textureAliveRequests.hasOwnProperty(id)) {
+                            scope.textureAliveRequests[id].onLoaded(texture);
+                            delete scope.textureAliveRequests[id];
+                            scope.textureAliveRequestsCount--;
+                        }
+                        scope.loadNextTexture();
+                    },
+                    function() {},
+                    function() {
+                        if (scope.textureAliveRequests.hasOwnProperty(id)) {
+                            // this.textureAliveRequests[id].onLoaded(texture);
+                            delete scope.textureAliveRequests[id];
+                            scope.textureAliveRequestsCount--;
+                        }
+                        scope.loadNextTexture();
+                    }
+                );
+            })(this, url, id);
+        }
+   }
+
+   textureFactory(zoom, xtile, ytile, onLoaded) {
+        var id = 'tile' + zoom + '_' + xtile + '_' + ytile;
+        if (this.textures.hasOwnProperty(id)) {
+            onLoaded(this.textures[id]);
+        } else {
+            const serverRandom = Constants.TILE_PROVIDER01_RANDOM[
+                Math.floor(Math.random() * Constants.TILE_PROVIDER01_RANDOM.length)];
+
+            const tileX = ((zoom > 0) ? (xtile % Math.pow(2, zoom)) : 0);
+            const tileY = ((zoom > 0) ? (ytile % Math.pow(2, zoom)) : 0); 
+            const url = this.tileSource.buildTileURL(zoom, tileX, tileY);
+            
+            console.debug(url);
+            this.textureRequestsCount = this.textureRequestsCount + (this.textureRequests.hasOwnProperty(id) ? 0 : 1);
+            this.textureRequests[id] = {
+                url: url,
+                onLoaded: onLoaded
+            }
+            this.loadNextTexture();
+        }
+    }
+
+    cancelOtherRequests(currentIds) {
+        for (let id in this.textureRequests) {
+            if (!currentIds.hasOwnProperty(id)) {
+                delete this.textureRequests[id];
+                this.textureRequestsCount--;
+            }
+        }
+        for (let id in this.textureAliveRequests) {
+            if (!currentIds.hasOwnProperty(id)) {
+                // if (textureAliveRequests[id].request.hasOwnProperty('abort')) {
+                //     textureAliveRequests[id].request.abort();
+                // }
+                // delete textureAliveRequests[id];
+                // textureAliveRequestsCount--;
+            }
+        }
+        this.loadNextTexture();
+    }
 }
 
-export default Toolbox;
+export {Toolbox, TextureLoader};

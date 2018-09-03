@@ -56,7 +56,7 @@ gulp.task('images', function(){
 });
 
 gulp.task('js', function(){
-    gulp.src('./src/js/**/*.js')
+    gulp.src(['./src/js/**/*.js', '!./src/js/**/*.test.js'])
         .pipe(gulp.dest('./dist/js/'))
         .pipe(connect.reload());
 });

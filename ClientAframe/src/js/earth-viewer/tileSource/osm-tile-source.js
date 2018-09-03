@@ -11,7 +11,7 @@ import BaseTileSource from './base-tile-source.js'
  class OSMTileSource extends BaseTileSource {
     constructor(){
          const osmUrl = '.tile.openstreetmap.org';
-         const fileFormat = 'png'
+         const fileFormat = '.png'
          super(osmUrl, fileFormat);
     }
 
@@ -24,7 +24,7 @@ import BaseTileSource from './base-tile-source.js'
 
     buildTileURL(zoom, x, y){
         //Typical format for rest request is /{zoom}/{x}/{y}{@2x}.{format}
-        return 'https://' + this._getRandomServer() + this.baseUrl + '/' + zoom + '/' + x + '/' + y + '.' + this.fileFormat; 
+        return 'https://' + this._getRandomServer() + this.baseUrl + '/' + zoom + '/' + x + '/' + y + this.fileFormat; 
     }
  }
 

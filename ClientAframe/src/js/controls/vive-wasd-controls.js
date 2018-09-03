@@ -161,8 +161,6 @@ AFRAME.registerComponent('vive-wasd-controls', {
 
     //if (!velocity[data.adAxis] && !velocity[data.wsAxis]) { return; }
 
-    let currentPosition = camera.position;
-
  /*    console.log('current camera position: '
       + ' x: ' + currentPosition.x
       + ' y: ' + currentPosition.y
@@ -171,7 +169,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
       + ' maxDistance: ' + data.maxDistance
     ); */
 
-    let position = currentPosition;
+    let position = camera.position;
 
     var scaleFactor = 0.98;  //Factor by which the earth is enlarged when zoomed in/out.
 
@@ -239,6 +237,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
     //Use threejs camera object to prevent interferences with orbit controls
     if (!this.isVREnabled){
       //Move the 'traditional' camera object when not in VR mode. 
+      //camera.position.set(position.x, position.y, userPosition.altitude);
       camera.position.set(position.x, position.y, userPosition.altitude);
     } else {
       //Move the outer camera rig element object when in VR mode. (Camera position will be overriden by the VR Headset)

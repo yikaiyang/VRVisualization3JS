@@ -1,11 +1,13 @@
 'use strict';
-import Toolbox from '../earth-viewer/util/toolbox-class.js'
+import {Toolbox, TextureLoader} from '../earth-viewer/util/toolbox-class.js'
 import WienerLinienLayer from './visualization/wienerlinienlayer.js'
+import GeoConversion from './util/geoconversion.js'
 
 var App = window.App || {};
 var callbackHelper = App.callbackHelper;
 
 let toolbox = new Toolbox();
+let textureLoader = new TextureLoader();
 
 var scene = document.querySelector('a-scene').object3D;
 var earth = new THREE.Object3D();
@@ -66,8 +68,8 @@ var updateSceneLazy = function(
             0);
         var oldXtile = xtile;
         var oldYtile = ytile;
-        xtile = long2tile(lonStamp, zoom);
-        ytile = lat2tile(latStamp, zoom);
+        xtile = GeoConversion.long2tile(lonStamp, zoom);
+        ytile = GeoConversion.lat2tile(latStamp, zoom);
 
         if (Math.abs(oldXtile - xtile) >= 1 ||
             Math.abs(oldYtile - ytile) >= 1) {
@@ -99,8 +101,8 @@ var tilematerial = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 1, t
 function updateScene(position) {
     console.log('position.lon:', position.lon);
     console.log('position.lat:', position.lat);
-    xtile = long2tile(position.lon, zoom);
-    ytile = lat2tile(position.lat, zoom);
+    xtile = GeoConversion.long2tile(position.lon, zoom);
+    ytile = GeoConversion.lat2tile(position.lat, zoom);
 
     var tiles = {};
     var nextMinXtile, nextMaxXtile;
@@ -110,10 +112,10 @@ function updateScene(position) {
     earth.add(tileGroups);
     var oriGround = new THREE.Object3D();
     if (zoom >= ZOOM_FLAT) {
-        var xtileOri = long2tile(position.lon, ZOOM_FLAT);
-        var ytileOri = lat2tile(position.lat, ZOOM_FLAT);
-        var lonOri = tile2long(xtileOri, ZOOM_FLAT);
-        var latOri = tile2lat(ytileOri, ZOOM_FLAT);
+        var xtileOri = GeoConversion.long2tile(position.lon, ZOOM_FLAT);
+        var ytileOri = GeoConversion.lat2tile(position.lat, ZOOM_FLAT);
+        var lonOri = GeoConversion.tile2long(xtileOri, ZOOM_FLAT);
+        var latOri = GeoConversion.tile2lat(ytileOri, ZOOM_FLAT);
 
         // 3 - ground position
         oriGround.position.set(0, 0, R * 1000);
@@ -154,16 +156,16 @@ function updateScene(position) {
         var maxYtile = Math.floor((ytile_ + (Math.pow(2, (size - 1)) - 1)) / 2) * 2 + 1;
         var modulus = (zoom_ > 0) ? Math.pow(2, zoom_) : 0;
         for (var atile = minXtile; atile <= maxXtile; atile++) {
-            var lon1 = tile2long(atile, zoom_);
-            var lon2 = tile2long(atile + 1, zoom_);
+            var lon1 = GeoConversion.tile2long(atile, zoom_);
+            var lon2 = GeoConversion.tile2long(atile + 1, zoom_);
             var lon = (lon1 + lon2) / 2;
             for (var btile = minYtile; btile <= maxYtile; btile++) {
-                var lat1 = tile2lat(btile, zoom_);
-                var lat2 = tile2lat(btile + 1, zoom_);
+                var lat1 = GeoConversion.tile2lat(btile, zoom_);
+                var lat2 = GeoConversion.tile2lat(btile + 1, zoom_);
                 var lat = (lat1 + lat2) / 2;
-                var widthUp = measure(lat1, lon1, lat1, lon2);
-                var widthDown = measure(lat2, lon1, lat2, lon2);
-                var widthSide = measure(lat1, lon1, lat2, lon1);
+                var widthUp = GeoConversion.measure(lat1, lon1, lat1, lon2);
+                var widthDown = GeoConversion.measure(lat2, lon1, lat2, lon2);
+                var widthSide = GeoConversion.measure(lat1, lon1, lat2, lon1);
                 var id = 'z_' + zoom_ + '_' + atile + "_" + btile;
                 for (var zzz = 1; zzz <= 2; zzz++) {
                     var idNext = 'z_' + (zoom_ - zzz) + '_' + Math.floor(atile / Math.pow(2, zzz)) + "_" + Math.floor(btile / Math.pow(2, zzz));
@@ -197,7 +199,7 @@ function updateScene(position) {
                         tileShape.lineTo(xA, yA);
 
                         var geometry = new THREE.ShapeGeometry(tileShape);
-                        assignUVs(geometry);
+                        Toolbox.assignUVs(geometry);
                         var tileMesh = new THREE.Mesh(geometry,tilematerial);
                         var tileSupport = new THREE.Object3D(); //create an empty container
                         tileSupport.position.set(xTileShift * widthUp, -yTileShift * widthSide, 0);
@@ -205,7 +207,7 @@ function updateScene(position) {
                         oriGround.add(tileSupport);
                     }
                     (function(yourTileMesh, yourZoom, yourXtile, yourYtile) {
-                        textureFactory(
+                       textureLoader.textureFactory(
                             yourZoom,
                             yourXtile,
                             yourYtile,
@@ -223,5 +225,5 @@ function updateScene(position) {
             }
         }
     }
-    cancelOtherRequests(currentIds);
+    textureLoader.cancelOtherRequests(currentIds);
 }
