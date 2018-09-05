@@ -1,13 +1,26 @@
 'use strict';
-var App = App || {};
+import {Toolbox, TextureLoader} from '../earth-viewer/util/toolbox-class.js'
+import WienerLinienLayer from './visualization/wienerlinienlayer.js'
+import GeoConversion from './util/geoconversion.js'
+
+var App = window.App || {};
+var callbackHelper = App.callbackHelper;
+
+let toolbox = new Toolbox();
+let textureLoader = new TextureLoader();
+
 var scene = document.querySelector('a-scene').object3D;
 var earth = new THREE.Object3D();
 
-//Set callback to trigger manual rerendering of earth when a zoomlevel has changed.
+let visLayer = new WienerLinienLayer(scene,earth);
+visLayer.load();
+
 var defaultLatitude = 48.210033;
 var defaultLongitude = 16.363449;
 
-var controls = new Controls();
+
+class EarthProperties{}
+EarthProperties.defaultAltitude
 
 ///Variables
 var R = 6378.137; //radius in kilometers
@@ -17,46 +30,94 @@ var zoom = 0;
 var tileGroups;
 var tileGroup = [];
 
-var TILE_PROVIDER01 = '.tile.openstreetmap.org';
-var TILE_PROVIDER01_RANDOM = ['a', 'b', 'c'];
-var TILE_PROVIDER01_FILE_EXT = 'png';
+var ZOOM_SHIFT_SIZE = 4;
+var ZOOM_MIN = 1;
 
 var ZOOM_SHIFT_SIZE = 4;
 var ZOOM_MIN = 1;
-var MAX_TILEMESH = 400;
-var ZOOM_FLAT = 13;
+var ZOOM_FLAT = 13; //ZoomLevel
 var tileMeshes = {};
 var tileMeshQueue = [];
 
-var ZOOM_SHIFT_SIZE = 4;
-var ZOOM_MIN = 1;
-var MAX_TILEMESH = 400;
-var ZOOM_FLAT = 13;
-var tileMeshes = {};
-var tileMeshQueue = [];
-
-var defaultAlti = R * 1000;
-
-
-var params = getSearchParameters();
-var lonStamp = 0;
-var latStamp = 0;
-var altitude = (params.alti) ? params.alti : defaultAlti;
+var defaultAltitude = R * 1000;
+var lonStamp, latStamp;
 
 earth.position.set(0, 0, -R * 1000);
 scene.add(earth);
 
+/* 
+let spGeometry = new THREE.SphereGeometry(R * 1200, 42, 42);
+let spMaterial = new THREE.MeshNormalMaterial({
+    wireframe: false
+});
+let earthMesh = new THREE.Mesh(spGeometry, spMaterial);
+earthMesh.position.set(0, 0, -R * 1000);
+scene.add(earthMesh); */
+
+
+function addAtmosphere(){
+    const Shaders = {
+        'atmosphere' : {
+            uniforms: {},
+            vertexShader: [
+              'varying vec3 vNormal;',
+              'varying vec3 pos;',
+              'void main() {',
+                'float atmosphereRadius = 20.0;',
+                'pos = position;',
+                'vNormal = normalize( normalMatrix * normal );',
+                'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+              '}'
+            ].join('\n'),
+            fragmentShader: [
+              'varying vec3 vNormal;',
+              'varying vec3 pos;',
+              'vec3 atmosphereColor = vec3(0.17, 0.79, 0.88);',
+              'void main() {',
+                'float intensity = pow( 0.5 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) ), 2.0 );',
+                'if (pos.x < 1800000.0 && pos.x > -1800000.0 && pos.y < 1800000.0 && pos.y > -1800000.0 && pos.y < 1800000.0 && pos.y > -1800000.0) {',
+                '   gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0) ;',
+                '} else {',
+                '   gl_FragColor = vec4( atmosphereColor, 1.0 ) * intensity;',
+                '}',
+              '}'
+            ].join('\n')
+        }
+    };
+    
+    let shader = Shaders.atmosphere;
+    let uniforms = THREE.UniformsUtils.clone(shader.uniforms);
+
+    let shaderMaterial = new THREE.ShaderMaterial({
+        uniforms: uniforms,
+        vertexShader: shader.vertexShader,
+        fragmentShader: shader.fragmentShader,
+        side: THREE.BackSide,
+        blending: THREE.AdditiveBlending,
+        transparent: true
+    });
+
+    let atmGeometry = new THREE.SphereGeometry(R * 1000, 20, 20);
+    let mesh = new THREE.Mesh(atmGeometry, shaderMaterial);
+  
+    mesh.scale.multiplyScalar(2.0);
+    mesh.position.set(0,0,-R*1000);
+
+    scene.add(mesh);
+}
+
+addAtmosphere();
+
 var zoom = 4;
 var updateSceneLazy = function(
-        altitude = R * 1000, 
-        latitude = defaultLatitude, 
+        altitude = defaultAltitude,
+        latitude = defaultLatitude,
         longitude = defaultLongitude
-    ) 
+    )
     {
     //alert('updateSceneLazy: altitude: ' + altitude);
     ////////////////////////////////////////////////////////////
     var oldZoom = zoom;
-    //var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
     var zoom__ = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(altitude)), 19), 1));
 
     if (zoom__ > ZOOM_MIN) {
@@ -72,8 +133,8 @@ var updateSceneLazy = function(
             0);
         var oldXtile = xtile;
         var oldYtile = ytile;
-        xtile = long2tile(lonStamp, zoom);
-        ytile = lat2tile(latStamp, zoom);
+        xtile = GeoConversion.long2tile(lonStamp, zoom);
+        ytile = GeoConversion.lat2tile(latStamp, zoom);
 
         if (Math.abs(oldXtile - xtile) >= 1 ||
             Math.abs(oldYtile - ytile) >= 1) {
@@ -90,37 +151,38 @@ var updateSceneLazy = function(
             'alti': altitude
         });
     }
-    ////////////////////////////////////////////////////////////
-    //renderer.render(scene, camera);
 };
 
 updateSceneLazy();
 
-//Register re-render calback
-if (!!App.callbackHelper){
+//Set callback to trigger manual rerendering of earth when a zoomlevel has changed.
+if (!!callbackHelper){
     callbackHelper.setCallback(updateSceneLazy);
 }
 
-var tilematerial = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 0.4, transparent: true } ); // new line
+//Custom tilematerial which is using during loading of tiles
+var tilematerial = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 1, transparent: false } ); // new line
                        
 function updateScene(position) {
     console.log('position.lon:', position.lon);
     console.log('position.lat:', position.lat);
-    xtile = long2tile(position.lon, zoom);
-    ytile = lat2tile(position.lat, zoom);
+    xtile = GeoConversion.long2tile(position.lon, zoom);
+    ytile = GeoConversion.lat2tile(position.lat, zoom);
 
     var tiles = {};
-    var nextMinXtile, nextMaxXtile;
 
     earth.remove(tileGroups);
+    console.log('Removing tiles:' + tileGroups);
+    console.log(tileGroups)
+
     tileGroups = new THREE.Object3D();
     earth.add(tileGroups);
     var oriGround = new THREE.Object3D();
     if (zoom >= ZOOM_FLAT) {
-        var xtileOri = long2tile(position.lon, ZOOM_FLAT);
-        var ytileOri = lat2tile(position.lat, ZOOM_FLAT);
-        var lonOri = tile2long(xtileOri, ZOOM_FLAT);
-        var latOri = tile2lat(ytileOri, ZOOM_FLAT);
+        var xtileOri = GeoConversion.long2tile(position.lon, ZOOM_FLAT);
+        var ytileOri = GeoConversion.lat2tile(position.lat, ZOOM_FLAT);
+        var lonOri = GeoConversion.tile2long(xtileOri, ZOOM_FLAT);
+        var latOri = GeoConversion.tile2lat(ytileOri, ZOOM_FLAT);
 
         // 3 - ground position
         oriGround.position.set(0, 0, R * 1000);
@@ -161,16 +223,16 @@ function updateScene(position) {
         var maxYtile = Math.floor((ytile_ + (Math.pow(2, (size - 1)) - 1)) / 2) * 2 + 1;
         var modulus = (zoom_ > 0) ? Math.pow(2, zoom_) : 0;
         for (var atile = minXtile; atile <= maxXtile; atile++) {
-            var lon1 = tile2long(atile, zoom_);
-            var lon2 = tile2long(atile + 1, zoom_);
+            var lon1 = GeoConversion.tile2long(atile, zoom_);
+            var lon2 = GeoConversion.tile2long(atile + 1, zoom_);
             var lon = (lon1 + lon2) / 2;
             for (var btile = minYtile; btile <= maxYtile; btile++) {
-                var lat1 = tile2lat(btile, zoom_);
-                var lat2 = tile2lat(btile + 1, zoom_);
+                var lat1 = GeoConversion.tile2lat(btile, zoom_);
+                var lat2 = GeoConversion.tile2lat(btile + 1, zoom_);
                 var lat = (lat1 + lat2) / 2;
-                var widthUp = measure(lat1, lon1, lat1, lon2);
-                var widthDown = measure(lat2, lon1, lat2, lon2);
-                var widthSide = measure(lat1, lon1, lat2, lon1);
+                var widthUp = GeoConversion.measure(lat1, lon1, lat1, lon2);
+                var widthDown = GeoConversion.measure(lat2, lon1, lat2, lon2);
+                var widthSide = GeoConversion.measure(lat1, lon1, lat2, lon1);
                 var id = 'z_' + zoom_ + '_' + atile + "_" + btile;
                 for (var zzz = 1; zzz <= 2; zzz++) {
                     var idNext = 'z_' + (zoom_ - zzz) + '_' + Math.floor(atile / Math.pow(2, zzz)) + "_" + Math.floor(btile / Math.pow(2, zzz));
@@ -182,7 +244,7 @@ function updateScene(position) {
                         var tileEarth = new THREE.Object3D(); //create an empty container
                         tileEarth.rotation.set(0, (lon1 + 180) * Math.PI / 180, 0);
                         tileGroup[zShift].add(tileEarth);
-                        tileMesh = getTileMesh(R, zoom_, btile, Math.max(9 - zoom_, 0));
+                        tileMesh = toolbox.getTileMesh(R, zoom_, btile, Math.max(9 - zoom_, 0));
                         tileEarth.add(tileMesh);
                     } else {
                         var tileShape = new THREE.Shape();
@@ -204,7 +266,7 @@ function updateScene(position) {
                         tileShape.lineTo(xA, yA);
 
                         var geometry = new THREE.ShapeGeometry(tileShape);
-                        assignUVs(geometry);
+                        Toolbox.assignUVs(geometry);
                         var tileMesh = new THREE.Mesh(geometry,tilematerial);
                         var tileSupport = new THREE.Object3D(); //create an empty container
                         tileSupport.position.set(xTileShift * widthUp, -yTileShift * widthSide, 0);
@@ -212,7 +274,7 @@ function updateScene(position) {
                         oriGround.add(tileSupport);
                     }
                     (function(yourTileMesh, yourZoom, yourXtile, yourYtile) {
-                        textureFactory(
+                       textureLoader.textureFactory(
                             yourZoom,
                             yourXtile,
                             yourYtile,
@@ -230,5 +292,5 @@ function updateScene(position) {
             }
         }
     }
-    cancelOtherRequests(currentIds);
+    textureLoader.cancelOtherRequests(currentIds);
 }
