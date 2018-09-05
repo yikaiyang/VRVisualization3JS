@@ -22,6 +22,9 @@ class Toolbox {
     constructor(){
         this.geoTiles = {};
         this.geoTileQueue = [];
+
+        this.tileMaterial = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
+        this.tileMaterial.depthTest = false;
     }
 
     getTileMesh (r, zoom, ytile, power) {
@@ -115,7 +118,7 @@ class Toolbox {
             }
             myGeometry.uvsNeedUpdate = true;
         }
-        return new THREE.Mesh(this.geoTiles[id]);
+        return new THREE.Mesh(this.geoTiles[id], this.tileMaterial);
     }
 
     static assignUVs(geometry){

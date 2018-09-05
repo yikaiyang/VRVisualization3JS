@@ -29,11 +29,9 @@ var tileGroup = [];
 var ZOOM_SHIFT_SIZE = 4;
 var ZOOM_MIN = 1;
 
-var ZOOM_FLAT = 13;
-
 var ZOOM_SHIFT_SIZE = 4;
 var ZOOM_MIN = 1;
-var ZOOM_FLAT = 13;
+var ZOOM_FLAT = 13; //ZoomLevel
 var tileMeshes = {};
 var tileMeshQueue = [];
 
@@ -42,6 +40,70 @@ var lonStamp, latStamp;
 
 earth.position.set(0, 0, -R * 1000);
 scene.add(earth);
+
+/* 
+
+let spGeometry = new THREE.SphereGeometry(R * 1200, 42, 42);
+let spMaterial = new THREE.MeshNormalMaterial({
+    wireframe: false
+});
+let earthMesh = new THREE.Mesh(spGeometry, spMaterial);
+earthMesh.position.set(0, 0, -R * 1000);
+scene.add(earthMesh); */
+
+
+function addAtmosphere(){
+    const Shaders = {
+        'atmosphere' : {
+            uniforms: {},
+            vertexShader: [
+              'varying vec3 vNormal;',
+              'varying vec3 pos;',
+              'void main() {',
+                'float atmosphereRadius = 20.0;',
+                'pos = position;',
+                'vNormal = normalize( normalMatrix * normal );',
+                'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+              '}'
+            ].join('\n'),
+            fragmentShader: [
+              'varying vec3 vNormal;',
+              'varying vec3 pos;',
+              'vec3 atmosphereColor = vec3(0.17, 0.79, 0.88);',
+              'void main() {',
+                'float intensity = pow( 0.5 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) ), 2.0 );',
+                'if (pos.x < 1800000.0 && pos.x > -1800000.0 && pos.y < 1800000.0 && pos.y > -1800000.0 && pos.y < 1800000.0 && pos.y > -1800000.0) {',
+                '   gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0) ;',
+                '} else {',
+                '   gl_FragColor = vec4( atmosphereColor, 1.0 ) * intensity;',
+                '}',
+              '}'
+            ].join('\n')
+        }
+    };
+    
+    let shader = Shaders.atmosphere;
+    let uniforms = THREE.UniformsUtils.clone(shader.uniforms);
+
+    let shaderMaterial = new THREE.ShaderMaterial({
+        uniforms: uniforms,
+        vertexShader: shader.vertexShader,
+        fragmentShader: shader.fragmentShader,
+        side: THREE.BackSide,
+        blending: THREE.AdditiveBlending,
+        transparent: true
+    });
+
+    let atmGeometry = new THREE.SphereGeometry(R * 1000, 20, 20);
+    let mesh = new THREE.Mesh(atmGeometry, shaderMaterial);
+  
+    mesh.scale.multiplyScalar(2.0);
+    mesh.position.set(0,0,-R*1000);
+
+    scene.add(mesh);
+}
+
+addAtmosphere();
 
 var zoom = 4;
 var updateSceneLazy = function(
@@ -105,9 +167,11 @@ function updateScene(position) {
     ytile = GeoConversion.lat2tile(position.lat, zoom);
 
     var tiles = {};
-    var nextMinXtile, nextMaxXtile;
 
     earth.remove(tileGroups);
+    console.log('Removing tiles:' + tileGroups);
+    console.log(tileGroups)
+
     tileGroups = new THREE.Object3D();
     earth.add(tileGroups);
     var oriGround = new THREE.Object3D();
