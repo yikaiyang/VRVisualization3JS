@@ -4,7 +4,7 @@
 
 const gulp = require('gulp');
 const connect = require('gulp-connect');
-const qunit = require('gulp-qunit');
+//const qunit = require('gulp-qunit');
 
 
 /**
@@ -33,9 +33,9 @@ gulp.task('webserver-public', function(){
 /**
  * Starts QUnit tests in PhantomJS
  */
-gulp.task('qunit', () => {
+/* gulp.task('qunit', () => {
     return gulp.src('./test/testrunner.html').pipe(qunit());
-})
+}) */
 
 gulp.task('data',function(){
     gulp.src('./src/data/*')

@@ -15,15 +15,22 @@ var earth = new THREE.Object3D();
 let visLayer = new WienerLinienLayer(scene,earth);
 visLayer.load();
 
-var defaultLatitude = 48.210033;
-var defaultLongitude = 16.363449;
-
-
+/**
+ * Earth Viewer constants
+ */
 class EarthProperties{}
-EarthProperties.defaultAltitude
+EarthProperties.RADIUS = 6378.137; //The default radius of the earth in km.
+EarthProperties.DEFAULT_LATITUDE = 48.210033;
+EarthProperties.DEFAULT_LONGITUDE = 16.363449;
+EarthProperties.DEFAULT_ALTITUDE = EarthProperties.RADIUS * 1000;
+
+EarthProperties.MIN_ZOOM_LEVEL = 4;
+EarthProperties.ZOOM_LEVEL_FLAT = 13; //At this zoom level all tiles are rendered in a flat style (no curvatures)
+EarthProperties.ZOOM_SHIFT_SIZE = 4;
+Object.freeze(EarthProperties);
 
 ///Variables
-var R = 6378.137; //radius in kilometers
+const R = 6378.137; //radius in kilometers
 var xtile = 0;
 var ytile = 0;
 var zoom = 0;
@@ -32,14 +39,8 @@ var tileGroup = [];
 
 var ZOOM_SHIFT_SIZE = 4;
 var ZOOM_MIN = 1;
+var ZOOM_FLAT = 13; 
 
-var ZOOM_SHIFT_SIZE = 4;
-var ZOOM_MIN = 1;
-var ZOOM_FLAT = 13; //ZoomLevel
-var tileMeshes = {};
-var tileMeshQueue = [];
-
-var defaultAltitude = R * 1000;
 var lonStamp, latStamp;
 
 earth.position.set(0, 0, -R * 1000);
@@ -53,6 +54,122 @@ let spMaterial = new THREE.MeshNormalMaterial({
 let earthMesh = new THREE.Mesh(spGeometry, spMaterial);
 earthMesh.position.set(0, 0, -R * 1000);
 scene.add(earthMesh); */
+
+class EarthViewer{
+    constructor(scene){
+        this.scene = scene;
+    }
+
+    /**
+     * Initializes 'private' properties used by the earth viewer
+     */
+    _initProperties(){
+        this.tileGroups;
+        this.tileGroup = [];
+
+        //Zoom levels
+        this.zoom = 0;
+    }
+
+    _addAtmosphere(){
+        const Shaders = {
+            'atmosphere' : {
+                uniforms: {},
+                vertexShader: [
+                  'varying vec3 vNormal;',
+                  'varying vec3 pos;',
+                  'void main() {',
+                    'float atmosphereRadius = 20.0;',
+                    'pos = position;',
+                    'vNormal = normalize( normalMatrix * normal );',
+                    'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+                  '}'
+                ].join('\n'),
+                fragmentShader: [
+                  'varying vec3 vNormal;',
+                  'varying vec3 pos;',
+                  'vec3 atmosphereColor = vec3(0.17, 0.79, 0.88);',
+                  'void main() {',
+                    'float intensity = pow( 0.5 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) ), 2.0 );',
+                    'if (pos.x < 1800000.0 && pos.x > -1800000.0 && pos.y < 1800000.0 && pos.y > -1800000.0 && pos.y < 1800000.0 && pos.y > -1800000.0) {',
+                    '   gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0) ;',
+                    '} else {',
+                    '   gl_FragColor = vec4( atmosphereColor, 1.0 ) * intensity;',
+                    '}',
+                  '}'
+                ].join('\n')
+            }
+        };
+        
+        let shader = Shaders.atmosphere;
+        let uniforms = THREE.UniformsUtils.clone(shader.uniforms);
+    
+        let shaderMaterial = new THREE.ShaderMaterial({
+            uniforms: uniforms,
+            vertexShader: shader.vertexShader,
+            fragmentShader: shader.fragmentShader,
+            side: THREE.BackSide,
+            blending: THREE.AdditiveBlending,
+            transparent: true
+        });
+    
+        let atmGeometry = new THREE.SphereGeometry(R * 1000, 20, 20);
+        let mesh = new THREE.Mesh(atmGeometry, shaderMaterial);
+      
+        mesh.scale.multiplyScalar(2.0);
+        mesh.position.set(0,0,-R*1000);
+    
+        this.scene.add(mesh);
+    }
+
+    rerenderEarth(
+        altitude = EarthProperties.DEFAULT_ALTITUDE,
+        latitude = EarthProperties.DEFAULT_LATITUDE,
+        longitude = EarthProperties.DEFAULT_LONGITUDE
+    ){
+         //alert('updateSceneLazy: altitude: ' + altitude);
+        ////////////////////////////////////////////////////////////
+        let oldZoom = zoom;
+        let zoom__ = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(altitude)), 19), 1));
+
+        if (zoom__ > ZOOM_MIN) {
+            zoom = zoom__;
+        }
+
+        if (lonStamp != longitude || latStamp != longitude) {
+            lonStamp = longitude;
+            latStamp = latitude;
+            earth.rotation.set(
+                latitude * Math.PI / 180,
+                (-longitude) * Math.PI / 180,
+                0);
+            var oldXtile = xtile;
+            var oldYtile = ytile;
+            xtile = GeoConversion.long2tile(lonStamp, zoom);
+            ytile = GeoConversion.lat2tile(latStamp, zoom);
+
+            if (Math.abs(oldXtile - xtile) >= 1 ||
+                Math.abs(oldYtile - ytile) >= 1) {
+                updateScene({
+                    'lon': lonStamp,
+                    'lat': latStamp,
+                    'alti': altitude
+                });
+            }
+        } else if (Math.abs(zoom - oldZoom) >= 1) {
+            updateScene({
+                'lon': lonStamp,
+                'lat': latStamp,
+                'alti': altitude
+            });
+        }
+    }
+
+    _updateScene(){
+        
+    }
+
+}
 
 
 function addAtmosphere(){
@@ -110,9 +227,9 @@ addAtmosphere();
 
 var zoom = 4;
 var updateSceneLazy = function(
-        altitude = defaultAltitude,
-        latitude = defaultLatitude,
-        longitude = defaultLongitude
+        altitude = EarthProperties.DEFAULT_ALTITUDE,
+        latitude = EarthProperties.DEFAULT_LATITUDE,
+        longitude = EarthProperties.DEFAULT_LONGITUDE
     )
     {
     //alert('updateSceneLazy: altitude: ' + altitude);
