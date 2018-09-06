@@ -9,9 +9,9 @@
             "request": "launch",
             "name": "Launch Chrome / Client",
             "url": "http://localhost:8888",
-            "webRoot": "${workspaceFolder}/Client/dist",
+            "webRoot": "${workspaceFolder}/ClientAframe/dist",
             "pathMapping": {
-                "/": "${workspaceFolder}/Client/src"
+                "/": "${workspaceFolder}/ClientAframe/src"
             }
         }
     ]
