@@ -6,8 +6,6 @@ import GeoConversion from './util/geoconversion.js'
 var App = window.App || {};
 var callbackHelper = App.callbackHelper;
 
-
-
 /**
  * Earth Viewer constants
  */
@@ -20,6 +18,8 @@ EarthProperties.DEFAULT_ALTITUDE = EarthProperties.RADIUS * 1000;
 EarthProperties.ZOOM_LEVEL_MIN = 1;
 EarthProperties.ZOOM_LEVEL_FLAT = 13; //At this zoom level all tiles are rendered in a flat style (no curvatures)
 EarthProperties.ZOOM_SHIFT_SIZE = 4;
+
+EarthProperties.TILE_COLOR = '#EFE9E1';
 Object.freeze(EarthProperties);
 
 class EarthViewer{
@@ -28,10 +28,12 @@ class EarthViewer{
         this._initEarthObject();
         this._initProperties();
         this._initCallback();
+
+        this._loadVisualization();
     }
 
     /**
-     * Initializes 'private' properties used by the earth viewer
+     * Initializes 'private/internal' properties used by the earth viewer
      */
     _initProperties(){
         this.tileGroups = new THREE.Object3D();
@@ -58,15 +60,20 @@ class EarthViewer{
         this.earth = new THREE.Object3D();
         this.earth.position.set(0, 0, -1000* EarthProperties.RADIUS);
         scene.add(this.earth);
+        this._addAtmosphere();
     }
 
     _loadVisualization(){
-        let visLayer = new WienerLinienLayer(scene,earth);
+        let visLayer = new WienerLinienLayer(scene, this.earth);
         visLayer.load();
     }
 
     _initCallback(){
-        callbackHelper.setCallback(this.rerenderEarth);
+        callbackHelper.setCallback(
+            (altitude, latitude, longitude) => {
+                this.rerenderEarth(altitude,latitude,longitude);
+            }
+        );
     }
 
     _addAtmosphere(){
@@ -115,7 +122,7 @@ class EarthViewer{
         let mesh = new THREE.Mesh(atmGeometry, shaderMaterial);
       
         mesh.scale.multiplyScalar(2.0);
-        mesh.position.set(0,0,-R*1000);
+        mesh.position.set(0,0,- EarthProperties.RADIUS * 1000);
     
         this.scene.add(mesh);
     }
@@ -128,13 +135,12 @@ class EarthViewer{
         this.earth.position.set(x, y, z);
     }
 
-
     rerenderEarth(
         altitude = EarthProperties.DEFAULT_ALTITUDE,
         latitude = EarthProperties.DEFAULT_LATITUDE,
         longitude = EarthProperties.DEFAULT_LONGITUDE
     ){
-        alert('updateSceneLazy: altitude: ' + altitude);
+        console.log('rerenderEarth: altitude: ' + altitude + ' lat: '+ latitude + ' lon: '+ longitude);
         ////////////////////////////////////////////////////////////
         let oldZoom = this.zoom;
 
@@ -167,7 +173,7 @@ class EarthViewer{
             //If difference between old tile and new tile is larger than 1. Then update earth tiles.
             if (Math.abs(oldXtile - this.xtile) >= 1 ||
                 Math.abs(oldYtile - this.ytile) >= 1) {
-                this._updateScene({
+                this._redrawEarth({
                     'lon': this.lonStamp,
                     'lat': this.latStamp,
                     'alti': altitude
@@ -175,7 +181,7 @@ class EarthViewer{
             }
         } else if (Math.abs(zoom - oldZoom) >= 1) {
             //If zoom level has changed by 1 then update the earth.
-            this._updateScene({
+            this._redrawEarth({
                 'lon': this.lonStamp,
                 'lat': this.latStamp,
                 'alti': altitude
@@ -187,7 +193,7 @@ class EarthViewer{
      * Completely redraws (loads new tiles) the earth using the given position.
      * @param {*} position 
      */
-    _updateScene(position){
+    _redrawEarth(position){
         //alert('updateScene: ' + position);
         console.log('position.lon:', position.lon);
         console.log('position.lat:', position.lat);
