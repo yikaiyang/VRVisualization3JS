@@ -1,5 +1,6 @@
 'use strict';
-import {Toolbox, TextureLoader} from '../earth-viewer/util/toolbox-class.js'
+import {TileTextureProvider} from './util/tile-texture-provider.js'
+import {TileMeshProvider} from "./util/tile-mesh-provider.js";
 import WienerLinienLayer from './visualization/wienerlinienlayer.js'
 import GeoConversion from './util/geoconversion.js'
 
@@ -10,16 +11,16 @@ var callbackHelper = App.callbackHelper;
  * Earth Viewer constants
  */
 class EarthProperties{}
-EarthProperties.RADIUS = 6378.137; //The default radius of the earth in km.
+EarthProperties.RADIUS = 6378137; //The default radius of the earth in km.
 EarthProperties.DEFAULT_LATITUDE = 48.210033;
 EarthProperties.DEFAULT_LONGITUDE = 16.363449;
-EarthProperties.DEFAULT_ALTITUDE = EarthProperties.RADIUS * 1000;
+EarthProperties.DEFAULT_ALTITUDE = EarthProperties.RADIUS;
 
 EarthProperties.ZOOM_LEVEL_MIN = 1;
 EarthProperties.ZOOM_LEVEL_FLAT = 13; //At this zoom level all tiles are rendered in a flat style (no curvatures)
 EarthProperties.ZOOM_SHIFT_SIZE = 4;
 
-EarthProperties.TILE_COLOR = '#EFE9E1';
+EarthProperties.TILE_COLOR = 0xEFE9E1;
 Object.freeze(EarthProperties);
 
 class EarthViewer{
@@ -27,7 +28,7 @@ class EarthViewer{
         this.scene = scene;
         this._initEarthObject();
         this._initProperties();
-        this._initCallback();
+        this._registerCallback();
 
         this._loadVisualization();
     }
@@ -40,10 +41,10 @@ class EarthViewer{
         this.tileGroup = [];
 
         //Toolbox
-        this.toolbox = new Toolbox();
+        this.tileMeshProvider = new TileMeshProvider();
 
         //Texture loader
-        this.textureLoader = new TextureLoader();
+        this.textureLoader = new TileTextureProvider();
 
         //Zoom levels
         this.zoom = 4;
@@ -58,7 +59,7 @@ class EarthViewer{
 
     _initEarthObject(){
         this.earth = new THREE.Object3D();
-        this.earth.position.set(0, 0, -1000* EarthProperties.RADIUS);
+        this.earth.position.set(0, 0, -EarthProperties.RADIUS);
         scene.add(this.earth);
         this._addAtmosphere();
     }
@@ -68,7 +69,7 @@ class EarthViewer{
         visLayer.load();
     }
 
-    _initCallback(){
+    _registerCallback(){
         callbackHelper.setCallback(
             (altitude, latitude, longitude) => {
                 this.rerenderEarth(altitude,latitude,longitude);
@@ -118,11 +119,11 @@ class EarthViewer{
             transparent: true
         });
     
-        let atmGeometry = new THREE.SphereGeometry(R * 1000, 20, 20);
+        let atmGeometry = new THREE.SphereGeometry(EarthProperties.RADIUS, 20, 20);
         let mesh = new THREE.Mesh(atmGeometry, shaderMaterial);
       
         mesh.scale.multiplyScalar(2.0);
-        mesh.position.set(0,0,- EarthProperties.RADIUS * 1000);
+        mesh.position.set(0,0, -EarthProperties.RADIUS);
     
         this.scene.add(mesh);
     }
@@ -262,46 +263,40 @@ class EarthViewer{
                 var lon2 = GeoConversion.tile2long(atile + 1, zoom_);
                 var lon = (lon1 + lon2) / 2;
                 for (var btile = minYtile; btile <= maxYtile; btile++) {
-                    var lat1 = GeoConversion.tile2lat(btile, zoom_);
-                    var lat2 = GeoConversion.tile2lat(btile + 1, zoom_);
-                    var lat = (lat1 + lat2) / 2;
-                    var widthUp = GeoConversion.measure(lat1, lon1, lat1, lon2);
-                    var widthDown = GeoConversion.measure(lat2, lon1, lat2, lon2);
-                    var widthSide = GeoConversion.measure(lat1, lon1, lat2, lon1);
+               
                     var id = 'z_' + zoom_ + '_' + atile + "_" + btile;
-                    for (var zzz = 1; zzz <= 2; zzz++) {
+                    for (var zzz = 1; zzz <= 2; zzz++) {                        
                         var idNext = 'z_' + (zoom_ - zzz) + '_' + Math.floor(atile / Math.pow(2, zzz)) + "_" + Math.floor(btile / Math.pow(2, zzz));
                         tiles[idNext] = {};
                     }
                     if (!tiles.hasOwnProperty(id)) {
+                        
                         if (zoom_ < EarthProperties.ZOOM_LEVEL_FLAT) {
+                            //Draw curved tiles
                             var tileMesh;
                             var tileEarth = new THREE.Object3D(); //create an empty container
                             tileEarth.rotation.set(0, (lon1 + 180) * Math.PI / 180, 0);
                             this.tileGroup[zShift].add(tileEarth);
-                            tileMesh = this.toolbox.getTileMesh(R, zoom_, btile, Math.max(9 - zoom_, 0));
+                            tileMesh = this.tileMeshProvider.getTileMesh(R, zoom_, btile, Math.max(9 - zoom_, 0));
                             tileEarth.add(tileMesh);
                         } else {
-                            var tileShape = new THREE.Shape();
+                            //Draw flat tiles
+
+                            /**
+                             * Calculating some points, i guess?
+                             */
+                            var lat1 = GeoConversion.tile2lat(btile, zoom_);
+                            var lat2 = GeoConversion.tile2lat(btile + 1, zoom_);
+                            var lat = (lat1 + lat2) / 2;
+                            var widthUp = GeoConversion.measure(lat1, lon1, lat1, lon2);
+                            var widthDown = GeoConversion.measure(lat2, lon1, lat2, lon2);
+                            var widthSide = GeoConversion.measure(lat1, lon1, lat2, lon1);
+
+                            var tileMesh = this.tileMeshProvider.getFlatTileMesh(widthUp, widthDown);
+
                             var xTileShift = (atile - xtile_) + (xtile_ % Math.pow(2, zoom_ - EarthProperties.ZOOM_LEVEL_FLAT));
                             var yTileShift = (btile - ytile_) + (ytile_ % Math.pow(2, zoom_ - EarthProperties.ZOOM_LEVEL_FLAT));
-                            var xA = 0;
-                            var xB = xA;
-                            var xC = widthUp;
-                            var xD = xC;
-                            var yA = -widthSide;
-                            var yB = 0;
-                            var yC = yB;
-                            var yD = yA;
-                            tileShape.moveTo(xA, yA);
-                            tileShape.lineTo(xB, yB);
-                            tileShape.lineTo(xC, yC);
-                            tileShape.lineTo(xD, yD);
-                            tileShape.lineTo(xA, yA);
-    
-                            var geometry = new THREE.ShapeGeometry(tileShape);
-                            Toolbox.assignUVs(geometry);
-                            var tileMesh = new THREE.Mesh(geometry);
+
                             var tileSupport = new THREE.Object3D(); //create an empty container
                             tileSupport.position.set(xTileShift * widthUp, -yTileShift * widthSide, 0);
                             tileSupport.add(tileMesh)
@@ -331,4 +326,4 @@ class EarthViewer{
     }
 }
 
-export {EarthViewer};
+export {EarthViewer, EarthProperties};
