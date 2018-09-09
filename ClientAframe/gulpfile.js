@@ -43,15 +43,16 @@ gulp.task('data',function(){
         .pipe(connect.reload());
 })
 
+
 gulp.task('libs', function(){
     gulp.src('./src/libs/*')
         .pipe(gulp.dest('./dist/libs/'))
         .pipe(connect.reload());
 })
 
-gulp.task('images', function(){
-    gulp.src('./src/images/*')
-        .pipe(gulp.dest('./dist/images/')
+gulp.task('img', function(){
+    gulp.src('./src/img/**/*')
+        .pipe(gulp.dest('./dist/img/')
     )
 });
 
@@ -95,6 +96,6 @@ gulp.task('watch', function(){
         .pipe(open({uri: 'http://localhost'}));
 }) */
 
-gulp.task('default', ['html', 'css', 'js', 'libs', 'data', 'webserver', 'watch', 'images', 'samples']);
+gulp.task('default', ['html', 'css', 'js', 'img', 'libs', 'data', 'webserver', 'watch', 'samples']);
 
-gulp.task('default-public', ['html', 'css', 'js', 'libs', 'data', 'webserver', 'webserver-public', 'watch', 'images', 'samples']);
+gulp.task('default-public', ['html', 'css', 'js', 'img', 'libs', 'data', 'webserver', 'webserver-public', 'watch', 'images', 'samples']);
