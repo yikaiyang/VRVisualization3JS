@@ -1,8 +1,7 @@
 import FileLoader from '../../util/fileloader.js';
 import GeoConversion from '../util/geoconversion.js';
+import {EarthProperties} from '../earth-viewer.js';
 
-var App = App || {};
-var callbackHelper = App.callbackHelper;
 class WienerLinienLayer {
     constructor(scene, earth){
         this.scene = scene;
@@ -10,17 +9,16 @@ class WienerLinienLayer {
         this.scope = this;
 
         this.color = new THREE.Color("rgb(187,57,70)");
-        this.initGeometries();
+        this._initGeometries();
     }
 
     load(){
-        this.loadStationData(this.createStationDataCallback);
-        //this.createStationData(stationData.data);
+        this._loadStationData(this._createStationDataCallback);
     }
 
 
     ///Private methods
-    initGeometries(){
+    _initGeometries(){
         this.mergedGeometry = new THREE.Geometry();   
         this.primitiveGeometry = new THREE.BoxGeometry(10,10,100);
         this.primitiveMaterial = new THREE.MeshBasicMaterial({
@@ -28,7 +26,7 @@ class WienerLinienLayer {
         });
     }
 
-    loadStationData(callback){
+    _loadStationData(callback){
         if (typeof Papa === undefined){
             console.error('Error: Framework not initialized.\n');
             return;
@@ -57,7 +55,7 @@ class WienerLinienLayer {
      * @param {} scope    Scope of the layer class (for access to methods and member variables) 
      * @param {*} stationData   Station data as text
      */
-    createStationDataCallback(scope, stationData){
+    _createStationDataCallback(scope, stationData){
         if (stationData === undefined){
             console.error('ERROR: stationData is undefined\n');
             return;
@@ -70,15 +68,15 @@ class WienerLinienLayer {
             let stationLat = stationData[i][latIdx];
             let stationLong = stationData[i][longIdx];
 
-            scope.createPrimitive(scope, stationLat, stationLong);
+            scope._createPrimitive(scope, stationLat, stationLong);
         }
 
         let cubes = new THREE.Mesh(scope.mergedGeometry, scope.primitiveMaterial);
         scope.earth.add(cubes);
     }
 
-    createPrimitive(scope, latitude, longitude){
-        let position = GeoConversion.WGStoGlobeCoord(latitude, longitude, R * 1000);
+    _createPrimitive(scope, latitude, longitude){
+        let position = GeoConversion.WGStoGlobeCoord(latitude, longitude, EarthProperties.RADIUS);
         if (position == undefined){
             return;
         }

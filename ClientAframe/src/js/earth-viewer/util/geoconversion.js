@@ -1,6 +1,8 @@
 /**
  * Helper class for conversion methods related to geocoordinates and the earthviewer.
  */
+
+ import {EarthProperties} from '../earth-viewer.js'
 class GeoConversion {
     static WGStoGlobeCoord(latitude = 0.0, longitude = 0.0, radius = 0.0){
         if (!!latitude && !!longitude && !!radius){
@@ -34,25 +36,16 @@ class GeoConversion {
     }
     
     static measure(lat1, lon1, lat2, lon2) { // generally used geo measurement function
-        // var R = 6378.137; // Radius of earth in KM
         var dLat = (lat2 - lat1) * Math.PI / 180;
         var dLon = (lon2 - lon1) * Math.PI / 180;
         var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
             Math.sin(dLon / 2) * Math.sin(dLon / 2);
         var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        var d = R * c;
-        return d * 1000; // meters
+        var d = EarthProperties.RADIUS * c;
+        return d; // meters
     }
     
-    static lonOffsetMeter2lon(lon, lat, x) {
-        return x / (R * Math.cos(lat)) + lon;
-    }
-    
-    static latOffsetMeter2lat(lat, y) {
-        var R = 6378.137;
-        return (y / R) + lat;
-    }
 }
 
 export default GeoConversion;

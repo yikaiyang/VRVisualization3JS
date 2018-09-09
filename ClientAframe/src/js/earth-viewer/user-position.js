@@ -32,4 +32,5 @@ class UserPosition {
     }
 }
 
+//TODO: Move this to an intializer
 App.UserPosition = new UserPosition();
