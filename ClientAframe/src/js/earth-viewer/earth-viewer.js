@@ -107,7 +107,7 @@ class EarthViewer{
             }
         };
         
-        let shader = Shaders.atmosphere;
+        const shader = Shaders.atmosphere;
         let uniforms = THREE.UniformsUtils.clone(shader.uniforms);
     
         let shaderMaterial = new THREE.ShaderMaterial({
@@ -143,13 +143,13 @@ class EarthViewer{
     ){
         console.log('rerenderEarth: altitude: ' + altitude + ' lat: '+ latitude + ' lon: '+ longitude);
         ////////////////////////////////////////////////////////////
-        let oldZoom = this.zoom;
+        const oldZoom = this.zoom;
 
         //Check Zoom level boundaries
-        let zoom__ = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(altitude)), 19), 1));
+        let newZoomLevel = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(altitude)), 19), 1));
 
-        if (zoom__ > EarthProperties.ZOOM_LEVEL_MIN) {
-            this.zoom = zoom__;
+        if (newZoomLevel > EarthProperties.ZOOM_LEVEL_MIN) {
+            this.zoom = newZoomLevel;
         } else {
             this.zoom = EarthProperties.ZOOM_LEVEL_MIN;
         }
