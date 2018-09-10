@@ -41,29 +41,38 @@
     padding: 18px;
     padding-left: 0px;
     margin-top: 14px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.menubutton:hover div{
+    background-color: #FFFFFF;;
 }
 
 .menubutton div {
     height: 2px;
     width: 16px;
-    background-color: white;
+    background-color: #A2A2A2;;
     margin-bottom: 3px;
 }
 
 /**
  * Menu button in expanded sidebar state.
  */
-
-.menubutton.showclosing .upperbar{
-    transform: rotate(45deg);
+.menubutton.isactive{
+    margin-bottom: 0px;
 }
 
-.menubutton.showclosing .middlebar{
-
+.menubutton.isactive .upperbar{
+    transform: rotate(-45deg) translate(-6px, 6px);
 }
 
-.menubutton.showclosing .lowerbar{
-    /*transform: rotate(-45deg);*/
+.menubutton.isactive .middlebar{
+    opacity: 0;
+}
+
+.menubutton.isactive .lowerbar{
+    transform: rotate(45deg) translate(-1px, -1px);
 }
 
 /**
