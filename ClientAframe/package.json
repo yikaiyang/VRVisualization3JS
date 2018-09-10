@@ -20,6 +20,7 @@
         "gulp-connect": "^5.5.0",
         "gulp-open": "^3.0.1",
         "gulp-qunit": "^2.0.1",
+        "gulp-sass": "^4.0.1",
         "jest": "^23.5.0",
         "npm": "^6.1.0",
         "papaparse": "^4.5.1",
