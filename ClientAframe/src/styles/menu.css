@@ -20,9 +20,12 @@
     transform: translate(0%, 0);
 }
 
+.menubar-container {
+    padding-left: 58px;
+}
+
 #menubar nav {
     margin-top: 58px;
-    padding-left: 58px;
 }
 
 #menubar nav ul {
@@ -35,14 +38,37 @@
 .menubutton {
     height: 16px;
     width: 16px;
+    padding: 18px;
+    padding-left: 0px;
+    margin-top: 14px;
 }
 
-.menubutton .upperbar{
+.menubutton div {
     height: 2px;
     width: 16px;
     background-color: white;
+    margin-bottom: 3px;
 }
 
+/**
+ * Menu button in expanded sidebar state.
+ */
+
+.menubutton.showclosing .upperbar{
+    transform: rotate(45deg);
+}
+
+.menubutton.showclosing .middlebar{
+
+}
+
+.menubutton.showclosing .lowerbar{
+    /*transform: rotate(-45deg);*/
+}
+
+/**
+ *  Menu items in navigation bar (Explore maps/Visualization/Settings)
+ **/
 
 .menu-item {
     font: 28pt;
