@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: Helvetica, Arial, Sans-Serif;
+    font-family: 'Roboto', Helvetica, Arial, Sans-Serif;
 }
 
 .ui {
@@ -38,11 +38,12 @@ form {
     background-repeat: no-repeat;
     background-size: 16px;
     background-position: center;
+    cursor: pointer;
 }
 
 #searchbar #textinput{
     border: none;
-    font-family: DINAlternate-Bold;
+   
     margin-left: 14px;
     border: 0;
     padding: 0;
@@ -64,13 +65,11 @@ form {
 }
 
 #search-results li {
-    font-family: DINAlternate-Bold;
-
     margin: 0;
     padding: 0px;
-
     height: 42px;
     border-bottom: 1px solid #EDEDED;
+    cursor: pointer;
 }
 
 #search-results li:last-child{
