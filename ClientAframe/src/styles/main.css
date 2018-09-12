@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: 'Roboto', Helvetica, Arial, Sans-Serif;
+    font-family:  Helvetica, Arial, Sans-Serif;
 }
 
 .ui {
@@ -43,7 +43,6 @@ form {
 
 #searchbar #textinput{
     border: none;
-   
     margin-left: 14px;
     border: 0;
     padding: 0;

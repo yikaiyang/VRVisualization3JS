@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="search">
         <form id="searchbar">
             <div class="search-container">
                 <button class="menu" type="button" onclick="openMenu()"></button>
@@ -10,15 +10,10 @@
 
         <div id="search-results">
             <ul>
-                <li>
-                    <span class="result-name">Vienna</span>
-                    <span class="delimiter">•</span>
-                    <span class="result-city">Austria</span>
-                </li>
-                <li>
-                    <span class="result-name">Vienna</span> 
-                    <span class="delimiter">•</span>
-                    <span class="result-city">Austria</span>
+                <li v-bind:key="resultItem.id" v-for="resultItem in results">
+                    <span class="result-item result-name">{{resultItem.result}}</span>
+                    <span class="result-item delimiter">•</span>
+                    <span class="result-item result-city">{{resultItem.country}}</span>
                 </li>
             </ul>
         </div>
@@ -30,14 +25,30 @@ export default {
   name: "Search",
   data: function() {
     return {
-      result: "Vienna",
-      country: "Austria"
+        results: [
+            {
+                result: 'Vienna',
+                country: 'Austria',
+            },
+            {
+                result: 'Prag',
+                country: 'Czech'
+            },
+            {
+                result: 'ASfsaf',
+                country: 'AfsdfLand'
+            }
+        ]
     };
   }
 };
 </script>
 
 <style scoped>
+
+#search {
+}
+
 form {
     background: #FFFFFF;
     box-shadow: 0 2px 2px 0 rgba(169,169,169,0.50);
@@ -59,32 +70,32 @@ form {
     background-color: white;
 }
 
-/* #searchbar >>> .menu{
+#searchbar >>> .menu{
     border: 0px;
     height: 48px;
     width: 48px;
     background-color: white;
-    background-image: url('../img/icons/menu.svg');
+    background-image: url('../assets/icons/Search/menu.svg');
     background-repeat: no-repeat;
     background-size: 16px;
     background-position: center;
     cursor: pointer;
-} */
-/*
-#searchbar #textinput{
+} 
+
+#searchbar >>> #textinput{
     border: none;
     margin-left: 14px;
     border: 0;
     padding: 0;
     height: 48px;
     font-size: 14px;
-    flex-grow: 2;   
-    font-size: 14px;
+    flex-grow: 2;
     color: #616569;
     outline: none;
 }
 
 #search-results {
+    width: 340px;
     background: #FFFFFF;
     box-shadow: 0 2px 2px 0 rgba(169,169,169,0.50);
     border-radius: 2px;
@@ -93,7 +104,7 @@ form {
     cursor: default;
 }
 
-#search-results li {
+#search-results >>> li {
     margin: 0;
     padding: 0px;
     height: 42px;
@@ -101,22 +112,23 @@ form {
     cursor: pointer;
 }
 
-#search-results li:last-child{
+#search-results >>> li:last-child{
     border-bottom: 0px;
 }
 
-#search-results li:hover {
+#search-results >>> li:hover {
     background-color: #F4F4F4;
 }
 
-#search-results li span {
-    height: 42px;
+#search-results >>> span {
     display: inline-flex;
-    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 42px;
     font-size: 14px;
 }
 
-#search-results .result-name{
+#search-results >>> .result-name{
     color: #2D2D2D;
     margin-right: 4px;
 }
@@ -125,20 +137,20 @@ form {
     color: #D8D8D8;
 }
 
-#search-results .result-city{
+#search-results >>> .result-city{
     color: #878787;
     margin-left: 4px;
 }
 
-#search-results ul {
+#search-results >>> ul {
     margin-left: 0;
     padding-left: 0;
 
     list-style: none;
 }
 
-#search-results .result-name {
+#search-results >>> .result-name {
     margin-left: 18px;
-} */
+}
 
 </style>
