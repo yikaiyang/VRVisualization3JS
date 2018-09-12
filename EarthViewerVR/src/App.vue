@@ -1,9 +1,7 @@
 <template>
   <div id="app">
-    <div class="ui">
       <Menubar></Menubar>
-      <router-view></router-view>
-    </div>
+      <router-view class="ui"></router-view>
   </div>
 </template>
 
@@ -30,14 +28,20 @@ export default {
   font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+  width: 100%;
+
+  //Make text not selectable
+  user-select: none;
 }
 
 .ui {
   position: absolute;
+  z-index: 100;
 }
 
 body{
-  background-color: #000914;
+  //background-color: #000914;
 }
 
 </style>

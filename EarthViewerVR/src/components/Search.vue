@@ -3,17 +3,26 @@
         <form id="searchbar">
             <div class="search-container">
                 <button class="menu" type="button" onclick="openMenu()"></button>
-                <input id="textinput" type="text" name="searchbox" placeholder="Search location">
+                <input 
+                    id="textinput" 
+                    type="text" 
+                    name="searchbox" 
+                    placeholder="Search location"
+                    v-model="searchInput"
+                >
             </div>
         </form>
             
-
         <div id="search-results">
             <ul>
                 <li v-bind:key="resultItem.id" v-for="resultItem in results">
                     <span class="result-item result-name">{{resultItem.result}}</span>
                     <span class="result-item delimiter">•</span>
                     <span class="result-item result-city">{{resultItem.country}}</span>
+                </li>
+
+                <li>
+                    <span class="result-item result-name">{{searchInput}}</span>
                 </li>
             </ul>
         </div>
@@ -25,6 +34,7 @@ export default {
   name: "Search",
   data: function() {
     return {
+        searchInput: '',
         results: [
             {
                 result: 'Vienna',
@@ -39,15 +49,12 @@ export default {
                 country: 'AfsdfLand'
             }
         ]
-    };
+    }
   }
 };
 </script>
 
 <style scoped>
-
-#search {
-}
 
 form {
     background: #FFFFFF;
