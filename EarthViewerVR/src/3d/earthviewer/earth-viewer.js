@@ -30,7 +30,7 @@ class EarthViewer{
         this._initProperties();
         this._registerCallback();
 
-       // this._loadVisualization();
+        this._loadVisualization();
     }
 
     /**

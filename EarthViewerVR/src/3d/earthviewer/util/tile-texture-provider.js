@@ -24,10 +24,10 @@ class TileTextureProvider {
        
        //Initialize Tile Source Provider
        this.tileSource = new MapboxTileSource(Constants.MAPBOX_KEY,undefined, MapboxOptions.StreetV1,'mapbox://styles/yikaiyang/cjljkon0224u72rmqfyvybx1e');
-       //this.tileSource = new OSMTileSource(); Uncomment this if tiles from OSM shall be used.
+       //this.tileSource = new OSMTileSource(); Uncomment this if tiles from OSM should be used.
    }
 
-   loadNextTexture(){
+   _loadNextTexture(){
         // console.log('this.textureAliveRequestsCount:', this.textureAliveRequestsCount, '/textureRequestsCount:', textureRequestsCount);
         while (this.textureAliveRequestsCount < Constants.MAX_TEXTURE_REQUEST && this.textureRequestsCount > 0) {
             var ids = Object.keys(this.textureRequests);
@@ -49,7 +49,7 @@ class TileTextureProvider {
                             delete scope.textureAliveRequests[id];
                             scope.textureAliveRequestsCount--;
                         }
-                        scope.loadNextTexture();
+                        scope._loadNextTexture();
                     },
                     function() {},
                     function() {
@@ -58,7 +58,7 @@ class TileTextureProvider {
                             delete scope.textureAliveRequests[id];
                             scope.textureAliveRequestsCount--;
                         }
-                        scope.loadNextTexture();
+                        scope._loadNextTexture();
                     }
                 );
             })(this, url, id);
@@ -81,7 +81,7 @@ class TileTextureProvider {
                 url: url,
                 onLoaded: onLoaded
             }
-            this.loadNextTexture();
+            this._loadNextTexture();
         }
     }
 
@@ -101,7 +101,7 @@ class TileTextureProvider {
                 // textureAliveRequestsCount--;
             }
         }
-        this.loadNextTexture();
+        this._loadNextTexture();
     }
 }
 

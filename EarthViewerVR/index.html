@@ -5,6 +5,7 @@
     <title>EarthViewer</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDK7Vp__eSf3moyboIE6vg6Plwn4KV-eHY&libraries=places"></script>
 
     <!--Load these files before initializing controls. Controls need access to provided datastructures-->
     <script src="./src/3d/earthviewer/user-position.js"></script>
@@ -13,14 +14,14 @@
 
     <script src="./src/3d/controls/vive-wasd-controls.js"></script>
     <script src="./src/3d/controls/aframe-orbit-controls.js"></script>
-   
+    
   </head>
   <body>
     <div id="app" class="ui"></div>
     <script src="/dist/build.js"></script>
 
     <script>
-     function closeMenu() {
+        function closeMenu() {
             const menubar = document.querySelector('#menubar');
             menubar.classList.add('menubar-collapsed');
         }
@@ -69,10 +70,10 @@
           </a-entity>
       </a-entity>          
       <a-sky color="#000914" radius="10000000"></a-sky>
-     </a-scene>
+    </a-scene>
 
-         <!-- Adds coordinate axis system to the earth for orientation-->
-      <script>
+    <!-- Adds coordinate axis system to the earth for orientation-->
+    <script>
         var R = 6378.137;
         var scene = document.querySelector('a-scene').object3D;
         let grid = new THREE.GridHelper()
@@ -80,8 +81,41 @@
         let gridHelper = new THREE.GridHelper(R * 1000);
         scene.add(axesHelper);
         scene.add(gridHelper);
-      </script>
+    </script>
 
-      <script type="module" src="./src/3d/earthviewer/earth-viewer-launcher.js"></script>
+    <script>
+        //let googleAutoComplete = new google.maps.places.AutoComplete(document.createElement('div'));
+
+        function initService() {
+            var displaySuggestions = function(predictions, status) {
+                console.log('displaySuggestions : ' );
+                console.log(predictions);
+                if (status != google.maps.places.PlacesServiceStatus.OK) {
+                    alert(status);
+                    return;
+                }
+
+                /* predictions.forEach(function(prediction) {
+                var li = document.createElement('li');
+                li.appendChild(document.createTextNode(prediction.description));
+                document.getElementById('results').appendChild(li);
+                }); */
+            };
+
+            const service = new google.maps.places.AutocompleteService();
+            service.getQueryPredictions({ input: 'vien' }, displaySuggestions);
+        }
+
+        function _parseResult(results){
+            
+        }
+
+        initService();
+
+    </script>
+
+    <script type="module" src="./src/3d/earthviewer/earth-viewer-launcher.js"></script>
+
+
   </body>
 </html>

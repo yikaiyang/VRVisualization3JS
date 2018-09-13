@@ -32,7 +32,8 @@ class WienerLinienLayer {
             return;
         }
 
-        this.filePath = '../../../../data/haltestellen.csv';
+        
+        this.filePath = './../../../assets/data/haltestellen.csv';
         this.fpath = 'data/haltestellen.csv';
 
         let scope = this.scope;

@@ -9,6 +9,8 @@
                     name="searchbox" 
                     placeholder="Search location"
                     v-model="searchInput"
+                    v-on:keyup="queryLocation"
+                    v-on:keyup.enter="queryLocation"
                 >
             </div>
         </form>
@@ -30,8 +32,12 @@
 </template>
 
 <script>
+import debounce from 'debounce' // Delays invocation of method
+import {GoogleMapsAPIClient} from '../api/googlemapsAPI'
+
 export default {
   name: "Search",
+
   data: function() {
     return {
         searchInput: '',
@@ -50,6 +56,23 @@ export default {
             }
         ]
     }
+  },
+
+  mounted () {
+      this.api = new GoogleMapsAPIClient();
+  },
+
+  methods: {
+      queryLocation: function (){
+        if (this.searchInput){
+            console.log(this.searchInput);
+            this.api.queryLocation(this.searchInput, function (result) {alert(result)});
+        }
+      }
+  },
+
+  created: function () {
+      this.queryLocation = debounce(this.queryLocation, 300); //Add 300ms delay when the method is triggered
   }
 };
 </script>
