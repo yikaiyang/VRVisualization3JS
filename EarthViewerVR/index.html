@@ -87,27 +87,45 @@
         //let googleAutoComplete = new google.maps.places.AutoComplete(document.createElement('div'));
 
         function initService() {
-            var displaySuggestions = function(predictions, status) {
-                console.log('displaySuggestions : ' );
-                console.log(predictions);
-                if (status != google.maps.places.PlacesServiceStatus.OK) {
-                    alert(status);
-                    return;
-                }
-
-                /* predictions.forEach(function(prediction) {
-                var li = document.createElement('li');
-                li.appendChild(document.createTextNode(prediction.description));
-                document.getElementById('results').appendChild(li);
-                }); */
-            };
-
             const service = new google.maps.places.AutocompleteService();
-            service.getQueryPredictions({ input: 'vien' }, displaySuggestions);
+            service.getQueryPredictions({ input: 'vien' }, _handleCallback);
         }
 
-        function _parseResult(results){
+        function _handleCallback(predictions, status) {
+            console.log('displaySuggestions : ' );
+            console.log(predictions);
+            const r = _parseResult(predictions, status);
+            console.log(r);
+        };
+
+
+        function _parseResult(apiResult, status){
+            let resultJSON = {
+                results: [],
+                status: ''
+            };
+
+            if (status != google.maps.places.PlacesServiceStatus.OK) {
+                //If API is unavailable, return an empty json object and set status element to 'Error'
+                console.debug('Error: Google places invalid servicestatus');
+                resultJSON.status = 'Error';
+                return resultJSON;
+            }
+
+            if (apiResult === undefined){
+                resultJSON.status = 'Error'
+                return resultJSON;
+            }
             
+            for (let i = 0; i < apiResult.length; i++){
+                let resultItem = {
+                    result: apiResult[i].description,
+                    resultDetail: apiResult[i].id
+                };
+                resultJSON.results.push(resultItem);
+            }
+
+            return resultJSON;
         }
 
         initService();

@@ -17,13 +17,13 @@ import BaseTileSource from './base-tile-source.js'
 
     _getRandomServer(){
         const randomServerOptions = ['a', 'b', 'c'];
-        const idx = Math.floor(Math.floor(Math.random() * randomServerOptions.length));
+        const idx = Math.floor(Math.random() * randomServerOptions.length);
         console.log(idx);
         return randomServerOptions[idx];
     }
 
     buildTileURL(zoom, x, y){
-        //Typical format for rest request is /{zoom}/{x}/{y}{@2x}.{format}
+        //Typical format for a tile request is /{zoom}/{x}/{y}{@2x}.{format}
         return 'https://' + this._getRandomServer() + this.baseUrl + '/' + zoom + '/' + x + '/' + y + this.fileFormat; 
     }
  }

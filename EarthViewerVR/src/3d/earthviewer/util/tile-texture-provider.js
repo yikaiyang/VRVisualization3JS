@@ -24,7 +24,7 @@ class TileTextureProvider {
        
        //Initialize Tile Source Provider
        this.tileSource = new MapboxTileSource(Constants.MAPBOX_KEY,undefined, MapboxOptions.StreetV1,'mapbox://styles/yikaiyang/cjljkon0224u72rmqfyvybx1e');
-       //this.tileSource = new OSMTileSource(); Uncomment this if tiles from OSM should be used.
+       //this.tileSource = new OSMTileSource(); //Uncomment this if tiles from OSM should be used.
    }
 
    _loadNextTexture(){

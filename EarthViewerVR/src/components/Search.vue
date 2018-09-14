@@ -18,13 +18,11 @@
         <div id="search-results">
             <ul>
                 <li v-bind:key="resultItem.id" v-for="resultItem in results">
-                    <span class="result-item result-name">{{resultItem.result}}</span>
-                    <span class="result-item delimiter">•</span>
-                    <span class="result-item result-city">{{resultItem.country}}</span>
-                </li>
-
-                <li>
-                    <span class="result-item result-name">{{searchInput}}</span>
+                    <div class="result-item-container">
+                        <span class="result-item result-name">{{resultItem.result}}</span>
+                        <span class="result-item delimiter">•</span>
+                        <span class="result-item result-city">{{resultItem.resultDetail + ' '}}</span>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -34,6 +32,7 @@
 <script>
 import debounce from 'debounce' // Delays invocation of method
 import {GoogleMapsAPIClient} from '../api/googlemapsAPI'
+import {GoogleMapsAutoComplete} from '../api/googlemapsAPI'
 
 export default {
   name: "Search",
@@ -42,7 +41,7 @@ export default {
     return {
         searchInput: '',
         results: [
-            {
+           /*  {
                 result: 'Vienna',
                 country: 'Austria',
             },
@@ -53,20 +52,37 @@ export default {
             {
                 result: 'ASfsaf',
                 country: 'AfsdfLand'
-            }
+            } */
         ]
     }
   },
 
   mounted () {
-      this.api = new GoogleMapsAPIClient();
+      this.api = new GoogleMapsAutoComplete();
   },
 
   methods: {
       queryLocation: function (){
         if (this.searchInput){
-            console.log(this.searchInput);
-            this.api.queryLocation(this.searchInput, function (result) {alert(result)});
+             this.api.query(this.searchInput,
+                 (result) => {
+                    console.log('Queried:');
+                    console.log(result);
+                    //alert(result);
+                    this.$data.results = result.results;
+                } 
+            );
+           /* console.debug('queryLocation: ' + this.searchInput);
+            this.api.query(this.searchInput, 
+                    this.handleRequest.bind(this)
+                 (result) => {
+                    console.log('Queried');
+                    console.log(result);
+                    alert(result);
+                } 
+            );*/
+        } else {
+            this.$data.results = [];
         }
       }
   },
@@ -137,17 +153,22 @@ form {
 #search-results >>> li {
     margin: 0;
     padding: 0px;
-    height: 42px;
+    min-height: 42px;
     border-bottom: 1px solid #EDEDED;
     cursor: pointer;
 }
 
 #search-results >>> li:last-child{
     border-bottom: 0px;
+    
 }
 
 #search-results >>> li:hover {
     background-color: #F4F4F4;
+}
+
+.result-item-container {
+    margin-left: 18px;
 }
 
 #search-results >>> span {
@@ -156,6 +177,7 @@ form {
     flex-direction: column;
     height: 42px;
     font-size: 14px;
+    word-wrap: break-word
 }
 
 #search-results >>> .result-name{
@@ -165,11 +187,11 @@ form {
 
 .delimiter {
     color: #D8D8D8;
+    margin-right: 4px;
 }
 
 #search-results >>> .result-city{
     color: #878787;
-    margin-left: 4px;
 }
 
 #search-results >>> ul {
@@ -180,7 +202,7 @@ form {
 }
 
 #search-results >>> .result-name {
-    margin-left: 18px;
+    
 }
 
 </style>

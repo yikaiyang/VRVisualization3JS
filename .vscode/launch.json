@@ -13,6 +13,6 @@
             "pathMapping": {
                 "/": "${workspaceFolder}/ClientAframe/src"
             }
-        }
+        },
     ]
 }
