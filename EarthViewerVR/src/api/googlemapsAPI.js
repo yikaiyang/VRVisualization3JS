@@ -47,6 +47,12 @@ class GoogleMapsAPIClient {
         this.callback;
     }
 
+    queryLocation (locationId){
+        if (!locationId){
+            console.error('Error: invalid locationId ' + locationId );
+        }   
+    }
+
     queryLocation(searchTerm, callback){
         this.callback = callback;
         let request = {
@@ -69,6 +75,7 @@ class GoogleMapsAPIClient {
         }
     }
 }
+
 
 class GoogleMapsAutoComplete {
     constructor(){

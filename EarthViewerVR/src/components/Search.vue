@@ -197,12 +197,7 @@ form {
 #search-results >>> ul {
     margin-left: 0;
     padding-left: 0;
-
     list-style: none;
-}
-
-#search-results >>> .result-name {
-    
 }
 
 </style>

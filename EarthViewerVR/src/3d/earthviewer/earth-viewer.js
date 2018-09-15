@@ -3,6 +3,7 @@ import {TileTextureProvider} from './util/tile-texture-provider.js'
 import {TileMeshProvider} from "./util/tile-mesh-provider.js";
 import WienerLinienLayer from './visualization/wienerlinienlayer.js'
 import GeoConversion from './util/geoconversion.js'
+import BaseThreeJSComponent from './../components/base-threejs-component.js'
 
 var App = window.App || {};
 var callbackHelper = App.callbackHelper;
@@ -23,13 +24,13 @@ EarthProperties.ZOOM_SHIFT_SIZE = 4;
 EarthProperties.TILE_COLOR = 0xEFE9E1;
 Object.freeze(EarthProperties);
 
-class EarthViewer{
-    constructor(scene){
+class EarthViewer extends BaseThreeJSComponent{
+    constructor(scene, ascene){
+        super(ascene); 
         this.scene = scene;
         this._initEarthObject();
         this._initProperties();
         this._registerCallback();
-
         this._loadVisualization();
     }
 
