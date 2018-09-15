@@ -11,12 +11,14 @@
     "jest": "jest"
   },
   "dependencies": {
+    "@tweenjs/tween.js": "^17.2.0",
     "@types/axios": "^0.14.0",
     "axios": "^0.18.0",
     "babel-jest": "^23.6.0",
     "bootstrap": "^4.1.3",
     "debounce": "^1.2.0",
     "jest": "^23.6.0",
+    "npm": "^6.4.1",
     "vue": "^2.5.11",
     "vue-router": "^3.0.1"
   },

@@ -2,6 +2,7 @@ import FileLoader from './util/fileloader.js';
 import GeoConversion from './util/geoconversion.js';
 
 var camera, scene, renderer, geometry, material, mesh;
+var sphere;
 var controls;
 let stats;
 
@@ -138,10 +139,20 @@ function init() {
 
     geometry = new THREE.SphereGeometry(20, 20, 20);
     material = new THREE.MeshNormalMaterial({
-        wireframe: false
+        wireframe: true
     });
-    let earthMesh = new THREE.Mesh(geometry, material);
-    scene.add(earthMesh);
+    sphere = new THREE.Mesh(geometry, material);
+    scene.add(sphere);
+
+    let position = { x: 0, y : 0};
+    let target = { x: 400, y : 400};
+    let tween = new TWEEN.Tween(position).to(target, 4000);
+    tween.onUpdate(function(){
+        //alert('onUpdate');
+        sphere.rotation.x = position.x;
+        sphere.rotation.y = position.y;
+    });
+    tween.start();
     
     let latitude = 48.210033;
     let longitude = 16.363449;
@@ -171,16 +182,19 @@ function init() {
     document.body.appendChild(renderer.domElement);
 }
 
-function animate() {
+function animate(time) {
     requestAnimationFrame(animate);
+    TWEEN.update(time);
+    
     render();
 }
 
 function render() {
     stats.begin();
-		//controls.update();
-    //mesh.rotation.x += 0.01;
-    //mesh.rotation.y += 0.02;
+        //controls.update();
+        /*
+    sphere.rotation.x += 0.01;
+    sphere.rotation.y += 0.02;*/
 
     renderer.render(scene, camera);
     stats.end();

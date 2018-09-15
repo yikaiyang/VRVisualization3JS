@@ -77,6 +77,20 @@ class EarthViewer extends BaseThreeJSComponent{
         );
     }
 
+    flyTo(latitude, longitude, duration){
+
+    }
+
+    animateRotation(){
+        let rotation = { x: 0, y: 0};
+        let rotationTarget = { x: 100, y: 100};
+        let tween = new TWEEN.Tween(rotation).to(rotationTarget, 2000);
+        tween.onUpdate(() => {
+            this.earth.rotation.x += rotation.x;
+        });
+        tween.start();
+    }
+
     enableAtmosphere(){
         const Shaders = {
             'atmosphere' : {
@@ -277,7 +291,7 @@ class EarthViewer extends BaseThreeJSComponent{
                             var tileEarth = new THREE.Object3D(); //create an empty container
                             tileEarth.rotation.set(0, (lon1 + 180) * Math.PI / 180, 0);
                             this.tileGroup[zShift].add(tileEarth);
-                            tileMesh = this.tileMeshProvider.getTileMesh(R, zoom_, btile, Math.max(9 - zoom_, 0));
+                            tileMesh = this.tileMeshProvider.getTileMesh(EarthProperties.RADIUS / 1000, zoom_, btile, Math.max(9 - zoom_, 0));
                             tileEarth.add(tileMesh);
                         } else {
                             //Draw flat tiles
@@ -323,6 +337,12 @@ class EarthViewer extends BaseThreeJSComponent{
             }
         }
         this.textureLoader.cancelOtherRequests(currentIds);
+    }
+
+    tick(time, delta){
+        TWEEN.update(time);
+        //this.earth.rotation.y += 0.0005;
+        //console.log(time);
     }
 }
 
