@@ -7,6 +7,7 @@ import BaseThreeJSComponent from './../components/base-threejs-component.js'
 
 var App = window.App || {};
 var callbackHelper = App.callbackHelper;
+var userPosition = App.UserPosition;
 
 /**
  * Earth Viewer constants
@@ -77,18 +78,53 @@ class EarthViewer extends BaseThreeJSComponent{
         );
     }
 
+    /**
+     * Rotates the earth to new location in a defined time interval (duration).
+     * @param {*} latitude 
+     * @param {*} longitude 
+     * @param {*} duration 
+     */
     flyTo(latitude, longitude, duration){
-
+        let position = {lat: this.latStamp , lon: this.lonStamp};
+        const newPosition = {lat: latitude, lon: longitude};
+        const tween = new TWEEN.Tween(position)
+            .delay(5000)
+            .to(newPosition, duration/2)
+            .easing(TWEEN.Easing.Quartic.InOut)
+            .onUpdate(() => {
+                //Rotate earth without loading tiles
+                this.earth.rotation.set(
+                    position.lat * Math.PI / 180,
+                    (-position.lon) * Math.PI / 180,
+                    0);
+                //console.log('tween: lat:' + position.lat + ' lon: ' + position.lon)
+                //this.rerenderEarth(undefined, position.lat, position.lon)
+            })
+            .onComplete(() => {
+                //Set new position globally, so that controls can access the updated position.
+                if (!!userPosition){
+                    userPosition.set(position.lat, position.lon, userPosition.altitude);
+                }
+                //Rerender when the rotation is complete
+                this.rerenderEarth(undefined, position.lat, position.lon);
+            });
+        tween.start();
     }
 
-    animateRotation(){
+    exampleRotation(){
         let rotation = { x: 0, y: 0};
-        let rotationTarget = { x: 100, y: 100};
-        let tween = new TWEEN.Tween(rotation).to(rotationTarget, 2000);
-        tween.onUpdate(() => {
-            this.earth.rotation.x += rotation.x;
+        const rotationMax = { x: 0, y: 0.1};
+        let tweenAccelerate = new TWEEN.Tween(rotation)
+            .to(rotationMax, 1000)
+            .repeat(1)      //repeat once for slow down animation
+            .yoyo(true)     //'bounces' the animation back
+            .easing(TWEEN.Easing.Quartic.In)
+            .onUpdate(() => {
+                console.log('t1: ' + rotation.y);
+                this.earth.rotation.y += rotation.y;
         });
-        tween.start();
+
+        tweenAccelerate.start();
     }
 
     enableAtmosphere(){
