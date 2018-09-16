@@ -2,8 +2,8 @@
  * TileTextureProvider is responsible for loading and assigning tile textures to a geometry.
  */
 
-import OSMTileSource from '../tileSource/osm-tile-source.js'
-import {MapboxTileSource, MapboxOptions} from '../tileSource/mapbox-tile-source.js'
+import OSMTileSource from '../tilesource/osm-tile-source.js'
+import {MapboxTileSource, MapboxOptions} from '../tilesource/mapbox-tile-source.js'
 
 class Constants {};
 Constants.MAX_TEXTURE_REQUEST = 10;
