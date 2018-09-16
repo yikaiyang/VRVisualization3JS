@@ -33,13 +33,13 @@ class WienerLinienLayer {
         }
 
         
-        this.filePath = './../../../assets/data/haltestellen.csv';
-        this.fpath = 'data/haltestellen.csv';
+        //this.filePath = './../../assets/data/haltestellen.csv';
+        this.filePathAbsolute = './src/3d/earthviewer/visualization/haltestellen.csv';
 
         let scope = this.scope;
 
         try {
-            FileLoader.parseFile(this.filePath, function(data){
+            FileLoader.parseFile(this.filePathAbsolute, function(data){
                 let results = Papa.parse(data);
                 callback(scope, results);
             });

@@ -9,7 +9,6 @@
 
 import Menubar from './components/Menubar.vue'
 
-
 export default {
   name: 'app',
   data () {

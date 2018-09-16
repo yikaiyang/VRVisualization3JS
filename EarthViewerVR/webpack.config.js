@@ -1,5 +1,6 @@
 var path = require('path')
 var webpack = require('webpack')
+var CopyWebpackPlugin = require('copy-webpack-plugin')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir);
@@ -81,13 +82,20 @@ module.exports = {
     extensions: ['*', '.js', '.vue', '.json']
   },
   devServer: {
+    //contentBase: path.join(__dirname, 'dist'),// Serve from build
     historyApiFallback: true,
     noInfo: true,
-    overlay: true
+    overlay: true,
+    port: 8888
   },
   performance: {
     hints: false
   },
+  plugins: [
+    new CopyWebpackPlugin([
+      {from: './src/assets/data', to: './assets/data'}
+    ]),
+  ],
   devtool: '#eval-source-map'
 }
 
