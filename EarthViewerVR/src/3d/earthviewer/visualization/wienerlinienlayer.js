@@ -1,6 +1,7 @@
 import FileLoader from './../../../util/fileloader.js';
 import GeoConversion from '../util/geoconversion.js';
 import {EarthProperties} from '../earth-viewer.js';
+import UnitConversion from '../util/unit-conversion.js';
 
 class WienerLinienLayer {
     constructor(scene, earth){
@@ -19,7 +20,7 @@ class WienerLinienLayer {
 
     ///Private methods
     _initGeometries(){
-        this.mergedGeometry = new THREE.Geometry();   
+        this.mergedGeometry = new THREE.Geometry();
         this.primitiveGeometry = new THREE.BoxGeometry(10,10,100);
         this.primitiveMaterial = new THREE.MeshBasicMaterial({
             color: this.color

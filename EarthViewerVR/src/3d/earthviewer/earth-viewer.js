@@ -22,8 +22,11 @@ EarthProperties.ZOOM_LEVEL_MIN = 1;
 EarthProperties.ZOOM_LEVEL_FLAT = 13; //At this zoom level all tiles are rendered in a flat style (no curvatures)
 EarthProperties.ZOOM_SHIFT_SIZE = 4;
 
+EarthProperties.ZOOM_LEVEL_EARTH_TRUNCATED = 7; //At this zoom level parts of the earth is culled and only areas visible for the viewer are displayed.
+
 EarthProperties.TILE_COLOR = 0xEFE9E1;
 Object.freeze(EarthProperties);
+
 
 class EarthViewer extends BaseThreeJSComponent{
     constructor(scene, ascene){
@@ -80,15 +83,40 @@ class EarthViewer extends BaseThreeJSComponent{
 
     /**
      * Rotates the earth to new location in a defined time interval (duration).
+     * 
+     * {
+     *    lat: 43.21,
+     *    lon: 16.00,
+     *    duration: 2000, (optional) : Default value will be 0.
+     *    targetAltitude: 4000: Default value will be the current position altitude (Altitude wont be changed)
+     *    
+     *    
+     * }
+     * 
      * @param {*} latitude 
      * @param {*} longitude 
      * @param {*} duration 
      */
     flyTo(latitude, longitude, duration){
+
         let position = {lat: this.latStamp , lon: this.lonStamp};
         const newPosition = {lat: latitude, lon: longitude};
-        const tween = new TWEEN.Tween(position)
-            .delay(5000)
+
+        //alert(this.zoom);
+
+        /**
+         * If the user is below below the zoom level, in which the earth is truncated.
+         */
+        if (this.zoom >= EarthProperties.ZOOM_LEVEL_EARTH_TRUNCATED){
+            //alert('Earth truncated');
+            if (!!userPosition){
+                userPosition.set(position.lat, newPosition.lon, userPosition.altitude);
+            }
+            //Rerender when the rotation is complete
+            this.rerenderEarth(userPosition.altitude, newPosition.lat, newPosition.lon);
+        } else {
+            const tween = new TWEEN.Tween(position)
+            .delay(0)
             .to(newPosition, duration/2)
             .easing(TWEEN.Easing.Quartic.InOut)
             .onUpdate(() => {
@@ -106,9 +134,10 @@ class EarthViewer extends BaseThreeJSComponent{
                     userPosition.set(position.lat, position.lon, userPosition.altitude);
                 }
                 //Rerender when the rotation is complete
-                this.rerenderEarth(undefined, position.lat, position.lon);
+                this.rerenderEarth(userPosition.altitude, position.lat, position.lon);
             });
-        tween.start();
+            tween.start();
+        }    
     }
 
     exampleRotation(){
@@ -186,6 +215,11 @@ class EarthViewer extends BaseThreeJSComponent{
         this.earth.position.set(x, y, z);
     }
 
+    _getZoomLevel(altitude){
+        const zoom = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(altitude)), 19), 1));
+        return zoom;
+    }
+
     rerenderEarth(
         altitude = EarthProperties.DEFAULT_ALTITUDE,
         latitude = EarthProperties.DEFAULT_LATITUDE,
@@ -196,7 +230,7 @@ class EarthViewer extends BaseThreeJSComponent{
         const oldZoom = this.zoom;
 
         //Check Zoom level boundaries
-        let newZoomLevel = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(altitude)), 19), 1));
+        let newZoomLevel = this._getZoomLevel(altitude);
 
         if (newZoomLevel > EarthProperties.ZOOM_LEVEL_MIN) {
             this.zoom = newZoomLevel;
@@ -230,7 +264,7 @@ class EarthViewer extends BaseThreeJSComponent{
                     'alti': altitude
                 });
             }
-        } else if (Math.abs(zoom - oldZoom) >= 1) {
+        } else if (Math.abs(this.zoom - oldZoom) >= 1) {
             //If zoom level has changed by 1 then update the earth.
             this._redrawEarth({
                 'lon': this.lonStamp,

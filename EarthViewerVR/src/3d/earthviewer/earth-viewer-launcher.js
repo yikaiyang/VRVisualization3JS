@@ -14,4 +14,6 @@ const tokyo = {
 earthViewer.rerenderEarth();
 earthViewer.enableAtmosphere();
 earthViewer.flyTo(tokyo.lat, tokyo.long, 2000);
+
+window.Earth = earthViewer;
 //earthViewer.exampleRotation();
