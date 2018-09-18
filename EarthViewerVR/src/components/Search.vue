@@ -15,9 +15,16 @@
             </div>
         </form>
             
-        <div id="search-results">
+        <div 
+            id="search-results"
+            v-on:mouseenter="enteredResultBox()"
+            v-on:mouseleave="leftResultBox()"
+        >
             <ul>
-                <li v-bind:key="resultItem.id" v-for="resultItem in results">
+                <li v-bind:key="resultItem.id" 
+                    v-for="resultItem in results"
+                    v-on:mouseenter="handleMouseOver(resultItem)"
+                    v-on:mouseleave="handleMouseOut(resultItem)">
                     <div class="result-item-container">
                         <span class="result-item result-name">{{resultItem.result}}</span>
                         <span class="result-item delimiter">•</span>
@@ -31,65 +38,133 @@
 
 <script>
 import debounce from 'debounce' // Delays invocation of method
-import {GoogleMapsAPIClient} from '../api/googlemapsAPI'
-import {GoogleMapsAutoComplete} from '../api/googlemapsAPI'
+import GoogleMapsClientAPI from '../api/googlemapsClientAPI.js'
+//import {GoogleMapsAutoComplete} from '../api/googlemapsAPI';
+
 
 export default {
-  name: "Search",
-
-  data: function() {
-    return {
-        searchInput: '',
-        results: [
-           /*  {
-                result: 'Vienna',
-                country: 'Austria',
-            },
-            {
-                result: 'Prag',
-                country: 'Czech'
-            },
-            {
-                result: 'ASfsaf',
-                country: 'AfsdfLand'
-            } */
-        ]
-    }
-  },
-
-  mounted () {
-      this.api = new GoogleMapsAutoComplete();
-  },
-
-  methods: {
-      queryLocation: function (){
-        if (this.searchInput){
-             this.api.query(this.searchInput,
-                 (result) => {
-                    console.log('Queried:');
-                    console.log(result);
-                    //alert(result);
-                    this.$data.results = result.results;
-                } 
-            );
-           /* console.debug('queryLocation: ' + this.searchInput);
-            this.api.query(this.searchInput, 
-                    this.handleRequest.bind(this)
-                 (result) => {
-                    console.log('Queried');
-                    console.log(result);
-                    alert(result);
-                } 
-            );*/
-        } else {
-            this.$data.results = [];
+    name: "Search",
+    data: function() {
+        return {
+            searchInput: '',
+            results: [
+            /*  {
+                    result: 'Vienna',
+                    country: 'Austria',
+                },
+                {
+                    result: 'Prag',
+                    country: 'Czech'
+                },
+                {
+                    result: 'ASfsaf',
+                    country: 'AfsdfLand'
+                } */
+            ],
+            cachedUserPosition: {}, //Cached position of the initial location of the user before peeking to  (Previewing)
         }
-      }
-  },
+    },
 
-  created: function () {
-      this.queryLocation = debounce(this.queryLocation, 300); //Add 300ms delay when the method is triggered
-  }
+    mounted () {
+        this.hoverTimeOut = {};
+        this.leftResultBoxTimeOut = {};
+        this.resultBox = {};
+        this.enteredResultBoxLock = false;
+        this.leftResultBoxLock = false;
+        this.isPeekingActive = false;
+
+        this.api = new GoogleMapsClientAPI();
+        const placeID = 'ChIJn8o2UZ4HbUcRRluiUYrlwv0';
+        this.api.getLocationInfo(placeID);
+    },
+
+    methods: {
+        queryLocation: function (){
+            if (this.searchInput){
+                this.api.query(this.searchInput,
+                    (result) => {
+                        if (!!result){
+                            this.$data.results = result.results;
+                        }
+                    } 
+                );
+            } else {
+                this.$data.results = [];
+            }
+        },
+      
+        handleMouseOver: function (item){
+        /**
+         * Rotates to selected location (mouseover) if the user hovers 800ms or longer above the item.
+         */
+            this.hoverTimeOut = setTimeout(() => {
+              
+                //alert('timeout' + item.placeID)
+                console.log(item.placeId);
+                const placeId = item.placeId;
+                if (!!placeId){
+                    this.api.getLocationInfo(
+                        placeId,
+                        (result) => {
+                            if (!!result){
+                                console.log(result);
+                                Earth.rotateTo(result.lat, result.lon);
+                            }
+                        }
+                    )
+                } else {
+                    console.error('ERROR: Mouse over: item ' + item + ' does not have a placeid.');
+                }
+            }, 1000);
+        },
+        handleMouseOut: function(item){
+            //Resets timeout for
+            clearTimeout(this.hoverTimeOut);
+        },
+        enteredResultBox: function(){
+            this.isPeekingActive = true;
+            console.debug('enteredResultBox');
+            if (!this.enteredResultBoxLock){
+                //alert('newPosition');
+                this.$data.cachedUserPosition = Earth.getUserPosition();
+            } 
+            this.enteredResultBoxLock = true;
+            clearTimeout(this.leftResultBoxTimeOut);
+        },
+        leftResultBox: function(){
+            console.debug('leftResultBox');
+            this.isPeekingActive = false;
+            clearTimeout(this.leftResultBoxTimeOut);
+
+            if (this.enteredResultBoxLock && !this.leftResultBoxLock){
+
+                this.leftResultBoxTimeOut = setTimeout(() => {
+                    //alert('leftResultBox');
+                    this.leftResultBoxLock = true; //Do not allow triggering leftResultBox method multiple times
+                    
+                    const position = this.$data.cachedUserPosition;
+                    if (!!position){
+                        Earth.rotateTo(position.latitude, position.longitude);
+                        //Wait 1000ms for animation to finish.
+                        setTimeout(() => {
+                            //alert('releasing lock');
+                            if (!this.isPeekingActive){
+                                this.enteredResultBoxLock = false;
+                            }
+                            
+                            this.leftResultBoxLock = false;
+                        },1000);
+                    } else {
+                        this.enteredResultBoxLock = false;
+                        this.leftResultBoxLock = false;
+                    }
+                }, 1000);     
+            }
+        },
+        created: function () {
+            this.queryLocation = debounce(this.queryLocation, 300); //Add 300ms delay when the method is triggered
+        }
+    }
 };
 </script>
 

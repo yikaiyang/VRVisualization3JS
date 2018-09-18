@@ -5,10 +5,6 @@ import WienerLinienLayer from './visualization/wienerlinienlayer.js'
 import GeoConversion from './util/geoconversion.js'
 import BaseThreeJSComponent from './../components/base-threejs-component.js'
 
-var App = window.App || {};
-var callbackHelper = App.callbackHelper;
-var userPosition = App.UserPosition;
-
 /**
  * Earth Viewer constants
  */
@@ -22,10 +18,18 @@ EarthProperties.ZOOM_LEVEL_MIN = 1;
 EarthProperties.ZOOM_LEVEL_FLAT = 13; //At this zoom level all tiles are rendered in a flat style (no curvatures)
 EarthProperties.ZOOM_SHIFT_SIZE = 4;
 
-EarthProperties.ZOOM_LEVEL_EARTH_TRUNCATED = 7; //At this zoom level parts of the earth is culled and only areas visible for the viewer are displayed.
+EarthProperties.ZOOM_LEVEL_EARTH_TRUNCATED = 6; //At this zoom level parts of the earth is culled and only areas visible for the viewer are displayed.
 
 EarthProperties.TILE_COLOR = 0xEFE9E1;
 Object.freeze(EarthProperties);
+
+/**
+ * Globals
+ */
+var App = window.App || {};
+var callbackHelper = App.callbackHelper;
+var userPosition = App.UserPosition;
+App.EARTH_RADIUS = EarthProperties.DEFAULT_ALTITUDE;
 
 
 class EarthViewer extends BaseThreeJSComponent{
@@ -81,8 +85,64 @@ class EarthViewer extends BaseThreeJSComponent{
         );
     }
 
+    getUserPosition(){
+        const userPositionClone = Object.assign({}, userPosition);
+        return userPositionClone;
+    }
+
+    setUserPosition(latitude, longitude, altitude){
+        if (!!latitude && !!longitude && !!altitude){
+            userPosition.set(latitude, longitude, altitude);
+        }
+    }
+
     /**
-     * Rotates the earth to new location in a defined time interval (duration).
+     * Rotates the earth to a given latitude, longitude position and updates the userposition with the provided latitude, longitude values 
+     * @param {*} latititude 
+     * @param {*} longitude 
+     */
+    rotateTo(latitude, longitude, duration = 1000, options){
+
+        var options = options || {};
+
+        let position = {lat: userPosition.latitude , lon: userPosition.longitude};
+        const newPosition = {lat: latitude, lon: longitude};
+
+          /**
+         * Ensure user is in a zoomed out position. otherwise don't apply the rotation effect. 
+         * (Doesn't look good, because only parts of the earth is rendered)
+         */
+        if (this.zoom < EarthProperties.ZOOM_LEVEL_EARTH_TRUNCATED) {
+            const tween = new TWEEN.Tween(position)
+            .delay(0)
+            .to(newPosition, duration)
+            .easing(TWEEN.Easing.Quartic.InOut)
+            .onUpdate(() => {
+                //Rotate earth without loading tiles
+                this.earth.rotation.set(
+                    position.lat * Math.PI / 180,
+                    (-position.lon) * Math.PI / 180,
+                    0);
+                //console.log('tween: lat:' + position.lat + ' lon: ' + position.lon)
+                //this.rerenderEarth(undefined, position.lat, position.lon)
+                this.setUserPosition(position.lat, position.lon, userPosition.altitude);
+            })
+            .onComplete(() => {
+                //Set new position globally, so that controls can access the updated position.
+               /*  if (!!userPosition){
+                    userPosition.set(position.lat, position.lon, userPosition.altitude);
+                } */
+                /*
+                //Rerender when the rotation is complete
+                this.rerenderEarth(userPosition.altitude, position.lat, position.lon); */
+            });
+            tween.start();
+        }    
+    }
+
+
+    /**
+     * Rotates and updates the position of the earth to a new location in a defined time interval (duration).
      * 
      * {
      *    lat: 43.21,
@@ -411,8 +471,6 @@ class EarthViewer extends BaseThreeJSComponent{
 
     tick(time, delta){
         TWEEN.update(time);
-        //this.earth.rotation.y += 0.0005;
-        //console.log(time);
     }
 }
 
