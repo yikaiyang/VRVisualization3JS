@@ -72,10 +72,12 @@ class EarthViewer extends BaseThreeJSComponent{
         scene.add(this.earth);
     }
 
+    //region Visualisation
     _loadVisualization(){
         let visLayer = new WienerLinienLayer(scene, this.earth);
         visLayer.load();
     }
+    //endregion
 
     _registerCallback(){
         callbackHelper.setCallback(
@@ -96,6 +98,19 @@ class EarthViewer extends BaseThreeJSComponent{
         }
     }
 
+    /**
+     * Sets the provided tile source and rerenders the earth.
+     * @param {*} tilesource 
+     */
+    setMapTileSource(tilesource){
+        if (!!tilesource){
+            this.textureLoader.setMapTileSource(tilesource);
+        } else {
+            console.error('ERROR: setMapTileSource: The provided maptilesource is invalid: ' );
+        }
+    }
+
+    //region Interaction
     /**
      * Rotates the earth to a given latitude, longitude position and updates the userposition with the provided latitude, longitude values 
      * @param {*} latititude 
@@ -125,13 +140,12 @@ class EarthViewer extends BaseThreeJSComponent{
                     0);
                 //console.log('tween: lat:' + position.lat + ' lon: ' + position.lon)
                 //this.rerenderEarth(undefined, position.lat, position.lon)
-                this.setUserPosition(position.lat, position.lon, userPosition.altitude);
             })
             .onComplete(() => {
                 //Set new position globally, so that controls can access the updated position.
-               /*  if (!!userPosition){
+                if (!!userPosition){
                     userPosition.set(position.lat, position.lon, userPosition.altitude);
-                } */
+                }
                 /*
                 //Rerender when the rotation is complete
                 this.rerenderEarth(userPosition.altitude, position.lat, position.lon); */
@@ -219,6 +233,28 @@ class EarthViewer extends BaseThreeJSComponent{
     enableAtmosphere(){
         const Shaders = {
             'atmosphere' : {
+                uniforms: {},
+                vertexShader: [
+                  'varying vec3 vNormal;',
+                  'varying vec3 pos;',
+                  'void main() {',
+                    'float atmosphereRadius = 20.0;',
+                    'pos = position;',
+                    'vNormal = normalize( normalMatrix * normal );',
+                    'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+                  '}'
+                ].join('\n'),
+                fragmentShader: [
+                  'varying vec3 vNormal;',
+                  'varying vec3 pos;',
+                  'vec3 atmosphereColor = vec3(0.17, 0.79, 0.88);',
+                  'void main() {',
+                    'float intensity = pow( 0.5 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) ), 2.0 );',        
+                    'gl_FragColor = vec4( atmosphereColor, 1.0 ) * intensity;',
+                  '}'
+                ].join('\n')
+            },
+            'atmosphere-cutout' : {
                 uniforms: {},
                 vertexShader: [
                   'varying vec3 vNormal;',

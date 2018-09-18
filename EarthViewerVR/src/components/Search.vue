@@ -92,7 +92,6 @@ export default {
                 this.$data.results = [];
             }
         },
-      
         handleMouseOver: function (item){
         /**
          * Rotates to selected location (mouseover) if the user hovers 800ms or longer above the item.
@@ -137,7 +136,6 @@ export default {
             clearTimeout(this.leftResultBoxTimeOut);
 
             if (this.enteredResultBoxLock && !this.leftResultBoxLock){
-
                 this.leftResultBoxTimeOut = setTimeout(() => {
                     //alert('leftResultBox');
                     this.leftResultBoxLock = true; //Do not allow triggering leftResultBox method multiple times
@@ -145,7 +143,7 @@ export default {
                     const position = this.$data.cachedUserPosition;
                     if (!!position){
                         Earth.rotateTo(position.latitude, position.longitude);
-                        //Wait 1000ms for animation to finish.
+                        //Wait 1000ms for transition animation to initial position to finish.
                         setTimeout(() => {
                             //alert('releasing lock');
                             if (!this.isPeekingActive){
@@ -158,7 +156,7 @@ export default {
                         this.enteredResultBoxLock = false;
                         this.leftResultBoxLock = false;
                     }
-                }, 1000);     
+                }, 1000);   //Wait 1000ms for other animations to finish.  
             }
         },
         created: function () {
