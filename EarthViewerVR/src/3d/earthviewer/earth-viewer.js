@@ -29,7 +29,6 @@ Object.freeze(EarthProperties);
 var App = window.App || {};
 var callbackHelper = App.callbackHelper;
 var userPosition = App.UserPosition;
-App.EARTH_RADIUS = EarthProperties.DEFAULT_ALTITUDE;
 
 
 class EarthViewer extends BaseThreeJSComponent{

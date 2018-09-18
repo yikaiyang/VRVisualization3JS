@@ -1,5 +1,4 @@
 /**
- * 
  * Sample request for mapbox api
  * 
  * "https://api.mapbox.com/v4/mapbox.mapbox-streets-v7/1/0/0.png?access_token=your-access-token
