@@ -7,10 +7,16 @@
                     <div class="lowerbar"></div>
                 </div>
                 <nav>
-                    <ul>
-                        <li class="menu-item-active">Explore Map</li>
-                        <li class="menu-item">Visualization</li>
-                        <li class="menu-item">Settings</li>
+                    <ul v-bind:key="item.name" 
+                        v-for="(item, index) in menuItems"
+                        >
+                        <!--v-on:Click="{handleMenuItemClick(index)}" -->
+                        <li 
+                            class="menu-item"
+                            
+                        >
+                            <router-link :to="{ path: item.route || '/'}">{{item.name}}</router-link>
+                        </li>
                     </ul>
                 </nav>
         </div>
@@ -23,6 +29,21 @@ export default {
     data: function() {
         return {
             isMenuVisible: false,
+            menuItems: [
+                {
+                    name: 'Explore Map',
+                    route: '/'
+                },
+                {
+                    name: 'Visualization',
+                    route: '/visualization'
+                },
+                {
+                    name: 'Settings',
+                    route: '/settings'
+                }
+            ],
+            selectedMenuItemIndex: 0, 
         }
     }
 }
@@ -64,6 +85,14 @@ export default {
         list-style: none;
         margin-left: 0;
         padding-left: 0;
+    }
+
+    nav a {
+        all: unset;
+    }
+
+     nav a:hover {
+        all: unset;
     }
 
     .menubutton {
@@ -125,5 +154,6 @@ export default {
 
     .menu-item-active {
         font-weight: bold;
+        color: #FFFFFF;
     }
 </style>

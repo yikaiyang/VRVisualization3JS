@@ -465,7 +465,7 @@ class EarthViewer extends BaseThreeJSComponent{
                             var tileEarth = new THREE.Object3D(); //create an empty container
                             tileEarth.rotation.set(0, (lon1 + 180) * Math.PI / 180, 0);
                             this.tileGroup[zShift].add(tileEarth);
-                            tileMesh = this.tileMeshProvider.getTileMesh(EarthProperties.RADIUS / 1000, zoom_, btile, Math.max(9 - zoom_, 0));
+                            tileMesh = this.tileMeshProvider.getTileMesh(EarthProperties.RADIUS, zoom_, btile, Math.max(9 - zoom_, 0));
                             tileEarth.add(tileMesh);
                         } else {
                             //Draw flat tiles

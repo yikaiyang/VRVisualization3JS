@@ -3,6 +3,7 @@
  */
 
  import {EarthProperties} from '../earth-viewer.js'
+ import Units from '../util/units.js'
 class GeoConversion {
     static WGStoGlobeCoord(latitude = 0.0, longitude = 0.0, radius = 0.0){
         if (!!latitude && !!longitude && !!radius){
@@ -42,7 +43,7 @@ class GeoConversion {
             Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
             Math.sin(dLon / 2) * Math.sin(dLon / 2);
         var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        var d = EarthProperties.RADIUS * c;
+        var d = Units.toReal(EarthProperties.RADIUS) * c;
         return d; // meters
     }
     

@@ -12,7 +12,7 @@ export default new Router({
         {
             path: '/',
             name: 'Frontpage',
-            component: Search,
+            //component: Search,
         },
         {
             path: '/test',

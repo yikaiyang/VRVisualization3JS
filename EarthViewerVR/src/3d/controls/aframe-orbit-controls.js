@@ -19,15 +19,16 @@
 var App = App || {};
 var callbackHelper = App.callbackHelper;
 var userPosition = App.UserPosition;
+var EARTH_RADIUS = App.EARTH_RADIUS || 6378137;
 
 THREE.OrbitControls = function (object, domElement) {
 	//Overwrite camera settings
 	///Manually overwrite near/far clipping properties. Since values from aframe are not adopted somehow???
 	
 	this.object = object;
-	this.object.near = 0.05;
+/* 	this.object.near = 0.05;
 	this.object.far = 10000000;
-	this.object.updateProjectionMatrix();
+	this.object.updateProjectionMatrix(); */
 
 	//Location information
 	this.defaultLatitude = 48.210033;
@@ -337,9 +338,9 @@ THREE.OrbitControls = function (object, domElement) {
 
 			panOffset.add(v); */
 
-			var lonDelta = Math.cos(spherical.theta) * (distance / (1000 * R * Math.cos(userPosition.latitude * Math.PI / 180))) * 180 / Math.PI;
+			var lonDelta = Math.cos(spherical.theta) * (distance / (EARTH_RADIUS * Math.cos(userPosition.latitude * Math.PI / 180))) * 180 / Math.PI;
             userPosition.longitude -= lonDelta;
-            var latDelta = -Math.sin(spherical.theta) * (distance / (R * 1000)) * 180 / Math.PI;
+            var latDelta = -Math.sin(spherical.theta) * (distance / (EARTH_RADIUS)) * 180 / Math.PI;
 			
 			console.debug('panLeft:'
 			+ 'distance: ' + distance
@@ -381,9 +382,9 @@ THREE.OrbitControls = function (object, domElement) {
 
 			panOffset.add(v); */
 
-			var lonDelta = Math.sin(spherical.theta) * (distance / (1000 * R * Math.cos(userPosition.latitude * Math.PI / 180))) * 180 / Math.PI;
+			var lonDelta = Math.sin(spherical.theta) * (distance / (EARTH_RADIUS * Math.cos(userPosition.latitude * Math.PI / 180))) * 180 / Math.PI;
             userPosition.longitude -= lonDelta;
-            var latDelta = Math.cos(spherical.theta) * (distance / (1000 * R)) * 180 / Math.PI;
+            var latDelta = Math.cos(spherical.theta) * (distance / (EARTH_RADIUS)) * 180 / Math.PI;
 			
 				
 			console.log('panUp: lonDelta: ' + lonDelta 

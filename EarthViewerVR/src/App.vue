@@ -1,13 +1,18 @@
 <template>
   <div id="app">
-      <Menubar></Menubar>
-      <router-view class="ui"></router-view>
+    <Menubar></Menubar>
+    <div class="ui">
+      
+      <Search ></Search>
+      <router-view ></router-view>
+    </div>
   </div>
 </template>
 
 <script>
 
 import Menubar from './components/Menubar.vue'
+import Search from './components/Search.vue'
 
 export default {
   name: 'app',
@@ -18,6 +23,7 @@ export default {
   },
   components: {
     Menubar,
+    Search
   }
 }
 </script>

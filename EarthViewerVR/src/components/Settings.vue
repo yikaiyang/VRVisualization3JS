@@ -5,8 +5,8 @@
         <ul>
             <li v-bind:key="resultItem.id" 
                 v-for="resultItem in results"
-                v-on:mouseenter="handleMouseOver(resultItem)"
-                v-on:mouseleave="handleMouseOut(resultItem)">
+                v-on:mouseenter="handleMouseOver()"
+                v-on:mouseleave="handleMouseOut()">
                 <div class="result-item-container">
                     <span class="result-item result-name">{{resultItem.result}}</span>
                     <span class="result-item delimiter">•</span>
@@ -47,6 +47,10 @@ export default {
 
     methods: {
         created: function () {
+        },
+        handleMouseOver: function() {
+        },
+        handleMouseOut: function() {
         }
     }
 };
