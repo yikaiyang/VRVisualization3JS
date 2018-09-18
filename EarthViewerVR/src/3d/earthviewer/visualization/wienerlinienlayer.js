@@ -1,7 +1,7 @@
 import FileLoader from './../../../util/fileloader.js';
 import GeoConversion from '../util/geoconversion.js';
 import {EarthProperties} from '../earth-viewer.js';
-import UnitConversion from '../util/unit-conversion.js';
+import UnitConversion from '../util/units.js';
 
 class WienerLinienLayer {
     constructor(scene, earth){

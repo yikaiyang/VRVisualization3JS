@@ -1,36 +1,31 @@
 <template>
-    <div id="search">
-        <form id="searchbar">
-            <div class="search-container">
-                <button class="menu" type="button" onclick="openMenu()"></button>
-                <input 
-                    id="textinput" 
-                    type="text" 
-                    name="searchbox" 
-                    placeholder="Search location"
-                    v-model="searchInput"
-                    v-on:keyup="queryLocation"
-                    v-on:keyup.enter="queryLocation"
-                >
-            </div>
-        </form>
-            
+    <div 
+        id="search-results"
+    >
+        <ul>
+            <li v-bind:key="resultItem.id" 
+                v-for="resultItem in results"
+                v-on:mouseenter="handleMouseOver(resultItem)"
+                v-on:mouseleave="handleMouseOut(resultItem)">
+                <div class="result-item-container">
+                    <span class="result-item result-name">{{resultItem.result}}</span>
+                    <span class="result-item delimiter">•</span>
+                    <span class="result-item result-city">{{resultItem.resultDetail + ' '}}</span>
+                </div>
+            </li>
+        </ul>
     </div>
 </template>
 
 <script>
-import debounce from 'debounce' // Delays invocation of method
-import GoogleMapsClientAPI from '../api/googlemapsClientAPI.js'
-//import {GoogleMapsAutoComplete} from '../api/googlemapsAPI';
-
 
 export default {
-    name: "Search",
+    name: "Settings",
     data: function() {
         return {
             searchInput: '',
             results: [
-            /*  {
+                {
                     result: 'Vienna',
                     country: 'Austria',
                 },
@@ -41,108 +36,17 @@ export default {
                 {
                     result: 'ASfsaf',
                     country: 'AfsdfLand'
-                } */
+                } 
             ],
             cachedUserPosition: {}, //Cached position of the initial location of the user before peeking to  (Previewing)
         }
     },
 
     mounted () {
-        this.hoverTimeOut = {};
-        this.leftResultBoxTimeOut = {};
-        this.resultBox = {};
-        this.enteredResultBoxLock = false;
-        this.leftResultBoxLock = false;
-        this.isPeekingActive = false;
-
-        this.api = new GoogleMapsClientAPI();
-        const placeID = 'ChIJn8o2UZ4HbUcRRluiUYrlwv0';
-        this.api.getLocationInfo(placeID);
     },
 
     methods: {
-        queryLocation: function (){
-            if (this.searchInput){
-                this.api.query(this.searchInput,
-                    (result) => {
-                        if (!!result){
-                            this.$data.results = result.results;
-                        }
-                    } 
-                );
-            } else {
-                this.$data.results = [];
-            }
-        },
-        handleMouseOver: function (item){
-        /**
-         * Rotates to selected location (mouseover) if the user hovers 800ms or longer above the item.
-         */
-            this.hoverTimeOut = setTimeout(() => {
-              
-                //alert('timeout' + item.placeID)
-                console.log(item.placeId);
-                const placeId = item.placeId;
-                if (!!placeId){
-                    this.api.getLocationInfo(
-                        placeId,
-                        (result) => {
-                            if (!!result){
-                                console.log(result);
-                                Earth.rotateTo(result.lat, result.lon);
-                            }
-                        }
-                    )
-                } else {
-                    console.error('ERROR: Mouse over: item ' + item + ' does not have a placeid.');
-                }
-            }, 1000);
-        },
-        handleMouseOut: function(item){
-            //Resets timeout for
-            clearTimeout(this.hoverTimeOut);
-        },
-        enteredResultBox: function(){
-            this.isPeekingActive = true;
-            console.debug('enteredResultBox');
-            if (!this.enteredResultBoxLock){
-                //alert('newPosition');
-                this.$data.cachedUserPosition = Earth.getUserPosition();
-            } 
-            this.enteredResultBoxLock = true;
-            clearTimeout(this.leftResultBoxTimeOut);
-        },
-        leftResultBox: function(){
-            console.debug('leftResultBox');
-            this.isPeekingActive = false;
-            clearTimeout(this.leftResultBoxTimeOut);
-
-            if (this.enteredResultBoxLock && !this.leftResultBoxLock){
-                this.leftResultBoxTimeOut = setTimeout(() => {
-                    //alert('leftResultBox');
-                    this.leftResultBoxLock = true; //Do not allow triggering leftResultBox method multiple times
-                    
-                    const position = this.$data.cachedUserPosition;
-                    if (!!position){
-                        Earth.rotateTo(position.latitude, position.longitude);
-                        //Wait 1000ms for transition animation to initial position to finish.
-                        setTimeout(() => {
-                            //alert('releasing lock');
-                            if (!this.isPeekingActive){
-                                this.enteredResultBoxLock = false;
-                            }
-                            
-                            this.leftResultBoxLock = false;
-                        },1000);
-                    } else {
-                        this.enteredResultBoxLock = false;
-                        this.leftResultBoxLock = false;
-                    }
-                }, 1000);   //Wait 1000ms for other animations to finish.  
-            }
-        },
         created: function () {
-            this.queryLocation = debounce(this.queryLocation, 300); //Add 300ms delay when the method is triggered
         }
     }
 };

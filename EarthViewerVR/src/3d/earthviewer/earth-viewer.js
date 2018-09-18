@@ -4,6 +4,8 @@ import {TileMeshProvider} from "./util/tile-mesh-provider.js";
 import WienerLinienLayer from './visualization/wienerlinienlayer.js'
 import GeoConversion from './util/geoconversion.js'
 import BaseThreeJSComponent from './../components/base-threejs-component.js'
+import Units from './util/units.js'
+
 
 /**
  * Earth Viewer constants
@@ -311,7 +313,14 @@ class EarthViewer extends BaseThreeJSComponent{
     }
 
     _getZoomLevel(altitude){
-        const zoom = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(altitude)), 19), 1));
+        const zoom = Math.floor(
+            Math.max(
+                Math.min(Math.floor(27 - Math.log2(
+                    Units.toTHREE(altitude))
+                ), 
+                19
+            ), 
+        1));
         return zoom;
     }
 

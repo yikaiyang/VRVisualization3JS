@@ -80,7 +80,7 @@ export default {
         background-color: #FFFFFF;;
     }
 
-    .menubutton  div {
+    .menubutton div{
         height: 2px;
         width: 16px;
         background-color: #A2A2A2;;
