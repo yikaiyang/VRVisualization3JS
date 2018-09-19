@@ -62,9 +62,9 @@ import {
   MapboxTileSource,
   MapboxOptions
 } from "./../3d/earthviewer/tilesource/mapbox-tile-source.js";
-import { OSMTileSource } from "./../3d/earthviewer/tilesource/osm-tile-source.js";
+import OSMTileSource from "./../3d/earthviewer/tilesource/osm-tile-source.js";
 
-const MAPBOX_TOKEN = 'adsfds';
+const MAPBOX_TOKEN = 'pk.eyJ1IjoieWlrYWl5YW5nIiwiYSI6ImNqaXJ5eXd6MDBhOGwzcGxvMmUwZGxsaDkifQ.Czx2MTe4B6ynlMbpW52Svw';
 
 export default {
   name: "Settings",
@@ -86,16 +86,30 @@ export default {
   },
 
   mounted() {
-      //Initialize available tilesources
+        //Initialize available tilesources
+        this._mapboxTileSource =
+            new MapboxTileSource(
+                MAPBOX_TOKEN,
+                undefined, 
+                MapboxOptions.StreetV1,
+                'mapbox://styles/yikaiyang/cjljkon0224u72rmqfyvybx1e'
+            );
+      
+        this._osmTileSource = new OSMTileSource();
+
   },
 
   methods: {
     mapSelectionDropdownClicked: function(id) {
       this.$data.selectedMapOptionId = id;
       if (id === 0) {
-        //Mapbox was selected
+          //Mapbox was selected
+          alert('mapbox');
+          Earth.setTileSource(this._mapboxTileSource);
       } else if (id === 1) {
           //OSM was selected
+          alert('osm');
+          Earth.setTileSource(this._osmTileSource);
       }
     }
   }
@@ -104,7 +118,7 @@ export default {
 
 <style scoped>
 h2 {
-  font-family: Heebo-Bold;
+  font-family: Heebo;
   font-size: 18px;
   font-weight: 500;
   padding: 20px;
@@ -116,7 +130,8 @@ h2 {
 
 p {
   /* Choose your map prov: */
-  font-family: Heebo-Bold;
+  font-family: Heebo;
+  font-weight: 600;
   font-size: 14px;
   margin-bottom: 8px;
   color: #505050;
@@ -143,7 +158,8 @@ p {
 }
 
 .panel {
-  background-color: #eaecef;
+  background-color: #f2f3f5;
+  box-shadow: 0 2px 2px 0 rgba(169,169,169,0.50);
   height: 540px;
   width: 340px;
   margin-left: 18px;

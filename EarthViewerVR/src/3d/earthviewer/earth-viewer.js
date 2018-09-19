@@ -5,6 +5,7 @@ import WienerLinienLayer from './visualization/wienerlinienlayer.js'
 import GeoConversion from './util/geoconversion.js'
 import BaseThreeJSComponent from './../components/base-threejs-component.js'
 import Units from './util/units.js'
+import BaseTileSource from './tilesource/base-tile-source.js'
 
 
 /**
@@ -103,9 +104,11 @@ class EarthViewer extends BaseThreeJSComponent{
      * Sets the provided tile source and rerenders the earth.
      * @param {*} tilesource 
      */
-    setMapTileSource(tilesource){
+    setTileSource(tilesource){
+    
         if (!!tilesource){
-            this.textureLoader.setMapTileSource(tilesource);
+            alert('new tile source');
+            this.textureLoader.setTileSource(tilesource);
         } else {
             console.error('ERROR: setMapTileSource: The provided maptilesource is invalid: ' );
         }
@@ -118,7 +121,6 @@ class EarthViewer extends BaseThreeJSComponent{
      * @param {*} longitude 
      */
     rotateTo(latitude, longitude, duration = 1000, options){
-
         var options = options || {};
 
         let position = {lat: userPosition.latitude , lon: userPosition.longitude};
@@ -377,6 +379,8 @@ class EarthViewer extends BaseThreeJSComponent{
             });
         }
     }
+
+    
 
     /**
      * Completely redraws (loads new tiles) the earth using the given position.

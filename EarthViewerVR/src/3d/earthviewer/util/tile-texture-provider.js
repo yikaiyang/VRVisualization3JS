@@ -4,6 +4,7 @@
 
 import OSMTileSource from '../tilesource/osm-tile-source.js'
 import {MapboxTileSource, MapboxOptions} from '../tilesource/mapbox-tile-source.js'
+import BaseTileSource from '../tilesource/base-tile-source.js'
 
 class Constants {};
 Constants.MAX_TEXTURE_REQUEST = 10;
@@ -13,7 +14,7 @@ Constants.MAPBOX_KEY = 'pk.eyJ1IjoieWlrYWl5YW5nIiwiYSI6ImNqaXJ5eXd6MDBhOGwzcGxvM
 Object.freeze(Constants);
 
 class TileTextureProvider {
-   constructor(){
+   constructor(tileSource){
        this.textureLoader = new THREE.TextureLoader();
        this.textureLoader.crossOrigin = '';
        this.textures = {};
@@ -23,8 +24,16 @@ class TileTextureProvider {
        this.textureRequestsCount = 0;
        
        //Initialize Tile Source Provider
-       this.tileSource = new MapboxTileSource(Constants.MAPBOX_KEY,undefined, MapboxOptions.StreetV1,'mapbox://styles/yikaiyang/cjljkon0224u72rmqfyvybx1e');
+       this.tileSource = tileSource || (new MapboxTileSource(Constants.MAPBOX_KEY,undefined, MapboxOptions.StreetV1,'mapbox://styles/yikaiyang/cjljkon0224u72rmqfyvybx1e'));
+       //this.tileSource = new MapboxTileSource(Constants.MAPBOX_KEY,undefined, MapboxOptions.StreetV1,'mapbox://styles/yikaiyang/cjljkon0224u72rmqfyvybx1e');
        //this.tileSource = new OSMTileSource(); //Uncomment this if tiles from OSM should be used.
+   }
+
+   setTileSource(tilesource){
+       if (tilesource){
+           this.tileSource = tilesource;
+           console.debug('tilesource changed to: ' + tilesource);
+       }
    }
 
    _loadNextTexture(){
