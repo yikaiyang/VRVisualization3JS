@@ -1,7 +1,12 @@
 <template>
     <div 
+        class="panel"
         id="search-results"
     >
+        <div class="header">
+            <h2>Settings</h2>
+        </div>
+        
         <ul>
             <li v-bind:key="resultItem.id" 
                 v-for="resultItem in results"
@@ -58,17 +63,28 @@ export default {
 
 <style scoped>
 
-form {
-    background: #FFFFFF;
-    box-shadow: 0 2px 2px 0 rgba(169,169,169,0.50);
-    border-radius: 2px;
+h2 {
+    font-size: 16px;
+    padding: 16px;
+    text-align: center;
+}
 
-    width: 340px;
-    height: 48px;
-    
-    margin-top: 18px;
-    margin-left: 18px;
-    cursor: default;
+.header {
+    background-color: white;
+    box-shadow: 0 2px 4px 0 rgba(299,299,299,0.5);
+}
+
+.header-line {
+    margin: 0;
+    padding: 0;
+}
+
+.heading {
+    background-color: white;
+}
+
+.panel {
+    background-color: #f7f7f7
 }
 
 .search-container {
@@ -105,7 +121,6 @@ form {
 
 #search-results {
     width: 340px;
-    background: #FFFFFF;
     box-shadow: 0 2px 2px 0 rgba(169,169,169,0.50);
     border-radius: 2px;
     margin-left: 18px;
