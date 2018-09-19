@@ -1,181 +1,154 @@
 <template>
     <div 
         class="panel"
-        id="search-results"
     >
         <div class="header">
             <h2>Settings</h2>
         </div>
-        
-        <ul>
-            <li v-bind:key="resultItem.id" 
-                v-for="resultItem in results"
-                v-on:mouseenter="handleMouseOver()"
-                v-on:mouseleave="handleMouseOut()">
-                <div class="result-item-container">
-                    <span class="result-item result-name">{{resultItem.result}}</span>
-                    <span class="result-item delimiter">•</span>
-                    <span class="result-item result-city">{{resultItem.resultDetail + ' '}}</span>
+
+        <div class="content">
+            <div class="content-item">
+                <p>Choose your map provider:</p>
+                <div class="dropdown">
+                    <button 
+                        class="btn btn-secondary dropdown-toggle" 
+                        type="button" 
+                        id="dropdownMenuButton" 
+                        data-toggle="dropdown" 
+                        aria-haspopup="true" 
+                        aria-expanded="false">
+                        {{
+                            this.mapOptions[selectedMapOptionId].providerName 
+                            || this.mapOptions[0].providerName
+                        }}
+                    </button>
+                    <div 
+                        class="dropdown-menu"
+                        aria-labelledby="dropdownMenuButton"
+                    >
+                        <a 
+                            :key="option.id"
+                            v-for="(option, index) in mapOptions"
+                            v-bind:class="{'disabled': (selectedMapOptionId === index)}"
+                            v-on:click="mapSelectionDropdownClicked(option.id)"
+                            class="dropdown-item" href="#">
+                            {{option.providerName}}
+                        </a>
+                    </div>
                 </div>
-            </li>
-        </ul>
+            </div>  
+
+            <div 
+                class="content-item"
+                v-bind:class="{ 'collapsed': 
+                    !mapOptions[selectedMapOptionId]
+                        .hasOwnProperty('apiKey')}"
+            >
+                <p>Enter your Mapbox API Token:</p>
+                <input 
+                    type="text" 
+                    class="form-control" 
+                    placeholder="API Token"
+                    aria-label="Mapbox API Token"
+                    v-bind:value="mapOptions[selectedMapOptionId].apiKey || ''"
+                >
+            </div>  
+        </div>
+
+        
     </div>
 </template>
 
 <script>
+import {
+  MapboxTileSource,
+  MapboxOptions
+} from "./../3d/earthviewer/tilesource/mapbox-tile-source.js";
+import { OSMTileSource } from "./../3d/earthviewer/tilesource/osm-tile-source.js";
+
+const MAPBOX_TOKEN = 'adsfds';
 
 export default {
-    name: "Settings",
-    data: function() {
-        return {
-            searchInput: '',
-            results: [
-                {
-                    result: 'Vienna',
-                    country: 'Austria',
-                },
-                {
-                    result: 'Prag',
-                    country: 'Czech'
-                },
-                {
-                    result: 'ASfsaf',
-                    country: 'AfsdfLand'
-                } 
-            ],
-            cachedUserPosition: {}, //Cached position of the initial location of the user before peeking to  (Previewing)
-        }
-    },
-
-    mounted () {
-    },
-
-    methods: {
-        created: function () {
+  name: "Settings",
+  data: function() {
+    return {
+      mapOptions: [
+        {
+          providerName: "Mapbox (Default)",
+          apiKey: MAPBOX_TOKEN,
+          id: 0
         },
-        handleMouseOver: function() {
-        },
-        handleMouseOut: function() {
+        {
+          providerName: "Open Street Maps",
+          id: 1
         }
+      ],
+      selectedMapOptionId: 0
+    };
+  },
+
+  mounted() {
+      //Initialize available tilesources
+  },
+
+  methods: {
+    mapSelectionDropdownClicked: function(id) {
+      this.$data.selectedMapOptionId = id;
+      if (id === 0) {
+        //Mapbox was selected
+      } else if (id === 1) {
+          //OSM was selected
+      }
     }
+  }
 };
 </script>
 
 <style scoped>
-
 h2 {
-    font-size: 16px;
-    padding: 16px;
-    text-align: center;
+  font-family: Heebo-Bold;
+  font-size: 18px;
+  font-weight: 500;
+  padding: 20px;
+}
+
+.collapsed {
+    visibility: hidden;
+}
+
+p {
+  /* Choose your map prov: */
+  font-family: Heebo-Bold;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #505050;
 }
 
 .header {
-    background-color: white;
-    box-shadow: 0 2px 4px 0 rgba(299,299,299,0.5);
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px 0 rgba(299, 299, 299, 0.5);
 }
 
 .header-line {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
-.heading {
-    background-color: white;
+.content {
+  padding-left: 18px; 
+  padding-right: 18px;
+  padding-top: 8px;
+}
+
+.content-item {
+    padding-bottom: 18px;
 }
 
 .panel {
-    background-color: #f7f7f7
+  background-color: #eaecef;
+  height: 540px;
+  width: 340px;
+  margin-left: 18px;
+  margin-top: 12px;
 }
-
-.search-container {
-    display: flex;
-}
-
-#searchbar {
-    background-color: white;
-}
-
-#searchbar >>> .menu{
-    border: 0px;
-    height: 48px;
-    width: 48px;
-    background-color: white;
-    background-image: url('../assets/icons/Search/menu.svg');
-    background-repeat: no-repeat;
-    background-size: 16px;
-    background-position: center;
-    cursor: pointer;
-} 
-
-#searchbar >>> #textinput{
-    border: none;
-    margin-left: 14px;
-    border: 0;
-    padding: 0;
-    height: 48px;
-    font-size: 14px;
-    flex-grow: 2;
-    color: #616569;
-    outline: none;
-}
-
-#search-results {
-    width: 340px;
-    box-shadow: 0 2px 2px 0 rgba(169,169,169,0.50);
-    border-radius: 2px;
-    margin-left: 18px;
-    margin-top: 8px;
-    cursor: default;
-}
-
-#search-results >>> li {
-    margin: 0;
-    padding: 0px;
-    min-height: 42px;
-    border-bottom: 1px solid #EDEDED;
-    cursor: pointer;
-}
-
-#search-results >>> li:last-child{
-    border-bottom: 0px;
-    
-}
-
-#search-results >>> li:hover {
-    background-color: #F4F4F4;
-}
-
-.result-item-container {
-    margin-left: 18px;
-}
-
-#search-results >>> span {
-    display: inline-flex;
-    justify-content: center;
-    flex-direction: column;
-    height: 42px;
-    font-size: 14px;
-    word-wrap: break-word
-}
-
-#search-results >>> .result-name{
-    color: #2D2D2D;
-    margin-right: 4px;
-}
-
-.delimiter {
-    color: #D8D8D8;
-    margin-right: 4px;
-}
-
-#search-results >>> .result-city{
-    color: #878787;
-}
-
-#search-results >>> ul {
-    margin-left: 0;
-    padding-left: 0;
-    list-style: none;
-}
-
 </style>

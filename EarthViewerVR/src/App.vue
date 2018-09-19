@@ -32,7 +32,7 @@ export default {
 @import '../node_modules/bootstrap/scss/bootstrap.scss';
 
 #app {
-  font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-family: 'Heebo', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
@@ -49,6 +49,8 @@ export default {
 
 body{
   //background-color: #000914;
+
+  background-color: #000914;
 }
 
 </style>
