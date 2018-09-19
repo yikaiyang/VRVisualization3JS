@@ -10,10 +10,10 @@
                     <ul v-bind:key="item.name" 
                         v-for="(item, index) in menuItems"
                         >
-                        <!--v-on:Click="{handleMenuItemClick(index)}" -->
                         <li 
                             class="menu-item"
-                            
+                            v-bind:class="{'menu-item-active': (index === selectedMenuItemIndex)}"
+                            v-on:click="handleMenuItemClick(index)"
                         >
                             <router-link :to="{ path: item.route || '/'}">{{item.name}}</router-link>
                         </li>
@@ -26,6 +26,7 @@
 <script>
 export default {
     name: 'Menubar',
+
     data: function() {
         return {
             isMenuVisible: false,
@@ -43,7 +44,13 @@ export default {
                     route: '/settings'
                 }
             ],
-            selectedMenuItemIndex: 0, 
+            selectedMenuItemIndex: 0,
+        }
+    },
+
+    methods: {
+        handleMenuItemClick : function(index){
+            this.$data.selectedMenuItemIndex = index;
         }
     }
 }
