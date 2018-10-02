@@ -3,5 +3,10 @@
     ["env", { "modules": false }],
     "stage-3"
   ],
-  "plugins": ["transform-es2015-classes"]
+  "plugins": ["transform-es2015-classes"],
+  "env": {
+    "test": {
+      "plugins": ["transform-es2015-modules-commonjs"]
+    }
+  }
 }
