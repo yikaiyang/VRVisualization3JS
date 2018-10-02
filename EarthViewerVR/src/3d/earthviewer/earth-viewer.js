@@ -105,9 +105,7 @@ class EarthViewer extends BaseThreeJSComponent{
      * @param {*} tilesource 
      */
     setTileSource(tilesource){
-    
         if (!!tilesource){
-            alert('new tile source');
             this.textureLoader.setTileSource(tilesource);
         } else {
             console.error('ERROR: setMapTileSource: The provided maptilesource is invalid: ' );
@@ -378,6 +376,17 @@ class EarthViewer extends BaseThreeJSComponent{
                 'alti': altitude
             });
         }
+    }
+
+    /**
+     * Dismisses all tiles of earth and rerenders earth.
+     */
+    forceRerenderEarth(){
+        this._redrawEarth({
+            'lon': this.lonStamp,
+            'lat': this.latStamp,
+            'alti': this.userPosition.altitude
+        });
     }
 
     

@@ -104,11 +104,10 @@ export default {
       this.$data.selectedMapOptionId = id;
       if (id === 0) {
           //Mapbox was selected
-          alert('mapbox');
           Earth.setTileSource(this._mapboxTileSource);
+          
       } else if (id === 1) {
           //OSM was selected
-          alert('osm');
           Earth.setTileSource(this._osmTileSource);
       }
     }
@@ -131,7 +130,6 @@ h2 {
 p {
   /* Choose your map prov: */
   font-family: Heebo;
-  font-weight: 600;
   font-size: 14px;
   margin-bottom: 8px;
   color: #505050;
