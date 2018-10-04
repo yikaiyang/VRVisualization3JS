@@ -215,22 +215,6 @@ class EarthViewer extends BaseThreeJSComponent{
         }    
     }
 
-    exampleRotation(){
-        let rotation = { x: 0, y: 0};
-        const rotationMax = { x: 0, y: 0.1};
-        let tweenAccelerate = new TWEEN.Tween(rotation)
-            .to(rotationMax, 1000)
-            .repeat(1)      //repeat once for slow down animation
-            .yoyo(true)     //'bounces' the animation back
-            .easing(TWEEN.Easing.Quartic.In)
-            .onUpdate(() => {
-                console.log('t1: ' + rotation.y);
-                this.earth.rotation.y += rotation.y;
-        });
-
-        tweenAccelerate.start();
-    }
-
     enableAtmosphere(){
         const Shaders = {
             'atmosphere' : {

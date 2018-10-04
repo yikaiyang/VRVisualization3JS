@@ -1,19 +1,27 @@
 'use strict';
 import {EarthViewer} from './earth-viewer.js'
+let d3 = require('d3-fetch');
 
-let ascene = document.querySelector('a-scene');
-let scene = ascene.object3D;
-let earthViewer = new EarthViewer(scene, ascene);
+/**
+ * Initializes the earth and renders the earth for the first time.
+ * 
+ * Loads only when the dom tree has been built 
+ */
+window.addEventListener("load", function(event) {
+    let ascene = document.querySelector('a-scene');
+    let scene = ascene.object3D;
+    let earthViewer = new EarthViewer(scene, ascene);
+    
+    earthViewer.rerenderEarth();
+
+    d3.csv('./src/3d/earthviewer/visualization/haltestellen.csv').then(function(text) {
+        alert('yeah');
+    });
+
+    //earthViewer.enableAtmosphere();
+    
+    window.Earth = earthViewer; //Export to global for debug purposes.
+});
+ 
 
 
-const tokyo = {
-    lat: 35.652832,
-    long: 139.839478
-}
-
-earthViewer.rerenderEarth();
-//earthViewer.enableAtmosphere();
-//earthViewer.flyTo(tokyo.lat, tokyo.long, 2000);
-
-window.Earth = earthViewer;
-//earthViewer.exampleRotation();

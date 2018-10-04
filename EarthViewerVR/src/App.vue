@@ -2,7 +2,6 @@
   <div id="app">
     <Menubar></Menubar>
     <div class="ui">
-      
       <Search ></Search>
       <router-view ></router-view>
     </div>
@@ -10,7 +9,6 @@
 </template>
 
 <script>
-
 import Menubar from './components/Menubar.vue'
 import Search from './components/Search.vue'
 
@@ -45,11 +43,10 @@ export default {
 .ui {
   position: absolute;
   z-index: 100;
+  cursor: default;
 }
 
 body{
-  //background-color: #000914;
-
   background-color: #000914;
 }
 

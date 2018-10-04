@@ -1,3 +1,5 @@
+import d3 from 'd3';
+
 class DataManager {
     constructor(files){
         this.files = files;
@@ -14,7 +16,7 @@ class DataManager {
     }
 
     processFiles(){
-        const filepath = '../haltestellen.csv';
+        const filepath = '';
         d3.csv(filepath, function(data){
             console.log(data);
         });

@@ -48,18 +48,15 @@ export default {
         return {
             searchInput: '',
             results: [
-            /*  {
+            /*
+              {
                     result: 'Vienna',
                     country: 'Austria',
                 },
                 {
                     result: 'Prag',
                     country: 'Czech'
-                },
-                {
-                    result: 'ASfsaf',
-                    country: 'AfsdfLand'
-                } */
+                }*/
             ],
             cachedUserPosition: {}, //Cached position of the initial location of the user before peeking to  (Previewing)
         }
@@ -97,8 +94,6 @@ export default {
          * Rotates to selected location (mouseover) if the user hovers 800ms or longer above the item.
          */
             this.hoverTimeOut = setTimeout(() => {
-              
-                //alert('timeout' + item.placeID)
                 console.log(item.placeId);
                 const placeId = item.placeId;
                 if (!!placeId){
