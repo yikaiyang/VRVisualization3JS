@@ -3,7 +3,22 @@ import d3 from 'd3';
 import fetchPolyFill from 'node-fetch-polyfill';
 import path from 'path';
 import fetch from 'node-fetch';
-import app from 'express';
+import express from 'express';
+
+/**
+ * Express setup
+ */
+const app = express();
+const port = 8081;
+
+let server = app.listen(port, function(){
+    var host = server.address().adress;
+    var port = server.address().port;
+    console.log('Server started with hostname: ' + host
+        + ' port: ' + port);
+})
+app.get('/', (req, res) => res.send('Working Server'));
+app.use(express.static('public'));
 
 const __dirname = path.resolve(path.dirname(decodeURI(new URL(import.meta.url).pathname)));
 
@@ -45,12 +60,14 @@ let data = [];
 //console.log(path.resolve('haltestellen.csv'));
 const haltestellenPath = path.resolve('haltestellen.csv');
 
-fetch('https://github.com').then((response) => {
+fetch('http://localhost:8081/assets/data/haltestellen.csv').then((response) => {
     console.log(response);
 });
+
 
 /* d3.csv(path.resolve('haltestellen.csv'), (data) => {
     console.log(data);
 });  */
 
 console.log(data);
+
