@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node --experimental-modules index.mjs",
+    "merge": "node --experimental-modules hospitaldata-merger.mjs",
     "debug": "node --inspect --experimental-modules index.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,6 +17,7 @@
     "express": "^4.16.3",
     "node-fetch": "^2.2.0",
     "node-fetch-polyfill": "^2.0.6",
-    "papaparse": "^4.6.1"
+    "papaparse": "^4.6.1",
+    "winston": "^3.1.0"
   }
 }

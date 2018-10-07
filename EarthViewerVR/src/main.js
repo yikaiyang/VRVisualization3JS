@@ -10,9 +10,6 @@ require('popper.js/dist/umd/popper');
 require('bootstrap/dist/js/bootstrap');
 require('d3-fetch');
 
-//import './3d/earthviewer/earth-viewer-launcher.js'
-
-
 new Vue({
   el: '#app',
   router,

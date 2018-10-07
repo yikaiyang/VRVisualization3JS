@@ -1,0 +1,30 @@
+{
+    "data": [
+        {
+            "HospitalID": "104",
+            "categoryGER": "NaN",
+            "categoryAUT": "",
+            "Department": "All",
+            "beds": "141",
+            "doctorsgeneral": "NaN",
+            "doctorsspecial": "NaN",
+            "nurses": "NaN",
+            "numberofstays": "NaN",
+            "averagestayduration": "NaN",
+            "address": "Grazer Straße 13, 7540 Güssing"
+        },
+        {
+            "HospitalID": "104",
+            "categoryGER": "930",
+            "categoryAUT": "AN",
+            "Department": "Anästesie und Intensivmedizin",
+            "beds": "6",
+            "doctorsgeneral": "12",
+            "doctorsspecial": "11",
+            "nurses": "21",
+            "numberofstays": "414",
+            "averagestayduration": "3.2",
+            "address": "Grazer Straße 13, 7540 Güssing"
+        }
+    ]
+}
