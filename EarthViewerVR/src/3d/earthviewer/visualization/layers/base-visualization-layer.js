@@ -1,10 +1,11 @@
 /**
  * A base visualization class which is inherited by all visualization layers (point, arcs...)
  */
-class BaseVisualizationLayer {
+export default class BaseVisualizationLayer {
     constructor(scene, earth){
         this._scene = scene;
         this._earth = earth;
+
         this._data = null;
         this._mapping = null;
         this._initGeometries();
@@ -28,8 +29,6 @@ class BaseVisualizationLayer {
     _initGeometries(){
         this.mergedGeometry = new THREE.Geometry();
     }
-
-
 
     _parseData(data, mapping){
         //TODO: Check validaty of data.

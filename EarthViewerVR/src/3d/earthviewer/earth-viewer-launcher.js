@@ -1,6 +1,5 @@
 'use strict';
 import {EarthViewer} from './earth-viewer.js'
-let d3 = require('d3-fetch');
 
 /**
  * Initializes the earth and renders the earth for the first time.
@@ -13,10 +12,6 @@ window.addEventListener("load", function(event) {
     let earthViewer = new EarthViewer(scene, ascene);
     
     earthViewer.rerenderEarth();
-
-    d3.csv('./src/3d/earthviewer/visualization/haltestellen.csv').then(function(text) {
-        alert('yeah');
-    });
 
     //earthViewer.enableAtmosphere();
     

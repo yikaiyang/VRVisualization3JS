@@ -2,6 +2,7 @@
 import {TileTextureProvider} from './util/tile-texture-provider.js'
 import {TileMeshProvider} from "./util/tile-mesh-provider.js";
 import WienerLinienLayer from './visualization/wienerlinienlayer.js'
+import PointLayer from './visualization/layers/point/pointlayer.js'
 import GeoConversion from './util/geoconversion.js'
 import BaseThreeJSComponent from './../components/base-threejs-component.js'
 import Units from './util/units.js'
@@ -76,7 +77,9 @@ class EarthViewer extends BaseThreeJSComponent{
 
     //region Visualisation
     _loadVisualization(){
-        let visLayer = new WienerLinienLayer(scene, this.earth);
+        const visLayer = new WienerLinienLayer(scene, this.earth);
+        const pointLayer = new PointLayer(scene, this.earth);
+        pointLayer._loadData();
         visLayer.load();
     }
     //endregion
