@@ -1,7 +1,10 @@
 import BaseVisualizationLayer from '../base-visualization-layer.js';
-import Axios from 'axios';
+import axios from 'axios';
 
-const filePath = './src/3d/earthviewer/visualization/haltestellen.csv'
+/**
+ * http://localhost:8888/src/assets/data/haltestellen.csv
+ */
+const filePath = './src/assets/data/hospital/hospitalData.json'
 
 export default class PointLayer extends BaseVisualizationLayer{
     constructor(scene, earth, props){
@@ -11,9 +14,15 @@ export default class PointLayer extends BaseVisualizationLayer{
     }
 
     _parseProperties(props){
+        const defaultMapping = {
+            dataArray: 'data', //Specifies the path to the data array, which should be rendered.
+            latitude: 'latitude',
+            longitude: 'longitude',
+        }
+
         if (!!props){
             const data = props.data;
-            const mapping = props.mapping;
+            const mapping = props.mapping || defaultMapping;
         } else {
             console.error('_parseProperties: props invalid')
         }
@@ -33,11 +42,20 @@ export default class PointLayer extends BaseVisualizationLayer{
         })
         .then((response) => {
             alert('loaded data');
-            console.log(response);
+            if (!!response){
+                this._data = response.data;
+            }
+            console.log(this._data);
         })
         .catch((error) => {
             console.error(error);
         })
+    }
+
+    /**
+     * Renders the data using the loaded mapping and data.
+     */
+    _renderData(){
 
     }
 

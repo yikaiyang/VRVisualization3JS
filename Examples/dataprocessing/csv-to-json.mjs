@@ -2,6 +2,7 @@ import papaparse from 'papaparse';
 import fetch from 'node-fetch';
 import path from 'path';
 import fs from 'fs';
+import FileUtils from 'util/fileUtils.mjs'
 
 /**
  * Converts a csv file to a json object and write the output to a file specified by the destination path.
@@ -19,24 +20,13 @@ function convertCSVtoJSONFile(originFilePath, destinationPath){
     });
 }
 
-function ensureDirectoryExists(filepath){
-    const dirname = path.dirname(filepath);
-    console.log(dirname);
-    if (!fs.existsSync(dirname)){
-        ensureDirectoryExists(dirname);
-        fs.mkdirSync(dirname);
-    } else {
-        return true;
-    }
-}
-
 function parseCSVData(data, destinationPath = 'data.json'){
     const result = papaparse.parse(data, {
         header: true,
         complete: (result) => {
             console.log('complete');
             const jsonData = JSON.stringify(result);
-            ensureDirectoryExists(destinationPath);
+            FileUtils.ensureDirectoryExists(destinationPath);
             fs.writeFile(destinationPath, jsonData, (error) => {
                 if (error){
                     console.error('File could not be written: ' + error);

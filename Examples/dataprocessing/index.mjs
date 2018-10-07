@@ -24,6 +24,8 @@ let server = app.listen(port, function(){
         + ' port: ' + port);
 })
 app.get('/', (req, res) => res.send('Working Server'));
+
+//Host csv and json files, so that these can be fetched later.
 app.use(express.static('public'));
 
 ///End express setup
@@ -52,17 +54,7 @@ filePaths = filePaths.map(p => __dirname + '/' + path.normalize(p));
 console.log(filePaths);
 console.log(serverFilePaths);
 
+//Convert our files
 for (let i=0; i < serverFilePaths.length; i++){
     csvToJson(serverFilePaths[i], 'jsonData/' + files[i].split('.')[0] + '.json');
 }
-
-/* d3.dsv(';', serverHostedPath, (data) => {
-    //console.log(data);
-    let dataString = JSON.stringify(data);
-    fs.writeFile('data.json', dataString, (error) => {
-        if (error){
-            console.error('error: ' + error);
-        }
-    });
-});
- */
