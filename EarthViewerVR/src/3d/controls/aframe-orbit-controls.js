@@ -21,14 +21,8 @@ var callbackHelper = App.callbackHelper;
 var userPosition = App.UserPosition;
 var EARTH_RADIUS = App.EARTH_RADIUS || 6378137;
 
-THREE.OrbitControls = function (object, domElement) {
-	//Overwrite camera settings
-	///Manually overwrite near/far clipping properties. Since values from aframe are not adopted somehow???
-	
+THREE.OrbitControls = function (object, domElement) {	
 	this.object = object;
-/* 	this.object.near = 0.05;
-	this.object.far = 10000000;
-	this.object.updateProjectionMatrix(); */
 
 	//Location information
 	this.defaultLatitude = 48.210033;

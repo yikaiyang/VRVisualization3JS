@@ -32,8 +32,7 @@ class WienerLinienLayer {
             console.error('Error: Framework not initialized.\n');
             return;
         }
-
-        
+    
         //this.filePath = './../../assets/data/haltestellen.csv';
         this.filePathAbsolute = './src/3d/earthviewer/visualization/haltestellen.csv';
 
