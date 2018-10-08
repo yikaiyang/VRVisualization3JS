@@ -25,7 +25,7 @@ export default class JSONUtil {
     /**
      * Returns property of a json object, described in the property path.
      * @param {*} object    the json object
-     * @param {*} propertyPath  the path of the object (for example position.latitude)
+     * @param {string} propertyPath  the path of the object (for example position.latitude)
      */
     static getProperty(object, propertyPath){
         if (!!object && !!propertyPath){

@@ -25,7 +25,6 @@ export default class BaseVisualizationLayer {
             'latitude': 'lat',          //pathToLatitudeProperty
             'longitude': 'lon',         //pathToLongitudeProperty
         }
-    
     */
     
     _initGeometries(){

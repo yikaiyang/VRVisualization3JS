@@ -1,5 +1,7 @@
 import BaseVisualizationLayer from '../base-visualization-layer.js';
 import axios from 'axios';
+import GeoConversion from '../../../util/geoconversion.js';
+import JSONUtil from '../../../../../util/json-util.js';
 
 /**
  * http://localhost:8888/src/assets/data/haltestellen.csv
@@ -7,13 +9,13 @@ import axios from 'axios';
 const filePath = './src/assets/data/hospital/hospitalData.json'
 
 export default class PointLayer extends BaseVisualizationLayer{
-    constructor(scene, earth, props){
+    constructor(scene, earth, config){
         super(scene,earth);
-        this._parseProperties(props);
+        this._parseConfiguration(config);
         this._initMaterials();
     }
 
-    _parseProperties(props){
+    _parseConfiguration(props){
         const defaultMapping = {
             dataArray: 'data', //Specifies the path to the data array, which should be rendered.
             latitude: 'position.latitude',
@@ -58,10 +60,15 @@ export default class PointLayer extends BaseVisualizationLayer{
     displayData(){
         //Do preparation stuff
         const data = this._data;
+        const mappingPath = this.this._mapping;
         
         for (let i = 0; i < data.length; i++){
-            
+            JSONUtil.getProperty()
         }
+    }
+
+    _drawShape(latitude, longitude){
+        
     }
 
     _createStationDataCallback(stationData){
