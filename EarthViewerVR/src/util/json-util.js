@@ -17,8 +17,8 @@ export default class JSONUtil {
             //Last item reached and object has property.
             return true;
         } else {
-            const remainingPath = splittedPath.slice(1, splittedPath.length - 1).join('.');
-            JSONUtil.checkIfPropertyExists(object[nextProperty], remainingPath); 
+            const remainingPath = splittedPath.slice(1, splittedPath.length).join('.');
+            return JSONUtil.checkIfPropertyExists(object[nextProperty], remainingPath); 
         }
     }
 

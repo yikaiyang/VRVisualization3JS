@@ -12,9 +12,21 @@
             "args": [
                 "--runInBand"
             ],
-            "cwd": "${workspaceFolder}",
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen"
+            "cwd": "${workspaceFolder}/EarthViewerVR/",
+            "windows": {
+                "useWSL": true
+            },
+            //"console": "integratedTerminal",
+            //"internalConsoleOptions": "neverOpen"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program",
+            "program": "${workspaceRoot}/EarthViewerVR/launch.js",  
+            "windows": {
+                "useWSL": true
+            },
         },
         {
             "type": "node",

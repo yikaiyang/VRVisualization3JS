@@ -8,13 +8,8 @@ test('Successful getProperty on valid json object with valid path', () => {
         }
     }
 
-    const expectedLatitude = testJSON.position.latitude;
-    const expectedLongitude = testJSON.position.longitude;
-
-    debugger;
-    const latitudeExists = JSONUtil.checkIfPropertyExists(testJSON, 'position.latitude');
-    debugger;
-    const longitudeExists = JSONUtil.checkIfPropertyExists(testJSON, 'position.longitude');
+    let latitudeExists = JSONUtil.checkIfPropertyExists(testJSON, 'position.latitude');
+    let longitudeExists = JSONUtil.checkIfPropertyExists(testJSON, 'position.longitude');
 
     expect(latitudeExists).toBe(true);
     expect(longitudeExists).toBe(true);
