@@ -16,8 +16,8 @@ export default class PointLayer extends BaseVisualizationLayer{
     _parseProperties(props){
         const defaultMapping = {
             dataArray: 'data', //Specifies the path to the data array, which should be rendered.
-            latitude: 'latitude',
-            longitude: 'longitude',
+            latitude: 'position.latitude',
+            longitude: 'position.longitude',
         }
 
         if (!!props){
@@ -55,8 +55,13 @@ export default class PointLayer extends BaseVisualizationLayer{
     /**
      * Renders the data using the loaded mapping and data.
      */
-    _renderData(){
-
+    displayData(){
+        //Do preparation stuff
+        const data = this._data;
+        
+        for (let i = 0; i < data.length; i++){
+            
+        }
     }
 
     _createStationDataCallback(stationData){

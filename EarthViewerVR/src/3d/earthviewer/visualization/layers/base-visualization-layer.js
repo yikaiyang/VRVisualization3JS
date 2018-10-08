@@ -1,6 +1,8 @@
 /**
  * A base visualization class which is inherited by all visualization layers (point, arcs...)
  */
+import JSONUtil from '../../../../util/jsonUtil.js'
+
 export default class BaseVisualizationLayer {
     constructor(scene, earth){
         this._scene = scene;
@@ -27,7 +29,7 @@ export default class BaseVisualizationLayer {
     */
     
     _initGeometries(){
-        this.mergedGeometry = new THREE.Geometry();
+        this._mergedGeometry = new THREE.Geometry();
     }
 
     _parseData(data, mapping){
@@ -36,19 +38,4 @@ export default class BaseVisualizationLayer {
         this.mapping = mapping;
     }
 
-    _checkIfPropertyExists(object, propertyPath) {
-        const splittedPath = propertyPath.split('.');
-        let nextProperty = splittedPath[0];
-        if (!object.hasOwnProperty(nextProperty)){
-            return false;
-        }
-
-        if (splittedPath.length <= 1){
-            //Last item reached and object has property.
-            return true;
-        } else {
-            const remainingPath = splittedPath.slice(1, splittedPath.length - 1).join('.');
-            this._checkIfPropertyExists(object[nextProperty], remainingPath); 
-        }
-    }
 }

@@ -17,7 +17,6 @@ class WienerLinienLayer {
         this._loadStationData(this._createStationDataCallback);
     }
 
-
     ///Private methods
     _initGeometries(){
         this.mergedGeometry = new THREE.Geometry();
