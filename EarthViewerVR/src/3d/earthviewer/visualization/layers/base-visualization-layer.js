@@ -1,7 +1,6 @@
 /**
  * A base visualization class which is inherited by all visualization layers (point, arcs...)
  */
-import JSONUtil from '../../../../util/jsonUtil.js'
 
 export default class BaseVisualizationLayer {
     constructor(scene, earth){
@@ -29,6 +28,10 @@ export default class BaseVisualizationLayer {
     
     _initGeometries(){
         this._mergedGeometry = new THREE.Geometry();
+    }
+
+    _mergeGeometry(mesh){
+        this._mergedGeometry.merge(mesh.geometry, mesh.matrix);
     }
 
     _parseData(data, mapping){
