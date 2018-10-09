@@ -2,6 +2,7 @@ import BaseVisualizationLayer from '../base-visualization-layer.js';
 import axios from 'axios';
 import GeoConversion from '../../../util/geoconversion.js';
 import JSONUtil from './../../../../../util/json-util.js';
+import {EarthProperties} from '../../../earth-viewer.js';
 
 /**
  * http://localhost:8888/src/assets/data/haltestellen.csv
@@ -33,9 +34,8 @@ export default class PointLayer extends BaseVisualizationLayer{
     }
 
     _initMaterials(){
-        
         this._color = new THREE.Color("rgb(187,57,70)");
-        this._primitiveGeometry = new THREE.BoxGeometry(10,10,100);
+        this._primitiveGeometry = new THREE.BoxGeometry(10,10,10000);
         this._primitiveMaterial = new THREE.MeshBasicMaterial({
             color: this._color
         });
@@ -82,6 +82,7 @@ export default class PointLayer extends BaseVisualizationLayer{
             let dataLongitude = JSONUtil.getProperty(dataPoint, mapping.longitude);
   
             console.log('point : lat: ' + dataLatitude + ' long: ' + dataLongitude);
+            this._addShape(dataLatitude, dataLongitude);
         }
     }
 
@@ -95,7 +96,7 @@ export default class PointLayer extends BaseVisualizationLayer{
 
         //Create visual primitive and orientate the element towards the center of the earth (0,0,0)
         const center = new THREE.Vector3(0,0,0);
-        let mesh = new THREE.Mesh(this.primitiveGeometry, scope.primitiveMaterial);
+        let mesh = new THREE.Mesh(this._primitiveGeometry, this._primitiveMaterial);
         mesh.position.set(position.x, position.y, position.z);
         mesh.lookAt(center);
         mesh.updateMatrix();

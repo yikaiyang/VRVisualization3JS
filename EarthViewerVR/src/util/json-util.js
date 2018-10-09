@@ -29,12 +29,13 @@ export default class JSONUtil {
      */
     static getProperty(object, propertyPath){
         if (!!object && !!propertyPath){
+            let objectElement = object;
             const splittedPath = propertyPath.split('.');
-            for (let i=0; !!object && i < splittedPath.length; i++){
-                object = object[splittedPath[i]];
+            for (let i=0; i < splittedPath.length; i++){
+                objectElement = objectElement[splittedPath[i]] || {};
             }
 
-            return (object || {});
+            return (objectElement || {});
         }
     }
 }

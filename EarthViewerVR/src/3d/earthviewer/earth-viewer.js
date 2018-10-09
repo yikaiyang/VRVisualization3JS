@@ -77,10 +77,11 @@ class EarthViewer extends BaseThreeJSComponent{
 
     //region Visualisation
     _loadVisualization(){
-        const visLayer = new WienerLinienLayer(scene, this.earth);
+        const wlLayer = new WienerLinienLayer(scene, this.earth);
         const pointLayer = new PointLayer(scene, this.earth);
         pointLayer._loadData();
-        visLayer.load();
+        pointLayer._renderData();
+        //wlLayer.load();
     }
     //endregion
 
