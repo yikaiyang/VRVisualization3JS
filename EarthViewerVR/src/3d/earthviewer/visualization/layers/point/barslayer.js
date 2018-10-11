@@ -1,7 +1,7 @@
 import BaseVisualizationLayer from '../base-visualization-layer.js';
 import axios from 'axios';
 
-import JSONUtil from './../../../../../util/json-util.js';
+import JSONUtil from '../../../../../util/json-util.js';
 
 
 /**
@@ -17,7 +17,7 @@ const defaultMapping = {
 
 const defaultData = {};
 
-export default class PointLayer extends BaseVisualizationLayer{
+export default class BarsLayer extends BaseVisualizationLayer{
     constructor(scene, earth, config){
         super(scene,earth);
         this._parseConfiguration(config);
@@ -37,9 +37,7 @@ export default class PointLayer extends BaseVisualizationLayer{
         this._color = new THREE.Color(0xbf0b2c);
 
         this._Rcolor = new THREE.Color("rgb(187,57,70)");
-
-        this._primitiveGeometry = new THREE.CylinderGeometry(10,10,100,14);
-        //this._primitiveGeometry = this._primitiveGeometry.rotateX(Math.PI / 2);
+        this._primitiveGeometry = new THREE.BoxGeometry(10,10,10000);
         this._primitiveMaterial = new THREE.MeshLambertMaterial({
             color: this._color
         });

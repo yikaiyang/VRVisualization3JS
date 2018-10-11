@@ -24,6 +24,7 @@ export default class JSONUtil {
 
     /**
      * Returns property of a json object, described in the property path.
+     * Return undefined if path is incorrect or property does not exist.
      * @param {*} object    the json object
      * @param {string} propertyPath  the path of the object (for example position.latitude)
      */
@@ -32,10 +33,23 @@ export default class JSONUtil {
             let objectElement = object;
             const splittedPath = propertyPath.split('.');
             for (let i=0; i < splittedPath.length; i++){
-                objectElement = objectElement[splittedPath[i]] || {};
+                objectElement = (objectElement || {})[splittedPath[i]];
             }
 
-            return (objectElement || {});
+            return (objectElement);
         }
+    }
+
+    /**
+     * Checks whether a json object is empty.
+     * From here: https://coderwall.com/p/_g3x9q/how-to-check-if-javascript-object-is-empty
+     * @param {*} obj 
+     */
+    static isEmpty(obj) {
+        for(var key in obj) {
+            if(obj.hasOwnProperty(key))
+                return false;
+        }
+        return true;
     }
 }

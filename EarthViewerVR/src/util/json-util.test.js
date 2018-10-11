@@ -148,9 +148,25 @@ test('Sucessful getProperty on valid hospital entry', () => {
     const expectedLatitude = testJSON.position.lat;
     const expectedLongitude = testJSON.position.lng;
 
-    const resultLatitude = JSONUtil.getProperty(testJSON, 'position.latitude');
-    const resultLongitude = JSONUtil.getProperty(testJSON, 'position.longitude');
+    const resultLatitude = JSONUtil.getProperty(testJSON, 'position.lat');
+    const resultLongitude = JSONUtil.getProperty(testJSON, 'position.lng');
 
     expect(resultLatitude).toBe(expectedLatitude);
     expect(resultLongitude).toBe(expectedLongitude);
 })
+
+
+test('Unsuccessful getProperty on valid json object with invalid path', () => {
+    const testJSON = {
+        position: {
+            latitude: 43,
+            longitude: 32,
+        }
+    }
+
+    const resultLatitude = JSONUtil.getProperty(testJSON, 'position.longa.fasdf');
+    const resultLongitude = JSONUtil.getProperty(testJSON, 'position.longitude.asdfs');
+
+    expect(resultLatitude).toBe(undefined);
+    expect(resultLongitude).toBe(undefined);
+});

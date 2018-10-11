@@ -80,7 +80,6 @@ class EarthViewer extends BaseThreeJSComponent{
         const wlLayer = new WienerLinienLayer(scene, this.earth);
         const pointLayer = new PointLayer(scene, this.earth);
         pointLayer._loadData();
-        pointLayer._renderData();
         //wlLayer.load();
     }
     //endregion
