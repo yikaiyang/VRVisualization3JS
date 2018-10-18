@@ -63,7 +63,7 @@ export default class PointLayer extends BaseVisualizationLayer{
 
             this.setConfiguration(config);
             this.displayData();
-            this._renderData();
+            //this._renderData();
         })
         .catch((error) => {
             console.error(error);
@@ -95,6 +95,7 @@ export default class PointLayer extends BaseVisualizationLayer{
             let mesh = new THREE.Mesh(this._primitiveGeometry, this._primitiveMaterial);
             this._addMergedShape(dataLatitude, dataLongitude, mesh);
         }
+        this._renderData();
     }
 
     _renderData(){
