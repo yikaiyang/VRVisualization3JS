@@ -20,11 +20,11 @@ const defaultData = {};
 export default class PointLayer extends BaseVisualizationLayer{
     constructor(scene, earth, config){
         super(scene,earth);
-        this._parseConfiguration(config);
         this._initMaterials();
+        this.setConfiguration(config);
     }
 
-    _parseConfiguration(config){
+    setConfiguration(config){
         if (!!config){
             this._data = config.data;
             this._mapping = config.mapping || defaultMapping;
@@ -61,7 +61,7 @@ export default class PointLayer extends BaseVisualizationLayer{
                 data: data
             }
 
-            this._parseConfiguration(config);
+            this.setConfiguration(config);
             this.displayData();
             this._renderData();
         })
