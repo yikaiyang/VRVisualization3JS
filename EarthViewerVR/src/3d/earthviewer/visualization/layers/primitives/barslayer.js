@@ -1,6 +1,4 @@
 import BaseVisualizationLayer from '../base-visualization-layer.js';
-import axios from 'axios';
-
 import JSONUtil from '../../../../../util/json-util.js';
 
 
@@ -15,16 +13,14 @@ const defaultMapping = {
     longitude: 'position.lng',
 };
 
-const defaultData = {};
-
 export default class BarsLayer extends BaseVisualizationLayer{
     constructor(scene, earth, config){
         super(scene,earth);
-        this._parseConfiguration(config);
         this._initMaterials();
+        this.setConfiguration(config);
     }
 
-    _parseConfiguration(config){
+    setConfiguration(config){
         if (!!config){
             this._data = config.data;
             this._mapping = config.mapping || defaultMapping;
@@ -36,36 +32,10 @@ export default class BarsLayer extends BaseVisualizationLayer{
     _initMaterials(){
         this._color = new THREE.Color(0xbf0b2c);
 
-        this._Rcolor = new THREE.Color("rgb(187,57,70)");
-        this._primitiveGeometry = new THREE.BoxGeometry(10,10,10000);
+        this._primitiveGeometry = new THREE.BoxGeometry(10,1000,10);
         this._primitiveMaterial = new THREE.MeshLambertMaterial({
             color: this._color
         });
-    }
-
-    _loadData(){
-        axios({
-            method: 'get',
-            url: filePath,
-        })
-        .then((response) => {
-            alert('loaded data');
-            let data;
-            if (!!response){
-                data = response.data;
-            }
-
-            const config = {
-                data: data
-            }
-
-            this._parseConfiguration(config);
-            this.displayData();
-            this._renderData();
-        })
-        .catch((error) => {
-            console.error(error);
-        })
     }
 
     /**

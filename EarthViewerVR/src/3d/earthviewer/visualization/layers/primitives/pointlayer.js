@@ -1,6 +1,6 @@
 import BaseVisualizationLayer from '../base-visualization-layer.js';
-import axios from 'axios';
 import JSONUtil from './../../../../../util/json-util.js';
+import PrimitivesUtil from './../../meshes/primitives-util';
 
 /**
  * http://localhost:8888/src/assets/data/haltestellen.csv
@@ -12,8 +12,6 @@ const defaultMapping = {
     latitude: 'position.lat',
     longitude: 'position.lng',
 };
-
-const defaultData = {};
 
 export default class PointLayer extends BaseVisualizationLayer{
     constructor(scene, earth, config){
@@ -34,38 +32,10 @@ export default class PointLayer extends BaseVisualizationLayer{
     _initMaterials(){
         this._color = new THREE.Color(0xbf0b2c);
 
-        this._Rcolor = new THREE.Color("rgb(187,57,70)");
-
         this._primitiveGeometry = new THREE.CylinderGeometry(10,10,100,14);
-        //this._primitiveGeometry = this._primitiveGeometry.rotateX(Math.PI / 2);
         this._primitiveMaterial = new THREE.MeshLambertMaterial({
             color: this._color
         });
-    }
-
-    _loadData(){
-        axios({
-            method: 'get',
-            url: filePath,
-        })
-        .then((response) => {
-            alert('loaded data');
-            let data;
-            if (!!response){
-                data = response.data;
-            }
-
-            const config = {
-                data: data
-            }
-
-            this.setConfiguration(config);
-            this.displayData();
-            //this._renderData();
-        })
-        .catch((error) => {
-            console.error(error);
-        })
     }
 
     /**
@@ -90,7 +60,8 @@ export default class PointLayer extends BaseVisualizationLayer{
             }
 
             //Create mesh for data entry.
-            let mesh = new THREE.Mesh(this._primitiveGeometry, this._primitiveMaterial);
+            //let mesh = new THREE.Mesh(this._primitiveGeometry, this._primitiveMaterial);
+            let mesh = PrimitivesUtil.createCylinder(100,10);
             this._addMergedShape(dataLatitude, dataLongitude, mesh);
         }
         this._renderData();

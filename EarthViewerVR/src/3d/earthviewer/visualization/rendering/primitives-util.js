@@ -1,3 +1,0 @@
-class PrimitivesUtil {
-    static generateCylinder()
-}
