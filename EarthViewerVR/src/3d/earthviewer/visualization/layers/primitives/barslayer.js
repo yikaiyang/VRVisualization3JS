@@ -92,6 +92,7 @@ export default class BarsLayer extends BaseVisualizationLayer{
             //Create mesh for data entry.
             let mesh = new THREE.Mesh(this._primitiveGeometry, this._primitiveMaterial);
             this._addMergedShape(dataLatitude, dataLongitude, mesh);
+            this._renderData();
         }
     }
 

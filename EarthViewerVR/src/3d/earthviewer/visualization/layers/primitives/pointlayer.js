@@ -1,8 +1,6 @@
 import BaseVisualizationLayer from '../base-visualization-layer.js';
 import axios from 'axios';
-
 import JSONUtil from './../../../../../util/json-util.js';
-
 
 /**
  * http://localhost:8888/src/assets/data/haltestellen.csv

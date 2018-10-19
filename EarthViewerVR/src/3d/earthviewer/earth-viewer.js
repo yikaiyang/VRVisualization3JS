@@ -1,13 +1,12 @@
-'use strict';
 import {TileTextureProvider} from './util/tile-texture-provider.js'
 import {TileMeshProvider} from "./util/tile-mesh-provider.js";
-import WienerLinienLayer from './visualization/wienerlinienlayer.js'
-import PointLayer from './visualization/layers/point/pointlayer.js'
+import WienerLinienLayer from './visualization/layers/wienerlinienlayer.js'
+import PointLayer from './visualization/layers/primitives/pointlayer.js'
 import GeoConversion from './util/geoconversion.js'
 import BaseThreeJSComponent from './../components/base-threejs-component.js'
 import Units from './util/units.js'
 import BaseTileSource from './tilesource/base-tile-source.js'
-
+import {VisualizationManager, VisualizationLayerType} from './visualization/visualizationmanager.js'
 
 /**
  * Earth Viewer constants
@@ -77,10 +76,13 @@ class EarthViewer extends BaseThreeJSComponent{
 
     //region Visualisation
     _loadVisualization(){
-        const wlLayer = new WienerLinienLayer(scene, this.earth);
-        const pointLayer = new PointLayer(scene, this.earth);
-        pointLayer._loadData();
-        //wlLayer.load();
+        const filePath = './src/assets/data/hospital/hospitalData.json'
+        this._visualizationManager = new VisualizationManager(this.scene, this.earth);
+        this._visualizationManager
+            .createLayer(
+                VisualizationLayerType.PointLayer, 
+                filePath
+            );
     }
     //endregion
 
