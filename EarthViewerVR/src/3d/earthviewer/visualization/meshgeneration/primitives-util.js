@@ -1,4 +1,4 @@
-class PrimitivesUtil {
+class PrimitivesGenerator {
     /**
      * Creates a three js cylinder mesh with the given parameters.
      * Returns a cylinder mesh if valid parameters are provided, otherwise null.
@@ -6,7 +6,7 @@ class PrimitivesUtil {
     static createCylinder(height = 100, width = 10, hexColor =  0xbf0b2c){
         let geometry = new THREE.CylinderGeometry(width, width, height, 14);
         let material = new THREE.MeshLambertMaterial({
-            color: new THREE.color(hexColor)
+            color: new THREE.Color(hexColor)
         });
 
         if (!!geometry && !! material){
@@ -28,6 +28,10 @@ class PrimitivesUtil {
 
         return null;
     }
+
+    static createArc(height, hexColor){
+        
+    }
 }
 
-export default PrimitivesUtil;
+export default PrimitivesGenerator;

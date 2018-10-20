@@ -26,7 +26,6 @@ export default class BaseVisualizationLayer {
             'longitude': 'lon',         //pathToLongitudeProperty
         }
     */
-    
     _initGeometries(){
         this._mergedGeometry = new THREE.Geometry();
     }
@@ -36,7 +35,7 @@ export default class BaseVisualizationLayer {
     }
 
     /**
-     * Adds a geometry 
+     * Merges a given mesh using geometry merging and positions the result at the provided location (latitude, longitude).
      * @param {number} latitude 
      * @param {number} longitude 
      * @param {THREE.Mesh} mesh
@@ -53,9 +52,6 @@ export default class BaseVisualizationLayer {
         //Create visual primitive and orientate the element towards the center of the earth (0,0,0)
         const center = new THREE.Vector3(0,0,0);
     
-      
-
-        //mesh.geometry.rotateX(Math.PI / 2);
         mesh.position.set(position.x, position.y, position.z);
         mesh.lookAt(center);
         mesh.rotateX(Math.PI / 2);

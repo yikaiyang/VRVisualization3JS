@@ -1,11 +1,8 @@
 import {TileTextureProvider} from './util/tile-texture-provider.js'
 import {TileMeshProvider} from "./util/tile-mesh-provider.js";
-import WienerLinienLayer from './visualization/layers/wienerlinienlayer.js'
-import PointLayer from './visualization/layers/primitives/pointlayer.js'
 import GeoConversion from './util/geoconversion.js'
 import BaseThreeJSComponent from './../components/base-threejs-component.js'
 import Units from './util/units.js'
-import BaseTileSource from './tilesource/base-tile-source.js'
 import {VisualizationManager, VisualizationLayerType} from './visualization/visualizationmanager.js'
 
 /**
