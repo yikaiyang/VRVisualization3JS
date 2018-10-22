@@ -3,11 +3,6 @@ import JSONUtil from '../../../../../util/json-util.js';
 import PrimitivesGenerator from '../../meshgeneration/primitives-util.js';
 
 
-/**
- * http://localhost:8888/src/assets/data/haltestellen.csv
- */
-const filePath = './src/assets/data/hospital/hospitalData.json'
-
 const defaultMapping = {
     dataPath: 'data', //Specifies the path to the data array, which should be rendered.
     latitude: 'position.lat',

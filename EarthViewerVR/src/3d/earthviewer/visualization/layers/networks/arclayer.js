@@ -13,7 +13,7 @@ const defaultMapping = {
     longitude: 'position.lng',
 };
 
-export default class PointLayer extends BaseVisualizationLayer{
+export default class ArcLayer extends BaseVisualizationLayer{
     constructor(scene, earth, config){
         super(scene,earth);
         this._initMaterials();

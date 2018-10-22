@@ -26,6 +26,63 @@ function midValue(number1, number2){
     return number1 + (number2 - number1) / 2;
 }
 
+/**
+ * Creates a spline on an globe with radius using a given geoencoded start and end position.
+ * An optional elevation or color can also be specified.
+ * @param {*} startPosition the startPosition as json object in json format: {lat: 43, lon: 3}
+ * @param {*} endPosition the endPosition as json object in json format: {lat: 43, lon: 3}
+ * @param {*} radius    the radius of the globe
+ * @param {*} elevation the protrusion of the midpoint of the spline. (optional) default is 0.
+ * @param {*} hexColor the color of the spline
+ */
+function createSpline(startPosition, endPosition, radius, elevation, hexColor = 0xff0000) {
+    if (!startPosition || !endPosition || !elevation){
+        return null;
+    }
+
+    //Calculate mid point.
+    const midPoint = {
+        lat: midValue(startPosition.lat, endPosition.lat),
+        lon: midValue(startPosition.lon, endPosition.lon)
+    };
+
+    const startCoords = GeoConversion.WGStoGlobeCoord(startPosition.lat, startPosition.lon, radius);
+    const endCoords = GeoConversion.WGStoGlobeCoord(endPosition.lat, endPosition.lon, radius);
+
+    const midPointCoords = GeoConversion.WGStoGlobeCoord(midPoint.lat, midPoint.lon, radius + elevation);
+
+    const digits = 8; //Specifies how many digits shall be left.
+
+     // Create a sine-like wave
+     var curve = new THREE.QuadraticBezierCurve3( 
+        new THREE.Vector3( 
+            roundNumber(startCoords.x, digits),
+            roundNumber(startCoords.y, digits),
+            roundNumber(startCoords.z, digits)
+        ),
+        new THREE.Vector3( 
+            roundNumber(midPointCoords.x, digits),
+            roundNumber(midPointCoords.y, digits),
+            roundNumber(midPointCoords.z, digits)
+        ),
+        new THREE.Vector3( 
+            roundNumber(endCoords.x, digits),
+            roundNumber(endCoords.y, digits), 
+            roundNumber(endCoords.z, digits)
+        ),
+     );
+
+    var points = curve.getPoints(40);
+    var geometry = new THREE.BufferGeometry().setFromPoints(points);
+    var material = new THREE.LineBasicMaterial( { 
+        color : hexColor,
+    } );
+
+    // Create the final object to add to the scene
+    var splineObject = new THREE.Line( geometry, material );
+    return splineObject;
+}
+
 function initSplines (){
     const newYork = {
         lat: 40.730610,
@@ -37,57 +94,7 @@ function initSplines (){
         lon: 16.3871662275896
     };
 
-    //World coordinates of location point
-    let newYorkWC = GeoConversion.WGStoGlobeCoord(newYork.lat, newYork.lon, 20);
-    let viennaWC = GeoConversion.WGStoGlobeCoord(vienna.lat, vienna.lon, 20);
-
-    let midPoint = {
-        lat: midValue(vienna.lat, newYork.lat),
-        lon: midValue(vienna.lon, newYork.lon)
-    };
-
-    let midPointWC = GeoConversion.WGStoGlobeCoord(midPoint.lat, midPoint.lon, 30);
-
-
-
-    const digits = 8;
-
-    console.log('NY x:' + roundNumber(newYorkWC.x, digits),  + ' y: ' 
-        + roundNumber(newYorkWC.y, digits) + ' z: ' 
-        + roundNumber(newYorkWC.z, digits));
-    console.log('vienna x:' + 
-        roundNumber(viennaWC.x, digits) + ' y: ' + 
-        roundNumber(viennaWC.y, digits) + ' z: ' + 
-        roundNumber(viennaWC.z, digits));
-
-    // Create a sine-like wave
-    var curve = new THREE.QuadraticBezierCurve3( 
-        new THREE.Vector3( roundNumber(newYorkWC.x, digits), roundNumber(newYorkWC.y, digits), roundNumber(newYorkWC.z, digits)),
-        new THREE.Vector3( midPointWC.x, midPointWC.y, midPointWC.z),
-        new THREE.Vector3( roundNumber(viennaWC.x, digits), roundNumber(viennaWC.y, digits), roundNumber(viennaWC.z, digits)),
-     );
-
-/*     var curve = new THREE.QuadraticBezierCurve3(
-        new THREE.Vector3( -10, 0, 0 ),
-        new THREE.Vector3( 20, 15, 4 ),
-        new THREE.Vector3( 10, 0, 0 )
-    ); */
-
-    console.log(curve);
-    
-
-    var points = curve.getPoints( 50 );
-
-    console.log(points);
-    var geometry = new THREE.BufferGeometry().setFromPoints( points );
-
-    var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
-
-    // Create the final object to add to the scene
-    var splineObject = new THREE.Line( geometry, material );
-
-    //splineObject.lookAt(10,0,10);
-
+    const splineObject = createSpline(newYork, vienna, 20, 10);
     scene.add(splineObject);
 
 }
