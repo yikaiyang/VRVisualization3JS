@@ -155,7 +155,6 @@ test('Sucessful getProperty on valid hospital entry', () => {
     expect(resultLongitude).toBe(expectedLongitude);
 })
 
-
 test('Unsuccessful getProperty on valid json object with invalid path', () => {
     const testJSON = {
         position: {
@@ -169,4 +168,281 @@ test('Unsuccessful getProperty on valid json object with invalid path', () => {
 
     expect(resultLatitude).toBe(undefined);
     expect(resultLongitude).toBe(undefined);
+});
+
+test('Sucessfully extract property from json Array', () => {
+   const testJSON = {
+        "data": [
+            {
+                "\ufeffKA-Nr": "K101",
+                "Bundesland": "Burgenland",
+                "Bezirk": "Oberwart",
+                "Versorgungszone": "Süd",
+                "Versorgungsregion": "Burgenland-Süd",
+                "Bezeichnung": "Rehabilitationszentrum für Herz-Kreislauferkrankungen Bad Tatzmannsdorf",
+                "Öffentlichkeitsrecht": "ohne Öffentlichkeitsrecht",
+                "Gemeinnützigkeit": "nicht gemeinnützig",
+                "Fondszugehörigkeit": "Sonstige",
+                "Adresse": "Vogelsangweg 11, 7431 Bad Tatzmannsdorf",
+                "Telefon, Fax": "03353/6000-0, 03353/6000-43510",
+                "Homepage": "http://www.ska-badtatzmannsdorf.at",
+                "Ärztlicher Leiter": "Prim. Prof. Dr. Herbert Laimer",
+                "Pflegedienstleiter": "PDL Ingeborg Hutter",
+                "Verwaltungsdirektor": "Dipl. KHBW Wolfgang Sandor",
+                "Bettenanzahl": "166",
+                "Bettenführende Fachrichtungen": "Rehabilitationszentrum (Interne)",
+                "Intensivbereiche": "",
+                "Großgeräte": "ECT",
+                "Träger-Nr.": "T090",
+                "Träger Bezeichnung": "Pensionsversicherungsanstalt Wien",
+                "Träger-Adresse": "Friedrich-Hillegeist-Straße 1, 1021 Wien Postfach",
+                "Träger Telefon, Fax": "01/050303, 01/050303-288 50",
+                "Träger Homepage": "http://www.pensionsversicherung.at",
+                "departments": []
+            },
+            {
+                "\ufeffKA-Nr": "K102",
+                "Bundesland": "Burgenland",
+                "Bezirk": "Eisenstadt(Stadt)",
+                "Versorgungszone": "Ost",
+                "Versorgungsregion": "Burgenland-Nord",
+                "Bezeichnung": "Krankenhaus der Barmherzigen Brüder Eisenstadt",
+                "Öffentlichkeitsrecht": "mit Öffentlichkeitsrecht",
+                "Gemeinnützigkeit": "gemeinnützig",
+                "Fondszugehörigkeit": "Landesfonds",
+                "Adresse": "Esterhazystraße 26, 7000 Eisenstadt",
+                "Telefon, Fax": "02682/601-0, 02682/601-1099",
+                "Homepage": "http://www.barmherzige-brueder.at",
+                "Ärztlicher Leiter": "Prim. Dr. Mathias Resinger",
+                "Pflegedienstleiter": "MAS Irene Zach",
+                "Verwaltungsdirektor": "MBA MSc Robert Maurer",
+                "Bettenanzahl": "384",
+                "Bettenführende Fachrichtungen": "AN, CH, GGH, HNO, IM, KI, OR, PSY, UC",
+                "Intensivbereiche": "AN, IM, KI",
+                "Großgeräte": "COR, CT, ECT, MR",
+                "Träger-Nr.": "T180",
+                "Träger Bezeichnung": "Konvent der Barmherzigen Brüder Eisenstadt",
+                "Träger-Adresse": "Esterhazystraße 26, 7000 Eisenstadt",
+                "Träger Telefon, Fax": "02682/601-0, 02682/601-1099",
+                "Träger Homepage": "http://www.barmherzige-brueder.at",
+                "departments": [
+                    {
+                        "HospitalID": "102",
+                        "categoryGER": "NaN",
+                        "categoryAUT": "",
+                        "Department": "All",
+                        "beds": "420",
+                        "doctorsgeneral": "NaN",
+                        "doctorsspecial": "NaN",
+                        "nurses": "NaN",
+                        "numberofstays": "NaN",
+                        "averagestayduration": "NaN",
+                        "address": "Esterhazystraße 26, 7000 Eisenstadt"
+                    },
+                    {
+                        "HospitalID": "102",
+                        "categoryGER": "169",
+                        "categoryAUT": "CH",
+                        "Department": "Chirurgie - allgemein",
+                        "beds": "46",
+                        "doctorsgeneral": "16",
+                        "doctorsspecial": "6",
+                        "nurses": "35",
+                        "numberofstays": "2248",
+                        "averagestayduration": "5.32",
+                        "address": "Esterhazystraße 26, 7000 Eisenstadt"
+                    },
+                    {
+                        "HospitalID": "102",
+                        "categoryGER": "199",
+                        "categoryAUT": "GGH",
+                        "Department": "Frauenheilkunde und Geburtshilfe",
+                        "beds": "28",
+                        "doctorsgeneral": "12",
+                        "doctorsspecial": "4",
+                        "nurses": "24",
+                        "numberofstays": "2287",
+                        "averagestayduration": "3.05",
+                        "address": "Esterhazystraße 26, 7000 Eisenstadt"
+                    },
+                    {
+                        "HospitalID": "102",
+                        "categoryGER": "220",
+                        "categoryAUT": "HNO",
+                        "Department": "Hals-, Nasen- und Ohrenheilkunde - allgemein",
+                        "beds": "21",
+                        "doctorsgeneral": "10",
+                        "doctorsspecial": "5",
+                        "nurses": "20",
+                        "numberofstays": "1607",
+                        "averagestayduration": "3.05",
+                        "address": "Esterhazystraße 26, 7000 Eisenstadt"
+                    },
+                    {
+                        "HospitalID": "102",
+                        "categoryGER": "323",
+                        "categoryAUT": "IM",
+                        "Department": "Innere Medizin I (Kardiologie und Nephrologie)",
+                        "beds": "98",
+                        "doctorsgeneral": "19",
+                        "doctorsspecial": "8",
+                        "nurses": "48",
+                        "numberofstays": "10017",
+                        "averagestayduration": "2",
+                        "address": "Esterhazystraße 26, 7000 Eisenstadt"
+                    },
+                    {
+                        "HospitalID": "102",
+                        "categoryGER": "316",
+                        "categoryAUT": "IM",
+                        "Department": "Innere Medizin II (Gastroenterologie und Onkologie)",
+                        "beds": "55",
+                        "doctorsgeneral": "NaN",
+                        "doctorsspecial": "NaN",
+                        "nurses": "NaN",
+                        "numberofstays": "NaN",
+                        "averagestayduration": "NaN",
+                        "address": "Esterhazystraße 26, 7000 Eisenstadt"
+                    },
+                    {
+                        "HospitalID": "102",
+                        "categoryGER": "930",
+                        "categoryAUT": "IN AN",
+                        "Department": "Intensivbetreuung (Anästhesiologie)",
+                        "beds": "8",
+                        "doctorsgeneral": "23",
+                        "doctorsspecial": "16",
+                        "nurses": "43",
+                        "numberofstays": "354",
+                        "averagestayduration": "7.34",
+                        "address": "Esterhazystraße 26, 7000 Eisenstadt"
+                    },
+                    {
+                        "HospitalID": "102",
+                        "categoryGER": "369",
+                        "categoryAUT": "KI",
+                        "Department": "Kinder- und Jugendheilkunde - allgemein",
+                        "beds": "25",
+                        "doctorsgeneral": "12",
+                        "doctorsspecial": "4",
+                        "nurses": "20",
+                        "numberofstays": "2118",
+                        "averagestayduration": "1.66",
+                        "address": "Esterhazystraße 26, 7000 Eisenstadt"
+                    },
+                    {
+                        "HospitalID": "102",
+                        "categoryGER": "366",
+                        "categoryAUT": "KI",
+                        "Department": "Neonatologie - allgemein",
+                        "beds": "6",
+                        "doctorsgeneral": "2",
+                        "doctorsspecial": "2",
+                        "nurses": "9",
+                        "numberofstays": "344",
+                        "averagestayduration": "4.91",
+                        "address": "Esterhazystraße 26, 7000 Eisenstadt"
+                    },
+                    {
+                        "HospitalID": "102",
+                        "categoryGER": "699",
+                        "categoryAUT": "OR",
+                        "Department": "Orthopädie und orthopädische Chirurgie - allgemein",
+                        "beds": "27",
+                        "doctorsgeneral": "7",
+                        "doctorsspecial": "6",
+                        "nurses": "19",
+                        "numberofstays": "1022",
+                        "averagestayduration": "5.05",
+                        "address": "Esterhazystraße 26, 7000 Eisenstadt"
+                    },
+                    {
+                        "HospitalID": "102",
+                        "categoryGER": "930",
+                        "categoryAUT": "PAL",
+                        "Department": "Palliativmedizinische Einrichtung",
+                        "beds": "5",
+                        "doctorsgeneral": "NaN",
+                        "doctorsspecial": "NaN",
+                        "nurses": "NaN",
+                        "numberofstays": "NaN",
+                        "averagestayduration": "NaN",
+                        "address": "Esterhazystraße 26, 7000 Eisenstadt"
+                    },
+                    {
+                        "HospitalID": "102",
+                        "categoryGER": "829",
+                        "categoryAUT": "PSY",
+                        "Department": "Psychiatrie - allgemein",
+                        "beds": "43",
+                        "doctorsgeneral": "15",
+                        "doctorsspecial": "5",
+                        "nurses": "40",
+                        "numberofstays": "NaN",
+                        "averagestayduration": "NaN",
+                        "address": "Esterhazystraße 26, 7000 Eisenstadt"
+                    },
+                    {
+                        "HospitalID": "102",
+                        "categoryGER": "930",
+                        "categoryAUT": "TK GEM",
+                        "Department": "Tagesklinik (Interdisziplinärer Bereich)",
+                        "beds": "13",
+                        "doctorsgeneral": "NaN",
+                        "doctorsspecial": "NaN",
+                        "nurses": "NaN",
+                        "numberofstays": "NaN",
+                        "averagestayduration": "NaN",
+                        "address": "Esterhazystraße 26, 7000 Eisenstadt"
+                    },
+                    {
+                        "HospitalID": "102",
+                        "categoryGER": "166",
+                        "categoryAUT": "UC",
+                        "Department": "Unfallchirurgie - allgemein",
+                        "beds": "38",
+                        "doctorsgeneral": "10",
+                        "doctorsspecial": "2",
+                        "nurses": "21",
+                        "numberofstays": "2548",
+                        "averagestayduration": "4.2",
+                        "address": "Esterhazystraße 26, 7000 Eisenstadt"
+                    },
+                    {
+                        "HospitalID": "102",
+                        "categoryGER": "339",
+                        "categoryAUT": "IM",
+                        "Department": "Innere Medizin I - allgemein",
+                        "beds": "3",
+                        "doctorsgeneral": "NaN",
+                        "doctorsspecial": "NaN",
+                        "nurses": "NaN",
+                        "numberofstays": "NaN",
+                        "averagestayduration": "NaN",
+                        "address": "Esterhazystraße 26, 7000 Eisenstadt"
+                    },
+                    {
+                        "HospitalID": "102",
+                        "categoryGER": "570",
+                        "categoryAUT": "NEU",
+                        "Department": "Akut-Nachbehandlung von neurologischen Patienten",
+                        "beds": "2",
+                        "doctorsgeneral": "NaN",
+                        "doctorsspecial": "NaN",
+                        "nurses": "NaN",
+                        "numberofstays": "NaN",
+                        "averagestayduration": "NaN",
+                        "address": "Esterhazystraße 26, 7000 Eisenstadt"
+                    }
+                ],
+                "position": {
+                    "lat": 47.8460518,
+                    "lng": 16.51482390000001
+                }
+            }
+        ]
+   };
+
+   let properties = JSONUtil.extractPropertiesFromArrayAsList(testJSON.data, 'Bettenanzahl');
+   expect(properties).toEqual([166,384]);
 });

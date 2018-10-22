@@ -5,6 +5,8 @@ import router from './router'
 
 import './3d/earthviewer/earth-viewer-launcher.js' //Load earth
 
+//Load node libraries
+require('chroma-js');
 require('jquery/dist/jquery');
 require('popper.js/dist/umd/popper');
 require('bootstrap/dist/js/bootstrap');

@@ -1,7 +1,11 @@
 import BaseVisualizationLayer from '../base-visualization-layer.js';
 import JSONUtil from './../../../../../util/json-util.js';
 import PrimitivesGenerator from './../../meshgeneration/primitives-util';
-import ColorUtil from '../../../util/color-util.js'
+
+/**
+ * http://localhost:8888/src/assets/data/haltestellen.csv
+ */
+const filePath = './src/assets/data/hospital/hospitalData.json'
 
 const defaultMapping = {
     dataPath: 'data', //Specifies the path to the data array, which should be rendered.
@@ -56,8 +60,8 @@ export default class PointLayer extends BaseVisualizationLayer{
             }
 
             //Create mesh for data entry.
-            let randomColor = ColorUtil.getRandomHexColor();
-            let mesh = PrimitivesGenerator.createCylinder(100,10, randomColor);
+            //let mesh = new THREE.Mesh(this._primitiveGeometry, this._primitiveMaterial);
+            let mesh = PrimitivesGenerator.createCylinder(100,10);
             this._addMergedShape(dataLatitude, dataLongitude, mesh);
         }
         this._renderData();

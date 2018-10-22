@@ -52,4 +52,54 @@ export default class JSONUtil {
         }
         return true;
     }
+
+    /**
+     * Extracts properties from a json array by specifying the property path.
+     * For example for the json object:
+     * const array = [
+     *    {
+     *      "p1": {
+     *          "p2": 121
+     *      }
+     *    },
+     *    {
+     *      "p1": {
+     *          "p2": 123
+     *      }
+     *    }
+     * ]
+     * this method can be called: extractPropertiesFromArrayAsList(array, "p1.p2", type="Number")
+     * to retrieve a list of the properties p2 contained in the array.
+     * -> [121, 123]
+     * 
+     * @param {*} jsonArray 
+     * @param {string} propertyPath 
+     * @param {string} type 
+     */
+    static extractPropertiesFromArrayAsList(jsonArray, propertyPath, type = "Number"){
+        let result = [];
+        let property;
+        let error = false;
+        for (let i = 0; i < jsonArray.length; i++){
+            property = JSONUtil.getProperty(jsonArray[i], propertyPath);
+
+            switch (type){
+                //Specified property is number.
+                case 'Number':
+                    property = parseFloat(property);
+                    break;
+                default:
+                    error = true;
+                    console.error('ERROR: extractPropertiesFromArrayAsList');
+            }
+            
+            if (!error){
+                if (!!property){
+                    result.push(property);
+                }
+            }
+        }
+
+        return result;
+    }
 }
