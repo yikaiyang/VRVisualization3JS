@@ -1,7 +1,8 @@
 import JSONUtil from '../../../../util/json-util.js'
 
+import BasePropertyMapper from './base-propertymapper.js'
 
-class ColorMapper {
+class ColorMapper extends BasePropertyMapper{
     constructor(jsonArray, propertyPath){
         this._parseParameters(jsonArray, propertyPath);
     }
