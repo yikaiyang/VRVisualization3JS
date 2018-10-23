@@ -1,8 +1,9 @@
 import JSONUtil from '../../../../util/json-util.js'
 
+
 class ColorMapper {
     constructor(jsonArray, propertyPath){
-        this._parseParameters(jsonArray, propertyPath)
+        this._parseParameters(jsonArray, propertyPath);
     }
 
     _parseParameters(jsonArray, propertyPath){
@@ -15,7 +16,16 @@ class ColorMapper {
         }
     }
 
-    _calculateColors(){
+    _calculateColors(options){
+        this.type = options.scale || 'continous'; //Type of scaling {continuous | segmented}. When values are 
+        this.range = options.range || [0,100]; //Range of target values as array f.e. if target: [0,100] 
+    }
+
+    /**
+     * Maps a value to a color value using the specified techniques ()
+     * @param {*} value 
+     */
+    mapValueToColor(value){
         
     }
 }
