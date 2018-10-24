@@ -76,11 +76,23 @@ function createSpline(startPosition, endPosition, radius, elevation, hexColor = 
     var geometry = new THREE.BufferGeometry().setFromPoints(points);
     var material = new THREE.LineBasicMaterial( { 
         color : hexColor,
+        lineWidth: 300
     } );
+
 
     // Create the final object to add to the scene
     var splineObject = new THREE.Line( geometry, material );
-    return splineObject;
+
+    //Meshline
+    let line = new MeshLine();
+    line.setGeometry(geometry);
+    let lineMaterial = new MeshLineMaterial({
+        color : new THREE.Color( 0xff0000 )
+    });
+
+    let mesh = new THREE.Mesh(line, lineMaterial);
+
+    return mesh;
 }
 
 function initSplines (){
@@ -245,6 +257,8 @@ function init() {
     let lineMaterial = new THREE.LineBasicMaterial({
     	color: 0xffffff
     });
+
+
     let lineGeometry = new THREE.Geometry();
     lineGeometry.vertices.push(
         new THREE.Vector3(0,0,0),

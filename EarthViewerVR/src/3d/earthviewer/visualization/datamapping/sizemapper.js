@@ -1,5 +1,5 @@
 import BasePropertyMapper from './base-propertymapper.js';
-import d3 from 'd3';
+import * as d3 from 'd3-scale';
 
 export default class SizeMapper extends BasePropertyMapper{
     constructor(jsonArray, propertyPath, options){

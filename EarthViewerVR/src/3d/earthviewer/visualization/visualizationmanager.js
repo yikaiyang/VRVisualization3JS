@@ -4,6 +4,7 @@ import DataLoader from './dataprocessing/dataloader.js'
 import BarsLayer from './layers/primitives/barslayer.js'
 import PointLayer from './layers/primitives/pointlayer.js'
 import WienerLinienLayer from './layers/wienerlinienlayer.js'
+import SizeMapper from './datamapping/sizemapper.js'
 
 class VisualizationLayerType {};
 VisualizationLayerType.PointLayer = 1;
