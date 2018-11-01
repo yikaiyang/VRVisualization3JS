@@ -1,6 +1,6 @@
 import BaseVisualizationLayer from '../base-visualization-layer.js';
-import JSONUtil from './../../../../../util/json-util.js';
-import PrimitivesGenerator from './../../meshgeneration/primitives-util';
+import JSONUtil from '../../../../../util/json-util.js';
+import PrimitivesGenerator from '../../meshgeneration/primitives-util';
 
 /**
  * http://localhost:8888/src/assets/data/haltestellen.csv
@@ -13,7 +13,7 @@ const defaultMapping = {
     longitude: 'position.lng',
 };
 
-export default class PointLayer extends BaseVisualizationLayer{
+export default class ArcLayer extends BaseVisualizationLayer{
     constructor(scene, earth, config){
         super(scene,earth);
         this._initMaterials();
@@ -48,22 +48,8 @@ export default class PointLayer extends BaseVisualizationLayer{
 
         const data = JSONUtil.getProperty(data_source, mapping.dataPath);
         
-        for (let i = 0; i < data.length; i++){
-            let dataPoint = data[i];
-            let dataLatitude = JSONUtil.getProperty(dataPoint, mapping.latitude);
-            let dataLongitude = JSONUtil.getProperty(dataPoint, mapping.longitude);
-  
-            console.log('point : lat: ' + dataLatitude + ' long: ' + dataLongitude);
-            if (!dataLatitude || !dataLongitude){
-                //Entry is empty. Skip this entry.
-                continue;
-            }
-
-            //Create mesh for data entry.
-            //let mesh = new THREE.Mesh(this._primitiveGeometry, this._primitiveMaterial);
-            let mesh = PrimitivesGenerator.createCylinder(100,10);
-            this._mergeMeshAtLocation(dataLatitude, dataLongitude, mesh);
-        }
+        
+        
         this._renderData();
     }
 

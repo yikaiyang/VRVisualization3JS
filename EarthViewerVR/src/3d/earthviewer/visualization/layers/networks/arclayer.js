@@ -62,7 +62,7 @@ export default class ArcLayer extends BaseVisualizationLayer{
             //Create mesh for data entry.
             //let mesh = new THREE.Mesh(this._primitiveGeometry, this._primitiveMaterial);
             let mesh = PrimitivesGenerator.createCylinder(100,10);
-            this._addMergedShape(dataLatitude, dataLongitude, mesh);
+            //this._addMergedShape(dataLatitude, dataLongitude, mesh);
         }
         this._renderData();
     }

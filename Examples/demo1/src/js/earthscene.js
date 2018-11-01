@@ -27,6 +27,34 @@ function midValue(number1, number2){
 }
 
 /**
+ * Creates a THREE.MeshLine object using a given geometry and linewidth.
+ * @param {*} geometry      the geometry data
+ * @param {*} linewidth     the line width
+ */
+function createMeshLine(geometry, linewidth = 0.1) {
+    if (!geometry){
+        console.error('Error: makeLine: geometry is undefined or null.');
+        return;
+    }
+
+	var g = new MeshLine();
+	g.setGeometry(geometry);
+
+	var material = new MeshLineMaterial( {
+		useMap: false,
+		color: new THREE.Color(0xf47d42),
+		opacity: 1.0,
+		resolution: new THREE.Vector2( window.innerWidth, window.innerHeight ),
+		sizeAttenuation: !false,
+		lineWidth: linewidth,
+		//near: camera.near,
+		//far: camera.far
+	});
+	var mesh = new THREE.Mesh( g.geometry, material );
+	return mesh;
+}
+
+/**
  * Creates a spline on an globe with radius using a given geoencoded start and end position.
  * An optional elevation or color can also be specified.
  * @param {*} startPosition the startPosition as json object in json format: {lat: 43, lon: 3}
@@ -73,26 +101,62 @@ function createSpline(startPosition, endPosition, radius, elevation, hexColor = 
      );
 
     var points = curve.getPoints(40);
-    var geometry = new THREE.BufferGeometry().setFromPoints(points);
+    //var geometry = new THREE.BufferGeometry().setFromPoints(points);
+    var splineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+    
     var material = new THREE.LineBasicMaterial( { 
         color : hexColor,
-        lineWidth: 300
     } );
 
-
     // Create the final object to add to the scene
-    var splineObject = new THREE.Line( geometry, material );
+    var splineObject = new THREE.Line( splineGeometry, material );
 
-    //Meshline
-    let line = new MeshLine();
-    line.setGeometry(geometry);
-    let lineMaterial = new MeshLineMaterial({
-        color : new THREE.Color( 0xff0000 )
-    });
+    //let mesh = new THREE.Mesh(line, lineMaterial);
+    return splineObject;
+}
 
-    let mesh = new THREE.Mesh(line, lineMaterial);
+function createSplineUsingMeshLine(startPosition, endPosition, radius, elevation, hexColor = 0xff0000, lineWidth = 0.1){
+    if (!startPosition || !endPosition || !elevation){
+        return null;
+    }
 
-    return mesh;
+    //Calculate mid point.
+    const midPoint = {
+        lat: midValue(startPosition.lat, endPosition.lat),
+        lon: midValue(startPosition.lon, endPosition.lon)
+    };
+
+    const startCoords = GeoConversion.WGStoGlobeCoord(startPosition.lat, startPosition.lon, radius);
+    const endCoords = GeoConversion.WGStoGlobeCoord(endPosition.lat, endPosition.lon, radius);
+
+    const midPointCoords = GeoConversion.WGStoGlobeCoord(midPoint.lat, midPoint.lon, radius + elevation);
+
+    const digits = 8; //Specifies how many digits shall be left.
+
+     // Create a sine-like wave
+     var curve = new THREE.QuadraticBezierCurve3( 
+        new THREE.Vector3( 
+            roundNumber(startCoords.x, digits),
+            roundNumber(startCoords.y, digits),
+            roundNumber(startCoords.z, digits)
+        ),
+        new THREE.Vector3( 
+            roundNumber(midPointCoords.x, digits),
+            roundNumber(midPointCoords.y, digits),
+            roundNumber(midPointCoords.z, digits)
+        ),
+        new THREE.Vector3( 
+            roundNumber(endCoords.x, digits),
+            roundNumber(endCoords.y, digits), 
+            roundNumber(endCoords.z, digits)
+        ),
+     );
+
+    var points = curve.getPoints(40);
+    //var geometry = new THREE.BufferGeometry().setFromPoints(points);
+    var splineGeometry = new THREE.Geometry().setFromPoints(points);
+    
+    return createMeshLine(splineGeometry, lineWidth);
 }
 
 function initSplines (){
@@ -106,9 +170,8 @@ function initSplines (){
         lon: 16.3871662275896
     };
 
-    const splineObject = createSpline(newYork, vienna, 20, 10);
+    const splineObject = createSplineUsingMeshLine(newYork, vienna, 20, 10, null, 0.5);
     scene.add(splineObject);
-
 }
 
 function WGStoGlobeCoord(latitude = 0.0, longitude = 0.0, radius = 0.0){
@@ -126,7 +189,6 @@ function WGStoGlobeCoord(latitude = 0.0, longitude = 0.0, radius = 0.0){
 }
 
 let color = new THREE.Color('rgb(155,155,155)');
-
 
 var geometry = new THREE.BoxGeometry(0.1,0.1,0.1);
 var material = new THREE.MeshBasicMaterial({

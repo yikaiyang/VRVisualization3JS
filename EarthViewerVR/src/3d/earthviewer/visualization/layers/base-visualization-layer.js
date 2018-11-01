@@ -40,7 +40,7 @@ export default class BaseVisualizationLayer {
      * @param {number} longitude 
      * @param {THREE.Mesh} mesh
      */
-    _addMergedShape(latitude, longitude, mesh){
+    _mergeMeshAtLocation(latitude, longitude, mesh){
         if (!latitude || !longitude || !mesh){
             //Invalid values for parameters.
             return;
