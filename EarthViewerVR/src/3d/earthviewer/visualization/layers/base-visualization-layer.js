@@ -30,6 +30,10 @@ export default class BaseVisualizationLayer {
         this._mergedGeometry = new THREE.Geometry();
     }
 
+    /**
+     * Merges a given geometry with the existing merged geometry.
+     * @param {*} mesh 
+     */
     _mergeGeometry(mesh){
         this._mergedGeometry.merge(mesh.geometry, mesh.matrix);
     }

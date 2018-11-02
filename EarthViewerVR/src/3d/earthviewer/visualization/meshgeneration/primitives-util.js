@@ -1,4 +1,6 @@
 import MathUtil from '../../../../util/math-util';
+import GeoConversion from '../../util/geoconversion';
+import {MeshLine, MeshLineMaterial} from 'three.meshline';
 class PrimitivesGenerator {
     /**
      * Creates a three js cylinder mesh with the given parameters.
@@ -105,10 +107,12 @@ class PrimitivesGenerator {
      * @param {*} elevation the protrusion of the midpoint of the spline. (optional) default is 0.
      * @param {*} hexColor the color of the spline
      */
-    static createArc(startPosition, endPosition, radius, elevation, hexColor = 0xff0000, lineWidth) {
+    static createArc(startPosition, endPosition, radius, elevation, hexColor = 0xff0000, lineWidth, options = {}) {
         if (!startPosition || !endPosition || !elevation){
             return null;
         }
+
+        let renderOption = (options.renderOption === 'GLLines') ? 'GLLines' : 'MeshLine';
 
         //Calculate mid point.
         const midPoint = {
@@ -143,14 +147,46 @@ class PrimitivesGenerator {
         );
         let points = curve.getPoints(40);
 
-        let geometry = new THREE.BufferGeometry().setFromPoints(points);
+        let geometry = new THREE.Geometry().setFromPoints(points);
         let material = new THREE.LineBasicMaterial( { 
             color : hexColor,
         } );
 
         // Create the final object to add to the scene
-        var splineObject = new THREE.Line( geometry, material );
+        let splineObject = new THREE.Line(geometry, material); //GLLINE
+        //let splineObject = PrimitivesGenerator.createMeshLine(geometry, 1.0); //THREE.MeshLine
         return splineObject;
+    }
+
+    /**
+     * Creates a THREE.MeshLine object using a given geometry and linewidth.
+     * @param {*} geometry      the geometry data
+     * @param {*} linewidth     the line width
+     */
+    static createMeshLine(geometry, linewidth = 0.1) {
+        if (!geometry){
+            console.error('Error: makeLine: geometry is undefined or null.');
+            return;
+        }
+
+        var g = new MeshLine();
+        g.setGeometry(geometry);
+
+        var material = new MeshLineMaterial( {
+            useMap: false,
+            color: new THREE.Color(0xf47d42),
+            opacity: 1.0,
+            resolution: new THREE.Vector2(window.innerWidth, window.innerHeight),
+            sizeAttenuation: !false,
+            lineWidth: linewidth,
+            //Not needed for now
+            near: 10,
+            far: 637800000
+            //Define far plane as maximum limit of used height.
+            // Objects must be within the range of the far plane. Otherwise they become invisible.
+        });
+        var mesh = new THREE.Mesh(g.geometry, material);
+        return mesh;
     }
 }
 

@@ -1,3 +1,8 @@
+/**
+ * Helper methods for extraction of properties inside json objects or handling with json objects.
+ * @author Yikai Yang
+ */
+
 export default class JSONUtil {
     /**
      * Check whether a json object contains a specified property.

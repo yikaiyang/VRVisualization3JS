@@ -47,8 +47,8 @@ function createMeshLine(geometry, linewidth = 0.1) {
 		resolution: new THREE.Vector2( window.innerWidth, window.innerHeight ),
 		sizeAttenuation: !false,
 		lineWidth: linewidth,
-		//near: camera.near,
-		//far: camera.far
+		near: camera.near,
+		far: camera.far
 	});
 	var mesh = new THREE.Mesh( g.geometry, material );
 	return mesh;
@@ -133,7 +133,7 @@ function createSplineUsingMeshLine(startPosition, endPosition, radius, elevation
 
     const digits = 8; //Specifies how many digits shall be left.
 
-     // Create a sine-like wave
+     // Create spline geometry
      var curve = new THREE.QuadraticBezierCurve3( 
         new THREE.Vector3( 
             roundNumber(startCoords.x, digits),
@@ -146,9 +146,9 @@ function createSplineUsingMeshLine(startPosition, endPosition, radius, elevation
             roundNumber(midPointCoords.z, digits)
         ),
         new THREE.Vector3( 
-            roundNumber(endCoords.x, digits),
-            roundNumber(endCoords.y, digits), 
-            roundNumber(endCoords.z, digits)
+            roundNumber(10000000, digits),
+            roundNumber(10000000, digits), 
+            roundNumber(10000000, digits)
         ),
      );
 
@@ -242,6 +242,8 @@ function init() {
     controls = new THREE.OrbitControls(camera);
     camera.position.z = 100;
     camera.position.y = 20;
+    camera.near = 0.1;
+    camera.far = 6378000;
     scene.add(camera);
     
     let gridHelper = new THREE.GridHelper(40 , 5);

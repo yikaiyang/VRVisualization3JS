@@ -80,6 +80,11 @@ class EarthViewer extends BaseThreeJSComponent{
                 VisualizationLayerType.PointLayer, 
                 filePath
             );
+        this._visualizationManager
+            .createLayer(
+                VisualizationLayerType.ArcLayer,
+                filePath
+            );
     }
     //endregion
 

@@ -1,7 +1,7 @@
 import BaseVisualizationLayer from '../base-visualization-layer.js';
-import JSONUtil from './../../../../../util/json-util.js';
-import PrimitivesGenerator from './../../meshgeneration/primitives-util';
-
+import JSONUtil from '../../../../../util/json-util.js';
+import PrimitivesGenerator from '../../meshgeneration/primitives-util';
+import {EarthProperties} from '../../../earth-viewer.js';
 /**
  * http://localhost:8888/src/assets/data/haltestellen.csv
  */
@@ -11,6 +11,16 @@ const defaultMapping = {
     dataPath: 'data', //Specifies the path to the data array, which should be rendered.
     latitude: 'position.lat',
     longitude: 'position.lng',
+};
+
+const AKHLocation = {
+    lat: 48.220582,
+    lon: 16.347051
+};
+
+const TULocation = {
+    lat: 48.2012343,
+    lon: 16.3635725
 };
 
 export default class ArcLayer extends BaseVisualizationLayer{
@@ -48,23 +58,18 @@ export default class ArcLayer extends BaseVisualizationLayer{
 
         const data = JSONUtil.getProperty(data_source, mapping.dataPath);
         
-        for (let i = 0; i < data.length; i++){
-            let dataPoint = data[i];
-            let dataLatitude = JSONUtil.getProperty(dataPoint, mapping.latitude);
-            let dataLongitude = JSONUtil.getProperty(dataPoint, mapping.longitude);
-  
-            console.log('point : lat: ' + dataLatitude + ' long: ' + dataLongitude);
-            if (!dataLatitude || !dataLongitude){
-                //Entry is empty. Skip this entry.
-                continue;
-            }
+        let arc = PrimitivesGenerator.createArc(
+                AKHLocation, 
+                TULocation,
+                EarthProperties.RADIUS,
+                1000,
+        );
 
-            //Create mesh for data entry.
-            //let mesh = new THREE.Mesh(this._primitiveGeometry, this._primitiveMaterial);
-            let mesh = PrimitivesGenerator.createCylinder(100,10);
-            //this._addMergedShape(dataLatitude, dataLongitude, mesh);
-        }
-        this._renderData();
+        this._earth.add(arc);
+
+        //this._mergeGeometry(arc);
+        
+        //this._renderData();
     }
 
     _renderData(){

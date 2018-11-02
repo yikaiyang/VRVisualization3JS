@@ -4,12 +4,14 @@ import DataLoader from './dataprocessing/dataloader.js'
 import BarsLayer from './layers/primitives/barslayer.js'
 import PointLayer from './layers/primitives/pointlayer.js'
 import WienerLinienLayer from './layers/wienerlinienlayer.js'
+import ArcLayer from './layers/networks/arclayer.js'
 import SizeMapper from './datamapping/sizemapper.js'
 
 class VisualizationLayerType {};
 VisualizationLayerType.PointLayer = 1;
 VisualizationLayerType.BarsLayer = 2;
 VisualizationLayerType.WienerLinienLayer = 3;
+VisualizationLayerType.ArcLayer = 4;
 Object.freeze(VisualizationLayerType);
 
 class VisualizationManager{
@@ -53,6 +55,9 @@ class VisualizationManager{
                     break;
                 case VisualizationLayerType.WienerLinienLayer:
                     layer = new WienerLinienLayer(this._scene, this._earth, configuration);
+                    break;
+                case VisualizationLayerType.ArcLayer:
+                    layer = new ArcLayer(this._scene, this._earth, configuration);
                     break;
                 default:
                     console.error('ERROR: invalid layertype.');

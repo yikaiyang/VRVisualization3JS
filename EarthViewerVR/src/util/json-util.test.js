@@ -1,3 +1,7 @@
+/**
+ * Tests for jsonUtil methods.
+ * @author Yikai Yang
+ */
 import JSONUtil from './json-util'
 
 test('Successful getProperty on valid json object with valid path', () => {
