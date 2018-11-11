@@ -17,11 +17,7 @@ export default class DataLoader {
                     data = response.data;
                 }
     
-                const config = {
-                    data: data
-                }
-    
-                resolve(config);
+                resolve(data);
             })
             .catch((error) => {
                 console.error('Failed loading file:' + filePath);

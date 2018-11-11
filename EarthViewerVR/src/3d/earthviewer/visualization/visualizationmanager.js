@@ -1,8 +1,11 @@
 import DataLoader from './dataprocessing/dataloader.js'
+import DataProcessor from './dataprocessing/dataprocessor.js'
+
+import PropertyMapping from './../../../assets/data/hospital/hospitalDataMapping.js';
 
 //Import all supported layertypes
 import BarsLayer from './layers/primitives/barslayer.js'
-import PointLayer from './layers/primitives/pointlayer.js'
+import PointLayer from './layers/primitives/pointlayer2.js'
 import WienerLinienLayer from './layers/wienerlinienlayer.js'
 import ArcLayer from './layers/networks/arclayer.js'
 import SizeMapper from './datamapping/sizemapper.js'
@@ -21,17 +24,24 @@ class VisualizationManager{
         this.layers = [];
     }
 
-    createLayer(layerType, filePath){
+    createLayer(layerType, filePath, propertyMapping = PropertyMapping){
         if (!!layerType && !!filePath){
             DataLoader.loadData(filePath)
-                .then((config => {
-                    this._addLayer(layerType,config);
+                .then((data => {
+                    //Process data
+                    const processedData = DataProcessor.processData(data, propertyMapping);
+
+                    //Add data to layer
+                    this._addLayer(layerType, processedData);
+                    
                 }))
                 .catch((error) =>{
                     console.error('Error: Could no load data from file:' + filePath);
                     console.error(error);
                     return;
                 });
+
+            
 
         } else {
             console.error(
@@ -41,23 +51,23 @@ class VisualizationManager{
         }
     }
 
-    _addLayer(layerType, configuration){
-        if (!!layerType && !!configuration){
+    _addLayer(layerType, data){
+        if (!!layerType && !!data){
             let layer;
             switch(layerType){
                 case VisualizationLayerType.PointLayer:
                     //Initialize Pointlayer
-                    layer = new PointLayer(this._scene, this._earth, configuration);
+                    layer = new PointLayer(this._scene, this._earth, data);
                     break;
                 case VisualizationLayerType.BarsLayer:
                     //Initialize Barslayer
-                    layer = new BarsLayer(this._scene, this._earth, configuration);
+                    layer = new BarsLayer(this._scene, this._earth, data);
                     break;
                 case VisualizationLayerType.WienerLinienLayer:
-                    layer = new WienerLinienLayer(this._scene, this._earth, configuration);
+                    layer = new WienerLinienLayer(this._scene, this._earth, data);
                     break;
                 case VisualizationLayerType.ArcLayer:
-                    layer = new ArcLayer(this._scene, this._earth, configuration);
+                    layer = new ArcLayer(this._scene, this._earth, data);
                     break;
                 default:
                     console.error('ERROR: invalid layertype.');
