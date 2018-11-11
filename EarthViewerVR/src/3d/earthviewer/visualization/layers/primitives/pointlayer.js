@@ -11,6 +11,7 @@ const defaultMapping = {
     dataPath: 'data', //Specifies the path to the data array, which should be rendered.
     latitude: 'position.lat',
     longitude: 'position.lng',
+    size: 'Bettenanzahl',
 };
 
 export default class PointLayer extends BaseVisualizationLayer{
@@ -22,7 +23,7 @@ export default class PointLayer extends BaseVisualizationLayer{
 
     setConfiguration(config){
         if (!!config){
-            this._data = config.data;
+            this.data = config.data;
             this._mapping = config.mapping || defaultMapping;
         } else {
             console.error('_parseProperties: config invalid')
@@ -31,11 +32,23 @@ export default class PointLayer extends BaseVisualizationLayer{
 
     _initMaterials(){
         this._color = new THREE.Color(0xbf0b2c);
-
-        this._primitiveGeometry = new THREE.CylinderGeometry(10,10,100,14);
         this._primitiveMaterial = new THREE.MeshLambertMaterial({
             color: this._color
         });
+    }
+
+    /*Properties */
+
+    set data(value){
+        if (!!value){
+            this._data = value;
+        } else {
+            console.error('ERROR: _setData: Parameter data is invalid');
+        }
+    }
+
+    get data(){
+        return this._data;
     }
 
     /**
@@ -43,7 +56,7 @@ export default class PointLayer extends BaseVisualizationLayer{
      */
     displayData(){
         //Do preparation stuff
-        const data_source = this._data;
+        const data_source = this.data;
         const mapping = this._mapping;
 
         const data = JSONUtil.getProperty(data_source, mapping.dataPath);
@@ -60,7 +73,6 @@ export default class PointLayer extends BaseVisualizationLayer{
             }
 
             //Create mesh for data entry.
-            //let mesh = new THREE.Mesh(this._primitiveGeometry, this._primitiveMaterial);
             let mesh = PrimitivesGenerator.createCylinder(100,10);
             this._mergeMeshAtLocation(dataLatitude, dataLongitude, mesh);
         }

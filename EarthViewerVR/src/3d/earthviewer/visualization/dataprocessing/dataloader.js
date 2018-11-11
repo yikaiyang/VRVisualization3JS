@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export default class DataLoader {
     /**
-     * Fetches data from a given filepath and returns value
+     * Fetches data from a given filepath and returns it's value
      */
     static loadData(filePath){
         return new Promise((resolve, reject) => {
@@ -29,5 +29,5 @@ export default class DataLoader {
                 reject(error);
             })
         });
-    } 
+    }
 }
