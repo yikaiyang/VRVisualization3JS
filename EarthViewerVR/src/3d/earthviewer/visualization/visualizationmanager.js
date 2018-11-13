@@ -5,7 +5,7 @@ import PropertyMapping from './../../../assets/data/hospital/hospitalDataMapping
 
 //Import all supported layertypes
 import BarsLayer from './layers/primitives/barslayer.js'
-import PointLayer from './layers/primitives/pointlayer2.js'
+import PointLayer from './layers/primitives/pointlayer.js'
 import WienerLinienLayer from './layers/wienerlinienlayer.js'
 import ArcLayer from './layers/networks/arclayer.js'
 import SizeMapper from './datamapping/sizemapper.js'

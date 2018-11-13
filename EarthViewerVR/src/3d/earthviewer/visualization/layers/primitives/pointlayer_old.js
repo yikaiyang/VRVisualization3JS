@@ -1,6 +1,6 @@
 import BaseVisualizationLayer from '../base-visualization-layer.js';
-import JSONUtil from './../../../../../util/json-util.js';
-import PrimitivesGenerator from './../../meshgeneration/primitives-util';
+import JSONUtil from '../../../../../util/json-util.js';
+import PrimitivesGenerator from '../../meshgeneration/primitives-util';
 
 /**
  * http://localhost:8888/src/assets/data/haltestellen.csv

@@ -3,24 +3,40 @@ import JSONUtil from '../../../../../util/json-util.js';
 import PrimitivesGenerator from '../../meshgeneration/primitives-util';
 
 import DataSchemaV1 from '../../dataschema/dataSchemaV1.js';
+import SizeMapper from '../../datamapping/sizemapper.js';
 
-/**
- * http://localhost:8888/src/assets/data/haltestellen.csv
- */
-const filePath = './src/assets/data/hospital/hospitalData.json'
-
-const defaultMapping = {
-    dataPath: 'data', //Specifies the path to the data array, which should be rendered.
-    latitude: 'position.lat',
-    longitude: 'position.lng',
-    size: 'Bettenanzahl',
+const defaultVisualChannelMapping = {
+    "height": "Bettenanzahl"
 };
 
 export default class PointLayer extends BaseVisualizationLayer{
-    constructor(scene, earth, data){
+    constructor(scene, earth, data, visualChannelMapping = defaultVisualChannelMapping){
         super(scene,earth);
         this._initMaterials();
         this.data = data;
+        this._parseVisualChannelMapping(visualChannelMapping);
+    }
+
+    _parseVisualChannelMapping(visualChannelMapping){
+        if (!!visualChannelMapping){
+            const colorProperty = visualChannelMapping.color;
+            const heightProperty = visualChannelMapping.height;
+            this._setHeightMapping(this._dataArray, heightProperty);
+        } else {
+            console.error("_parseVisualChannelMapping. Property visual channel mapping is null or undefined.");
+        }
+    }
+
+    _setColorMapping(data, colorProperty){
+        if (!!data && !!colorProperty){
+            //this._colorMapper = new ColorMapper()
+        }
+    }
+    
+    _setHeightMapping(dataArray, heightProperty){
+        if (!!dataArray && !!heightProperty){
+            this._heightMapper = new SizeMapper(dataArray, heightProperty);
+        }
     }
     
     _initMaterials(){
