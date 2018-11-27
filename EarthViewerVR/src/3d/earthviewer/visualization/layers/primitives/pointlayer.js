@@ -19,6 +19,7 @@ export default class PointLayer extends BaseVisualizationLayer{
 
     _parseVisualChannelMapping(visualChannelMapping){
         if (!!visualChannelMapping){
+            this._visualChannelMapping = visualChannelMapping;
             const colorProperty = visualChannelMapping.color;
             const heightProperty = visualChannelMapping.height;
             this._setHeightMapping(this._dataArray, heightProperty);
@@ -83,7 +84,10 @@ export default class PointLayer extends BaseVisualizationLayer{
             let dataPoint = this._dataArray[i];
             let dataLatitude = JSONUtil.getProperty(dataPoint, DataSchemaV1.latitude);
             let dataLongitude = JSONUtil.getProperty(dataPoint, DataSchemaV1.longitude);
-            let height = JSONUtil.getProperty(dataPoint, "properties.Bettenanzahl") || DEFAULT_HEIGHT;
+        
+            let height = JSONUtil.getProperty(
+                dataPoint,
+                DataSchemaV1.properties + '.' + this._visualChannelMapping.height) || DEFAULT_HEIGHT;
             //alert(height);
 
             console.log('point : lat: ' + dataLatitude + ' long: ' + dataLongitude);
