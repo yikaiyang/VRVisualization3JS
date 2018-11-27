@@ -1,32 +1,30 @@
 import JSONUtil from '../../../../util/json-util.js'
-
 import BasePropertyMapper from './base-propertymapper.js'
+import chroma from 'chroma-js'
 
-class ColorMapper extends BasePropertyMapper{
-    constructor(jsonArray, propertyPath){
-        this._parseParameters(jsonArray, propertyPath);
+export default class ColorMapper extends BasePropertyMapper{
+    constructor(jsonArray, propertyPath, options){
+        super(jsonArray,propertyPath);
+        this._parseOptions(options);
+        this._createMapping();
     }
 
-    _parseParameters(jsonArray, propertyPath){
-        if (!!jsonArray && !!propertyPath){
-            let values = JSONUtil.extractPropertiesFromArrayAsList(jsonArray, propertyPath);
-            if (!Array.isArray(values)){
-                console.error('ERROR: _parseParameters: Returned object is invalid (null or undefined)');
-            }
-            this._values = values;
-        }
+    _parseOptions(options){
+        options = options || {};
+        this.targetRange = options.range || [0,100];
+        this.scaleType = options.scaleType || 'continous';
     }
 
-    _calculateColors(options){
-        this.type = options.scale || 'continous'; //Type of scaling {continuous | segmented}. When values are 
-        this.range = options.range || [0,100]; //Range of target values as array f.e. if target: [0,100] 
+    _createMapping(){
+        const defaultColors = ['white', 'red'];
+
+        //Create mapping for values
+        this.mapValue = chroma
+            .scale(defaultColors)
+            .domain([this.minValue, this.maxValue]);
     }
 
-    /**
-     * Maps a value to a color value using the specified techniques ()
-     * @param {*} value 
-     */
-    mapValueToColor(value){
-        
+    getMappedValue(value){
+        return this.mapValue(value);
     }
 }

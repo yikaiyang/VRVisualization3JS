@@ -4,9 +4,11 @@ import PrimitivesGenerator from '../../meshgeneration/primitives-util';
 
 import DataSchemaV1 from '../../dataschema/dataSchemaV1.js';
 import SizeMapper from '../../datamapping/sizemapper.js';
+import ColorMapper from '../../datamapping/colormapper.js';
 
 const defaultVisualChannelMapping = {
-    "height": "Bettenanzahl"
+    "height": "Bettenanzahl",
+    "color": "Bettenanzahl"
 };
 
 export default class PointLayer extends BaseVisualizationLayer{
@@ -30,7 +32,7 @@ export default class PointLayer extends BaseVisualizationLayer{
 
     _setColorMapping(data, colorProperty){
         if (!!data && !!colorProperty){
-            //this._colorMapper = new ColorMapper()
+            this._colorMapper = new ColorMapper(dataArray, colorProperty);
         }
     }
     
