@@ -9,7 +9,7 @@ export default class SizeMapper extends BasePropertyMapper{
     }
 
     _parseOptions(options){
-        options = options || {}
+        options = options || {};
         this.targetRange = options.range || [0,100];
         this.scaleType = options.scaleType || 'continous';
     }

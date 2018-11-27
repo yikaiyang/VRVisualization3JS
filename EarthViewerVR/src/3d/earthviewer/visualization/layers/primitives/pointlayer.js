@@ -47,7 +47,6 @@ export default class PointLayer extends BaseVisualizationLayer{
     }
 
     /*Properties */
-
     set data(value){
         if (!!value){
             this._data = value;
@@ -77,12 +76,16 @@ export default class PointLayer extends BaseVisualizationLayer{
             console.error('displayData: Property _displayData is empty or invalid.');
             return;
         }
+
+        const DEFAULT_HEIGHT = 0;
         
         for (let i = 0; i < this._dataArray.length; i++){
             let dataPoint = this._dataArray[i];
             let dataLatitude = JSONUtil.getProperty(dataPoint, DataSchemaV1.latitude);
             let dataLongitude = JSONUtil.getProperty(dataPoint, DataSchemaV1.longitude);
-  
+            let height = JSONUtil.getProperty(dataPoint, "properties.Bettenanzahl") || DEFAULT_HEIGHT;
+            //alert(height);
+
             console.log('point : lat: ' + dataLatitude + ' long: ' + dataLongitude);
             if (!dataLatitude || !dataLongitude){
                 //Entry is empty. Skip this entry.
@@ -90,7 +93,7 @@ export default class PointLayer extends BaseVisualizationLayer{
             }
 
             //Create mesh for data entry.
-            let mesh = PrimitivesGenerator.createCylinder(100,10);
+            let mesh = PrimitivesGenerator.createCylinder(height,10);
             this._mergeMeshAtLocation(dataLatitude, dataLongitude, mesh);
         }
         this._renderData();

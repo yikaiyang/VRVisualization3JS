@@ -3,7 +3,8 @@ const SchemaV1 = {
     "title": "title",
     "latitude": "position.lat",
     "longitude": "position.lon",
-    "links": "links"
+    "links": "links",
+    "properties": "properties"
 }
 
 export default SchemaV1;
