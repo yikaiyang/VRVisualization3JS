@@ -40,11 +40,17 @@ module.exports = {
             // BABEL
             {
                 test: /\.js$/,
-                loader: 'babel-loader',
+                //loader: 'babel-loader',
                 exclude: /(node_modules)/,
-                options: {
-                    compact: true
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                      presets: ['@babel/preset-env']
+                    }
                 }
+                /*options: {
+                    compact: true
+                }*/
             },
 
             // STYLES

@@ -14,8 +14,9 @@
     "url": "https://cvgellhorn@github.com/cvgellhorn/webpack-boilerplate.git"
   },
   "dependencies": {
-    "is-odd": "^3.0.1",
+    "@babel/preset-env": "^7.1.6",
     "lodash": "4.17.11",
+    "three": "^0.98.0",
     "three-instanced-mesh": "^0.96.1"
   },
   "devDependencies": {

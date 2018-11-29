@@ -8,4 +8,5 @@ import 'styles/index.scss';
 // ================================
 // START YOUR APP HERE
 // ================================
+
 import './scripts/instancedscene';
