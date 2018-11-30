@@ -3,6 +3,8 @@
 var THREE = require('three');
 require('three-instanced-mesh')(THREE);
 
+//import InstancedMeshGenerator from './instanced-mesh-generator';
+
 // Create an empty scene
 var scene = new THREE.Scene();
 
@@ -15,9 +17,6 @@ var controls = new THREE.OrbitControls(camera);
 controls.update();
 
 var renderer = new THREE.WebGLRenderer();
-
-// Configure renderer clear color
-//renderer.setClearColor("#000000");
 
 // Configure renderer size
 renderer.setSize( window.innerWidth, window.innerHeight );
@@ -36,16 +35,41 @@ var light = new THREE.HemisphereLight( 0xffffff, 0x080820, 1 );
 scene.add(light);
 
 var boxGeometry = new THREE.BoxBufferGeometry(0.02,0.02,0.02);
-var boxMaterial = new THREE.MeshLambertMaterial({
-    color: 'white'
-});
+var boxMaterial = new THREE.MeshLambertMaterial();
+
+var tempGeometry = new THREE.BoxGeometry(1,1,1);
+var tempMesh = new THREE.Mesh(
+    tempGeometry, 
+    new THREE.MeshBasicMaterial()
+);
+tempMesh.position.set(1,1,1);
+tempMesh.lookAt(0,0,0);
+//scene.add(tempMesh);
+
+function initInstancedMesh(
+        geometry, 
+        material, 
+        instanceCount, 
+        isDynamic = false,
+        hasColor = false,
+        isUniformScaled = false
+    ){
+    var cluster = new THREE.InstancedMesh(
+        boxGeometry,
+        boxMaterial,
+        1000,
+        false,
+        true,
+        false,
+    );
+}
 
 var cluster = new THREE.InstancedMesh(
     boxGeometry,
     boxMaterial,
     1000,
     false,
-    false,
+    true,
     false,
 );
 
@@ -54,13 +78,16 @@ var quaternion = new THREE.Quaternion();
 var scaleVec = new THREE.Vector3(1,1,1);
 
 for (var i = 0; i < 1000; i++){
-    cluster.setQuaternionAt(i, quaternion);
+    //get rotation of temp object
+
+    cluster.setQuaternionAt(i, tempMesh.quaternion);
     cluster.setPositionAt(i, offsetVec.set(
         Math.random(), Math.random(), Math.random()
     ));
-
+    var color = new THREE.Color(Math.random(), Math.random(), Math.random());
+    cluster.setColorAt(i,color);
     var scale = new THREE.Vector3(Math.random(), Math.random(), Math.random());
-    cluster.setScaleAt(i, scale);
+    cluster.setScaleAt(i,scale);
 }
 
 // Add cube to Scene
