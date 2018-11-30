@@ -10,10 +10,14 @@ var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 camera.position.z = 4;
 
+//Init controls
+var controls = new THREE.OrbitControls(camera);
+controls.update();
+
 var renderer = new THREE.WebGLRenderer();
 
 // Configure renderer clear color
-renderer.setClearColor("#000000");
+//renderer.setClearColor("#000000");
 
 // Configure renderer size
 renderer.setSize( window.innerWidth, window.innerHeight );
@@ -25,24 +29,47 @@ document.body.appendChild(renderer.domElement);
 // FUN STARTS HERE
 // ------------------------------------------------
 
-// Create a Cube Mesh with basic material
-var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-var material = new THREE.MeshBasicMaterial( { color: "#433F81" } );
-var cube = new THREE.Mesh( geometry, material );
 
-//let boxGeometry = new THREE.BoxBufferGeometry(2,2,2,1,1,1);
-//let boxMaterial = new THREE.MeshPhongMaterial();
 
+//lights
+var light = new THREE.HemisphereLight( 0xffffff, 0x080820, 1 );
+scene.add(light);
+
+var boxGeometry = new THREE.BoxBufferGeometry(0.02,0.02,0.02);
+var boxMaterial = new THREE.MeshLambertMaterial({
+    color: 'white'
+});
+
+var cluster = new THREE.InstancedMesh(
+    boxGeometry,
+    boxMaterial,
+    1000,
+    false,
+    false,
+    false,
+);
+
+var offsetVec = new THREE.Vector3();
+var quaternion = new THREE.Quaternion();
+var scaleVec = new THREE.Vector3(1,1,1);
+
+for (var i = 0; i < 1000; i++){
+    cluster.setQuaternionAt(i, quaternion);
+    cluster.setPositionAt(i, offsetVec.set(
+        Math.random(), Math.random(), Math.random()
+    ));
+
+    var scale = new THREE.Vector3(Math.random(), Math.random(), Math.random());
+    cluster.setScaleAt(i, scale);
+}
 
 // Add cube to Scene
-scene.add( cube );
+//scene.add( cube );
+scene.add(cluster);
 
 // Render Loop
 var render = function () {
   requestAnimationFrame( render );
-
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
 
   // Render the scene
   renderer.render(scene, camera);
