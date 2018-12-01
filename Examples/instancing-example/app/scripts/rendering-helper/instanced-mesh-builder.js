@@ -1,6 +1,13 @@
+var THREE = require('three');
 require('three-instanced-mesh')(THREE);
 
-export default class InstancedMeshGenerator{
+/**
+ * InstancedMeshGenerator simplifies the creation of instanced meshes.
+ * Internally it creates a three-instanced-mesh object, which is filled using the addInstance method.
+ * Use getMesh() method to obtain the resulting mesh.
+ * @author Yikai Yang
+ */
+export default class InstancedMeshBuilder{
     constructor(
         geometry, 
         material, 

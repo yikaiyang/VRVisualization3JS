@@ -3,10 +3,10 @@
 var THREE = require('three');
 require('three-instanced-mesh')(THREE);
 
-//import InstancedMeshGenerator from './instanced-mesh-generator';
+import InstancedMeshBuilder from './rendering-helper/instanced-mesh-builder.js';
 
 // Create an empty scene
-var scene = new THREE.Scene();
+let scene = new THREE.Scene();
 
 // Create a basic perspective camera
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
@@ -24,12 +24,6 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 // Append Renderer to DOM
 document.body.appendChild(renderer.domElement);
 
-// ------------------------------------------------
-// FUN STARTS HERE
-// ------------------------------------------------
-
-
-
 //lights
 var light = new THREE.HemisphereLight( 0xffffff, 0x080820, 1 );
 scene.add(light);
@@ -46,24 +40,6 @@ tempMesh.position.set(1,1,1);
 tempMesh.lookAt(0,0,0);
 //scene.add(tempMesh);
 
-function initInstancedMesh(
-        geometry, 
-        material, 
-        instanceCount, 
-        isDynamic = false,
-        hasColor = false,
-        isUniformScaled = false
-    ){
-    var cluster = new THREE.InstancedMesh(
-        boxGeometry,
-        boxMaterial,
-        1000,
-        false,
-        true,
-        false,
-    );
-}
-
 var cluster = new THREE.InstancedMesh(
     boxGeometry,
     boxMaterial,
@@ -73,26 +49,26 @@ var cluster = new THREE.InstancedMesh(
     false,
 );
 
-var offsetVec = new THREE.Vector3();
-var quaternion = new THREE.Quaternion();
-var scaleVec = new THREE.Vector3(1,1,1);
+let instancedMeshGenerator = new InstancedMeshBuilder(boxGeometry, boxMaterial, 1000, false, true, false);
 
 for (var i = 0; i < 1000; i++){
     //get rotation of temp object
+    
+    let position = new THREE.Vector3(Math.random(), Math.random(), Math.random());
+    let color = new THREE.Color(Math.random(), Math.random(), Math.random());
+    let scale = new THREE.Vector3(Math.random(), Math.random(), Math.random());
 
     cluster.setQuaternionAt(i, tempMesh.quaternion);
-    cluster.setPositionAt(i, offsetVec.set(
-        Math.random(), Math.random(), Math.random()
-    ));
-    var color = new THREE.Color(Math.random(), Math.random(), Math.random());
     cluster.setColorAt(i,color);
-    var scale = new THREE.Vector3(Math.random(), Math.random(), Math.random());
+    cluster.setPositionAt(i, position);
     cluster.setScaleAt(i,scale);
+
+    instancedMeshGenerator.addInstance(position, tempMesh.quaternion, color, scale);
 }
 
 // Add cube to Scene
 //scene.add( cube );
-scene.add(cluster);
+scene.add(instancedMeshGenerator.getMesh());
 
 // Render Loop
 var render = function () {

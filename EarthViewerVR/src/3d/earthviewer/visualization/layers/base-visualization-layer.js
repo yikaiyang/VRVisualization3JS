@@ -3,6 +3,7 @@
  */
 import GeoConversion from '../../util/geoconversion';
 import {EarthProperties} from '../../earth-viewer.js';
+import EarthviewerMergedMeshBuilder from '../rendering-helper/earthviewer-merged-mesh-builder.js';
 export default class BaseVisualizationLayer {
     constructor(scene, earth){
         this._scene = scene;
@@ -10,24 +11,14 @@ export default class BaseVisualizationLayer {
 
         this._data = null;
         this._mapping = null;
-        this._initGeometries();
+
+        this._meshBuilder = new EarthviewerMergedMeshBuilder();
     }
 
     setData(data, mapping){
         if (!!data){
             this._parseData(data, mapping);
         }
-    }
-
-    /*
-        Example for mapping:
-        {
-            'latitude': 'lat',          //pathToLatitudeProperty
-            'longitude': 'lon',         //pathToLongitudeProperty
-        }
-    */
-    _initGeometries(){
-        this._mergedGeometry = new THREE.Geometry();
     }
 
     /**
@@ -49,21 +40,7 @@ export default class BaseVisualizationLayer {
             //Invalid values for parameters.
             return;
         }
-
-        //Calculate corresponding world coordinates from latitude, longitude values.
-        let position = GeoConversion.WGStoGlobeCoord(latitude, longitude, EarthProperties.RADIUS);
-
-        //Create visual primitive and orientate the element towards the center of the earth (0,0,0)
-        const center = new THREE.Vector3(0,0,0);
-    
-        mesh.position.set(position.x, position.y, position.z);
-        mesh.lookAt(center);
-        mesh.rotateX(Math.PI / 2);
-
-        mesh.updateMatrix();
-        
-        //Merge geometries
-        this._mergeGeometry(mesh);
+        this._meshBuilder.addMeshAtLocation(latitude, longitude,mesh);
     }
 
 
@@ -74,7 +51,9 @@ export default class BaseVisualizationLayer {
     }
 
     _renderData(){
-        const dataMesh = new THREE.Mesh(this._mergedGeometry, new THREE.MeshBasicMaterial());
+        //let dataMesh = new THREE.Mesh(this._mergedGeometry, new THREE.MeshBasicMaterial());
+        
+        let dataMesh = this._meshBuilder.getMesh();
         this._earth.add(dataMesh);
     }
 

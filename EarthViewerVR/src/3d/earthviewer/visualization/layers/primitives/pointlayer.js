@@ -44,7 +44,7 @@ export default class PointLayer extends BaseVisualizationLayer{
     
     _initMaterials(){
         this._color = new THREE.Color(0xbf0b2c);
-        this._primitiveMaterial = new THREE.MeshLambertMaterial({
+        this._material = new THREE.MeshLambertMaterial({
             color: this._color
         });
     }
@@ -112,7 +112,7 @@ export default class PointLayer extends BaseVisualizationLayer{
 
     _renderData(){
         //this._primitiveMaterial
-        const dataMesh = new THREE.Mesh(this._mergedGeometry);
-        this._earth.add(dataMesh);
+        let mesh = this._meshBuilder.getMesh(this._material);
+        this._earth.add(mesh);
     }
 }
