@@ -2,7 +2,15 @@ import InstancedMeshBuilder from './instanced-mesh-builder.js'
 
 export default class EarthviewerInstancedMeshBuilder extends InstancedMeshBuilder {
  
-    constructor(){
+    constructor(
+        geometry, 
+        material, 
+        maxInstanceCount, 
+        isDynamic = false,
+        hasColor = false,
+        isUniformScaled = false
+    ){
+        super(geometry, material, maxInstanceCount, isDynamic, hasColor, isUniformScaled)
         this._rotationHelperMesh = new THREE.Mesh
         (
             new THREE.BoxGeometry(1,1,1),
@@ -17,7 +25,12 @@ export default class EarthviewerInstancedMeshBuilder extends InstancedMeshBuilde
      * @param {THREE.Mesh} mesh
      */
     addInstanceAtLocation(latitude, longitude, color, scale){
-        if (!latitude || !longitude || !mesh){
+        if (!this._geometry || !this._material){
+            console.error('ERROR: addInstanceAtLocation: Geometry or material invalid');
+            return;
+        }
+
+        if (!latitude || !longitude){
             //Invalid values for parameters.
             return;
         }

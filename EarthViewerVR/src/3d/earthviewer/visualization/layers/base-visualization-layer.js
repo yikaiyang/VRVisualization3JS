@@ -4,6 +4,7 @@
 import GeoConversion from '../../util/geoconversion';
 import {EarthProperties} from '../../earth-viewer.js';
 import EarthviewerMergedMeshBuilder from '../rendering-helper/earthviewer-merged-mesh-builder.js';
+import DefaultMeshBuilder from '../rendering-helper/default-mesh-builder';
 export default class BaseVisualizationLayer {
     constructor(scene, earth){
         this._scene = scene;
@@ -12,7 +13,7 @@ export default class BaseVisualizationLayer {
         this._data = null;
         this._mapping = null;
 
-        this._meshBuilder = new EarthviewerMergedMeshBuilder();
+        this._meshBuilder = new DefaultMeshBuilder();
     }
 
     setData(data, mapping){
@@ -22,20 +23,12 @@ export default class BaseVisualizationLayer {
     }
 
     /**
-     * Merges a given geometry with the existing merged geometry.
-     * @param {*} mesh 
-     */
-    _mergeGeometry(mesh){
-        this._mergedGeometry.merge(mesh.geometry, mesh.matrix);
-    }
-
-    /**
      * Merges a given mesh using geometry merging and positions the result at the provided location (latitude, longitude).
      * @param {number} latitude 
      * @param {number} longitude 
      * @param {THREE.Mesh} mesh
      */
-    _mergeMeshAtLocation(latitude, longitude, mesh){
+    addMeshAtLocation(latitude, longitude, mesh){
         if (!latitude || !longitude || !mesh){
             //Invalid values for parameters.
             return;
@@ -51,8 +44,6 @@ export default class BaseVisualizationLayer {
     }
 
     _renderData(){
-        //let dataMesh = new THREE.Mesh(this._mergedGeometry, new THREE.MeshBasicMaterial());
-        
         let dataMesh = this._meshBuilder.getMesh();
         this._earth.add(dataMesh);
     }

@@ -1,7 +1,7 @@
 import MathUtil from '../../../../util/math-util';
 import GeoConversion from '../../util/geoconversion';
 import {MeshLine, MeshLineMaterial} from 'three.meshline';
-class PrimitivesGenerator {
+class ShapeFactory {
     /**
      * Creates a three js cylinder mesh with the given parameters.
      * Returns a cylinder mesh if valid parameters are provided, otherwise null.
@@ -190,4 +190,4 @@ class PrimitivesGenerator {
     }
 }
 
-export default PrimitivesGenerator;
+export default ShapeFactory;

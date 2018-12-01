@@ -1,10 +1,12 @@
 import BaseVisualizationLayer from '../base-visualization-layer.js';
 import JSONUtil from '../../../../../util/json-util.js';
-import PrimitivesGenerator from '../../meshgeneration/primitives-util';
+import ShapeFactory from '../../meshgeneration/shape-factory';
 
 import DataSchemaV1 from '../../dataschema/dataSchemaV1.js';
 import SizeMapper from '../../datamapping/sizemapper.js';
 import ColorMapper from '../../datamapping/colormapper.js';
+
+import EarthviewerInstancedMeshBuilder from '../../rendering-helper/earthviewer-instanced-mesh-builder.js';
 
 const defaultVisualChannelMapping = {
     "height": "Bettenanzahl",
@@ -17,6 +19,7 @@ export default class PointLayer extends BaseVisualizationLayer{
         this._initMaterials();
         this.data = data;
         this._parseVisualChannelMapping(visualChannelMapping);
+      
     }
 
     _parseVisualChannelMapping(visualChannelMapping){
@@ -104,14 +107,14 @@ export default class PointLayer extends BaseVisualizationLayer{
             }
 
             //Create mesh for data entry.
-            let mesh = PrimitivesGenerator.createCylinder(height,10, 0xbf0b2c);
-            this._mergeMeshAtLocation(dataLatitude, dataLongitude, mesh);
+            let meshColor = new THREE.Color(Math.random(), Math.random(), Math.random());
+            let mesh = ShapeFactory.createCylinder(height,10, meshColor);
+            this.addMeshAtLocation(dataLatitude, dataLongitude, mesh);
         }
         this._renderData();
     }
 
     _renderData(){
-        //this._primitiveMaterial
         let mesh = this._meshBuilder.getMesh(this._material);
         this._earth.add(mesh);
     }

@@ -1,6 +1,6 @@
 import BaseVisualizationLayer from '../base-visualization-layer.js';
 import JSONUtil from '../../../../../util/json-util.js';
-import PrimitivesGenerator from '../../meshgeneration/primitives-util.js';
+import ShapeFactory from '../../meshgeneration/shape-factory.js';
 
 
 const defaultMapping = {
@@ -56,8 +56,8 @@ export default class BarsLayer extends BaseVisualizationLayer{
             }
 
             //Create mesh for data entry.
-            let mesh = PrimitivesGenerator.createCube(1000, 10, 0xbf0b2c);
-            this._mergeMeshAtLocation(dataLatitude, dataLongitude, mesh);
+            let mesh = ShapeFactory.createCube(1000, 10, 0xbf0b2c);
+            this.addMeshAtLocation(dataLatitude, dataLongitude, mesh);
             this._renderData();
         }
     }

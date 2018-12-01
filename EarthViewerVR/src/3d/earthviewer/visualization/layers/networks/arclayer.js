@@ -1,6 +1,6 @@
 import BaseVisualizationLayer from '../base-visualization-layer.js';
 import JSONUtil from '../../../../../util/json-util.js';
-import PrimitivesGenerator from '../../meshgeneration/primitives-util';
+import ShapeFactory from '../../meshgeneration/shape-factory';
 import {EarthProperties} from '../../../earth-viewer.js';
 /**
  * http://localhost:8888/src/assets/data/haltestellen.csv
@@ -58,7 +58,7 @@ export default class ArcLayer extends BaseVisualizationLayer{
 
         const data = JSONUtil.getProperty(data_source, mapping.dataPath);
         
-        let arc = PrimitivesGenerator.createArc(
+        let arc = ShapeFactory.createArc(
                 AKHLocation, 
                 TULocation,
                 EarthProperties.RADIUS,

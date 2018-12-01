@@ -16,8 +16,8 @@ export default class InstancedMeshBuilder{
         hasColor = false,
         isUniformScaled = false
     ){
-        this.geometry = geometry;
-        this.material = material;
+        this._geometry = geometry;
+        this._material = material;
         this.maxInstancesCount = maxInstanceCount; //Max number of allowed instances
         this.isDynamic = isDynamic;
         this.hasColor = hasColor;           //Set to true if meshes are colored.
@@ -26,8 +26,8 @@ export default class InstancedMeshBuilder{
         this._instancesCount = 0; //Counts the number of instanced meshes.
         
         this._instancedMesh = new THREE.InstancedMesh(
-            this.geometry,
-            this.material,
+            this._geometry,
+            this._material,
             this.maxInstancesCount,
             this.isDynamic,
             this.hasColor,
