@@ -1,4 +1,6 @@
 import InstancedMeshBuilder from './instanced-mesh-builder.js'
+import GeoConversion from '../../util/geoconversion.js'
+import {EarthProperties} from '../../earth-viewer.js'
 
 export default class EarthviewerInstancedMeshBuilder extends InstancedMeshBuilder {
  

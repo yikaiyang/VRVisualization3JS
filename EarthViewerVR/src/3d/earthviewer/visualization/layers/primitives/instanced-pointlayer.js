@@ -6,21 +6,35 @@ import DataSchemaV1 from '../../dataschema/dataSchemaV1.js';
 import SizeMapper from '../../datamapping/sizemapper.js';
 import ColorMapper from '../../datamapping/colormapper.js';
 
+import EarthviewerInstancedMeshBuilder from '../../rendering-helper/earthviewer-instanced-mesh-builder.js';
+
 const defaultVisualChannelMapping = {
     "height": "Bettenanzahl",
     "color": "Bettenanzahl"
 };
 
-export default class PointLayer extends BaseVisualizationLayer{
+export default class InstancedPointLayer extends BaseVisualizationLayer{
     constructor(scene, earth, data, visualChannelMapping = defaultVisualChannelMapping){
         super(scene,earth);
         this._initMaterials();
         this.data = data;
+
+        this._initInstancing();
         this._parseVisualChannelMapping(visualChannelMapping);
     }
 
     _initInstancing(){
-
+        const color = new THREE.Color(Math.random(),Math.random(),Math.random());
+        let mesh = ShapeFactory.createCylinder(10, 10, color);
+        let geometry = new THREE.BoxBufferGeometry(1,1,1);
+        this._meshBuilder = new EarthviewerInstancedMeshBuilder(
+            geometry,
+            new THREE.MeshLambertMaterial({}),
+            1000,
+            false,
+            true,
+            false
+        );
     }
 
     _parseVisualChannelMapping(visualChannelMapping){
@@ -110,13 +124,19 @@ export default class PointLayer extends BaseVisualizationLayer{
             //Create mesh for data entry.
             let meshColor = new THREE.Color(Math.random(), Math.random(), Math.random());
             let mesh = ShapeFactory.createCylinder(height,10, meshColor);
-            this.addMeshAtLocation(dataLatitude, dataLongitude, mesh);
+          
+            this._meshBuilder.addInstanceAtLocation(
+                    dataLatitude, 
+                    dataLongitude, 
+                    meshColor,
+                    new THREE.Vector3(10,height,10)
+            )
         }
         this._renderData();
     }
 
     _renderData(){
-        let mesh = this._meshBuilder.getMesh(this._material);
+        let mesh = this._meshBuilder.getMesh();
         this._earth.add(mesh);
     }
 }

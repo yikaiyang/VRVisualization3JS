@@ -6,6 +6,7 @@ import PropertyMapping from './../../../assets/data/hospital/hospitalDataMapping
 //Import all supported layertypes
 import BarsLayer from './layers/primitives/barslayer.js'
 import PointLayer from './layers/primitives/pointlayer.js'
+import InstancedPointLayer from './layers/primitives/instanced-pointlayer.js'
 import WienerLinienLayer from './layers/wienerlinienlayer.js'
 import ArcLayer from './layers/networks/arclayer.js'
 import SizeMapper from './datamapping/sizemapper.js'
@@ -36,13 +37,10 @@ class VisualizationManager{
                     
                 }))
                 .catch((error) =>{
-                    console.error('Error: Could no load data from file:' + filePath);
+                    console.error('Error: Could not load data from file:' + filePath);
                     console.error(error);
                     return;
                 });
-
-            
-
         } else {
             console.error(
                 'ERROR: Invalid parameters: layerType: ' + layerType + ' filepath: ' + filePath
@@ -57,7 +55,8 @@ class VisualizationManager{
             switch(layerType){
                 case VisualizationLayerType.PointLayer:
                     //Initialize Pointlayer
-                    layer = new PointLayer(this._scene, this._earth, data);
+                    //layer = new PointLayer(this._scene, this._earth, data);
+                    layer = new InstancedPointLayer(this._scene, this._earth, data);
                     break;
                 case VisualizationLayerType.BarsLayer:
                     //Initialize Barslayer
