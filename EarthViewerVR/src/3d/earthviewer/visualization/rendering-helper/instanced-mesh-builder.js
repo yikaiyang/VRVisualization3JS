@@ -33,6 +33,7 @@ export default class InstancedMeshBuilder{
                 this.hasColor,
                 this.isUniformScaled
             );
+            this._instancedMesh.name = 'instancedmesh';
         } catch (e){
             console.error('Could not create InstancedMesh');
             console.error(e);

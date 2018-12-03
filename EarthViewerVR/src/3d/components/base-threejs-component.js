@@ -7,6 +7,7 @@
 class BaseThreeJSComponent {
     constructor (ascene){
         this.ascene = ascene;
+        this._threeScene = ascene.object3D;
         this.ascene.addBehavior(this);
         this.el = { isPlaying: true};
         this.init(ascene);
