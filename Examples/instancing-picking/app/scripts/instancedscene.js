@@ -9,7 +9,15 @@ import DefaultMeshBuilder from './rendering-helper/default-mesh-builder.js';
 
 
 // Create an empty scene
+
 let scene = new THREE.Scene();
+let pickingScene = new THREE.Scene();
+
+let scenes = [];
+let activeSceneIdx = 0;
+let activeScene = scenes[0];
+scenes.push(scene);
+scenes.push(pickingScene);
 
 // Create a basic perspective camera
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
@@ -46,35 +54,35 @@ tempMesh.position.set(1,1,1);
 tempMesh.lookAt(0,0,0);
 //scene.add(tempMesh);
 
-var cluster = new THREE.InstancedMesh(
-    boxGeometry,
-    boxMaterial,
-    1000,
-    false,
-    true,
-    false,
-);
 
-let instancedMeshGenerator = new InstancedMeshBuilder(boxGeometry, boxMaterial, 1000, false, true, false);
+function createInstancedMesh(){
+  let instancedMeshGenerator = new InstancedMeshBuilder(boxGeometry, boxMaterial, 1000, false, true, false);
 
-for (var i = 0; i < 1000; i++){
-    //get rotation of temp object
-    
-    let position = new THREE.Vector3(Math.random(), Math.random(), Math.random());
-    let color = new THREE.Color(Math.random(), Math.random(), Math.random());
-    let scale = new THREE.Vector3(Math.random(), Math.random(), Math.random());
-
-    cluster.setQuaternionAt(i, tempMesh.quaternion);
-    cluster.setColorAt(i,color);
-    cluster.setPositionAt(i, position);
-    cluster.setScaleAt(i,scale);
-
-    instancedMeshGenerator.addInstance(position, tempMesh.quaternion, color, scale);
+  for (var i = 0; i < 1000; i++){
+      //get rotation of temp object
+      let position = new THREE.Vector3(Math.random(), Math.random(), Math.random());
+      let color = new THREE.Color(Math.random(), Math.random(), Math.random());
+      let scale = new THREE.Vector3(Math.random(), Math.random(), Math.random());
+  
+      instancedMeshGenerator.addInstance(position, tempMesh.quaternion, color, scale);
+  }
+  // Add cube to Scene
+  scene.add(instancedMeshGenerator.getMesh());
 }
 
-// Add cube to Scene
-scene.add(instancedMeshGenerator.getMesh());
+createInstancedMesh();
 
+function addToPickingScene(id, position, quaternion, scale){
+  let geometry = new BoxGeometry(0.02,0.02,0.02);
+  let matrix = new THREE.Matrix4();
+  let color = new THREE.Color();
+  matrix.compose(position, quaternion, scale);
+  boxGeometry.applyMatrix(matrix);
+  let mesh = new THREE.MeshBasicMaterial({
+    color: new color.setHex(id)
+  });
+  pickingScene.add(mesh);
+}
 
 
 
@@ -105,4 +113,14 @@ var render = function () {
 
 render(); 
 
-window.APP = scene;
+function changeScene() {
+  if (activeSceneIdx < scenes.length - 1){
+    activeSceneIdx++;
+    activeScene[activeSceneIdx];
+  } else {
+    activeSceneIdx = 0;
+  }
+}
+
+window.APP.scene = scene;
+window.APP.changeScene = changeScene();
