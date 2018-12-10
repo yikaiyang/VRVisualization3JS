@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const RawBundlerPlugin = require('webpack-raw-bundler');
 
 // Is the current build a development build
 const IS_DEV = (process.env.NODE_ENV === 'dev');

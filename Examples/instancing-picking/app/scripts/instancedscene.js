@@ -9,7 +9,6 @@ import DefaultMeshBuilder from './rendering-helper/default-mesh-builder.js';
 
 
 // Create an empty scene
-
 let scene = new THREE.Scene();
 let pickingScene = new THREE.Scene();
 
@@ -23,7 +22,7 @@ scenes.push(pickingScene);
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 camera.position.z = 4;
 
-var mousePicker = new MousePicker(scene, camera);
+var mousePicker = new MousePicker(pickingScene, camera);
 
 //Init controls
 var controls = new THREE.OrbitControls(camera);
@@ -65,6 +64,7 @@ function createInstancedMesh(){
       let scale = new THREE.Vector3(Math.random(), Math.random(), Math.random());
   
       instancedMeshGenerator.addInstance(position, tempMesh.quaternion, color, scale);
+      addToPickingScene(i, position, tempMesh.quaternion, scale);
   }
   // Add cube to Scene
   scene.add(instancedMeshGenerator.getMesh());
@@ -73,14 +73,16 @@ function createInstancedMesh(){
 createInstancedMesh();
 
 function addToPickingScene(id, position, quaternion, scale){
-  let geometry = new BoxGeometry(0.02,0.02,0.02);
+  let geometry = new THREE.BoxGeometry(0.02,0.02,0.02);
   let matrix = new THREE.Matrix4();
   let color = new THREE.Color();
   matrix.compose(position, quaternion, scale);
-  boxGeometry.applyMatrix(matrix);
-  let mesh = new THREE.MeshBasicMaterial({
-    color: new color.setHex(id)
+  geometry.applyMatrix(matrix);
+  let material = new THREE.MeshBasicMaterial({
+    color: color.setHex(id)
   });
+
+  let mesh = new THREE.Mesh(geometry, material);
   pickingScene.add(mesh);
 }
 
@@ -123,4 +125,5 @@ function changeScene() {
 }
 
 window.APP.scene = scene;
+window["test"] = '2';
 window.APP.changeScene = changeScene();

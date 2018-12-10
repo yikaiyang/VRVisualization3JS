@@ -32,10 +32,6 @@ export default class MousePicker{
         console.log('x:' + this._mousePosition.x + ' y:' + this._mousePosition.y);
     }
 
-    stop(){
-        this.log = !this.log;
-    }
-
     tick(time, delta){
         //console.log(time);
         if (!this._raycaster){
@@ -56,19 +52,21 @@ export default class MousePicker{
        
 
         if (this._selected !== intersects[0]){
-       
             if (!!this._selected){
-                this._selected.object.material.emissive.set(0x000000);//Reset selection glow
+             //   this._selected.object.material.emissive.set(0x000000);//Reset selection glow
             }
             
             this._selected = intersects[0];
-            this._selected.object.material.emissive.set(0xff0000);
-        }
-        /*for ( let i = 0; i < intersects.length; i++ ) {
-            intersects[i].object.material.emissive.set(0xff0000);
-        }*/
-       
-
-        //console.log(intersects);
+            if (!!this._selected){
+            //    this._selected.object.material.emissive.set(0xff0000);
+                //Selected object differs from the object set.
+                let object = this._selected.object;
+                if (!!object){
+                    let color = object.material.color.getHex();
+                    let selectionElement = document.querySelector('#selection');
+                    selectionElement.innerHTML = 'ID: ' + color;
+                }
+            }  
+        } 
     }
 }

@@ -105,4 +105,13 @@ var render = function () {
 
 render(); 
 
-window.APP = scene;
+
+initGlobals();
+function initGlobals(){
+  window.onload(() => {
+    window.APP = scene;
+    window["test"] = "123";
+    alert('test');
+  })
+}
+

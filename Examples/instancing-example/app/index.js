@@ -11,3 +11,5 @@ import 'styles/index.scss';
 var THREE = require('three');
 import './scripts/orbitControls';
 import './scripts/instancedscene';
+
+window.test = '1';
