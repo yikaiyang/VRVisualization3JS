@@ -1,20 +1,31 @@
 'use strict';
 
 var THREE = require('three');
+var EventEmitter = require('eventemitter3');
 require('three-instanced-mesh')(THREE);
 
 import MousePicker from '../mousepicker';
 import InstancedMeshBuilder from './rendering-helper/instanced-mesh-builder.js';
 import DefaultMeshBuilder from './rendering-helper/default-mesh-builder.js';
 
+import PickingFrameBuffer from './picking-framebuffer.js';
+
+let eventEmitter = new EventEmitter();
+eventEmitter.on('positionChanged', () => {
+    alert('test');
+}, this);
+eventEmitter.emit('positionChanged');
 
 // Create an empty scene
 let scene = new THREE.Scene();
 let pickingScene = new THREE.Scene();
 
+let pickingFB = new PickingFrameBuffer();
+
 let scenes = [];
 let activeSceneIdx = 0;
 let activeScene = scenes[0];
+
 scenes.push(scene);
 scenes.push(pickingScene);
 
@@ -67,7 +78,9 @@ function createInstancedMesh(){
       addToPickingScene(i, position, tempMesh.quaternion, scale);
   }
   // Add cube to Scene
-  scene.add(instancedMeshGenerator.getMesh());
+  let instancedMesh = instancedMeshGenerator.getMesh();
+  instancedMesh.name = 'instanced_mesh';
+  scene.add(instancedMesh);
 }
 
 createInstancedMesh();
@@ -104,11 +117,14 @@ function addCubes(){
 
 //addCubes();
 
+let visibleMesh = scene.getObjectByName('instanced_mesh');
+
 // Render Loop
 var render = function () {
   requestAnimationFrame( render );
 
   mousePicker.tick();
+  //visibleMesh.rotation.x += 0.01;
   // Render the scene
   renderer.render(scene, camera);
 };
