@@ -16,7 +16,6 @@ eventEmitter.emit('positionChanged');
 
 // Create an empty scene
 let scene = new THREE.Scene();
-let pickingScene = new THREE.Scene();
 
 let pickingSC = new PickingScene();
 
@@ -25,13 +24,12 @@ let activeSceneIdx = 0;
 let activeScene = scenes[0];
 
 scenes.push(scene);
-scenes.push(pickingScene);
 
 // Create a basic perspective camera
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 camera.position.z = 4;
 
-var mousePicker = new MousePicker(pickingScene, camera);
+var mousePicker = new MousePicker(pickingSC, camera);
 
 //Init controls
 var controls = new THREE.OrbitControls(camera);
@@ -85,46 +83,19 @@ createInstancedMesh();
 
 function addToPickingScene(id, position, quaternion, scale){
   let geometry = new THREE.BoxGeometry(0.02,0.02,0.02);
-  let matrix = new THREE.Matrix4();
-  let color = new THREE.Color();
-  matrix.compose(position, quaternion, scale);
-  geometry.applyMatrix(matrix);
-  let material = new THREE.MeshBasicMaterial({
-    color: color.setHex(id)
-  });
-
-  let mesh = new THREE.Mesh(geometry, material);
-  pickingScene.add(mesh);
+  pickingSC.addObject(id, position, quaternion, scale, geometry);
 }
-
-
-
-function addCubes(){
-    let meshGenerator = new DefaultMeshBuilder();
-
-    for (let i = 0; i < 100; i++){
-      let cube = new THREE.BoxGeometry(0.02,0.02,0.02);
-      let color = new THREE.Color(Math.random(), Math.random(), Math.random());
-      let position = new THREE.Vector3(Math.random(), Math.random(), Math.random());
-      let material = new THREE.MeshLambertMaterial({color: color});
-      let mesh = new THREE.Mesh(cube, material);
-      mesh.position.set(position.x, position.y, position.z);
-      scene.add(mesh);
-    }
-}
-
-//addCubes();
 
 let visibleMesh = scene.getObjectByName('instanced_mesh');
 
 // Render Loop
 var render = function () {
-  requestAnimationFrame( render );
+  requestAnimationFrame(render);
 
   mousePicker.tick();
   //visibleMesh.rotation.x += 0.01;
   // Render the scene
-  renderer.render(scene, camera);
+  renderer.render(pickingSC.getScene(), camera);
 };
 
 render(); 

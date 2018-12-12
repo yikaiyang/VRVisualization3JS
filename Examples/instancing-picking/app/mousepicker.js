@@ -41,7 +41,7 @@ export default class MousePicker{
         }
         this._raycaster.setFromCamera(this._mousePosition,this._camera);
         // calculate objects intersecting the picking ray
-        let intersects = this._raycaster.intersectObjects( this._scene.children);
+        let intersects = this._raycaster.intersectObjects( this._scene.getSceneObjects());
         
         if (!!this.log){
             console.log(intersects);

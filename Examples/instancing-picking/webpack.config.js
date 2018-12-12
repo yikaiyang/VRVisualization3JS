@@ -37,7 +37,7 @@ module.exports = {
             {from: './app', to: './'}
         ]),
         new webpack.ProvidePlugin({
-            EE: path.resolve(__dirname, './app/eventemitter.js')
+            EVENT_BUS: path.resolve(__dirname, './app/eventemitter.js')
         })
     ],
     module: {

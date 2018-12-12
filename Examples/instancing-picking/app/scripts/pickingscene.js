@@ -1,22 +1,28 @@
 var THREE = require('three');
-let EventEmitter = require('eventemitter3');
 
 export default class PickingScene{
     constructor(){
         this._scene = new THREE.Scene();
+        this._group = new THREE.Group();
+        this._scene.add(this._group);
         this._initEventEmitter();
     }
 
     _initEventEmitter(){
-        this._eventEmitter = new EventEmitter();
-        this._eventEmitter.on('positionChanged', () => {
-            alert('test');
-        }, this);
-        /** 
-        EE.on('positionChanged', () => {
-            alert('test');
-        }, this);*/
-        EE();
+        EVENT_BUS.on(
+            'positionChanged',
+            (args) => {
+                this._handlePositionChange(args)
+            }, this);
+
+        EVENT_BUS.emit('positionChanged',
+        'test1');
+    }
+
+    _handlePositionChange(args){
+        if (!!args){
+
+        }
     }
 
     addObject(
@@ -43,7 +49,7 @@ export default class PickingScene{
       
         let mesh = new THREE.Mesh(geometry, material);
         mesh.name = id;
-        this._scene.add(mesh);
+        this._group.add(mesh);
     }
 
     getScene(){
@@ -51,6 +57,6 @@ export default class PickingScene{
     }
 
     getSceneObjects(){
-        return this._scene.children;
+        return this._group.children;
     }
 }
