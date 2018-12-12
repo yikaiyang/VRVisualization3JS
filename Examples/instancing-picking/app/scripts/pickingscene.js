@@ -1,17 +1,31 @@
-var THREE = require('three')
+var THREE = require('three');
+let EventEmitter = require('eventemitter3');
 
-export default class PickingFrameBuffer{
+export default class PickingScene{
     constructor(){
         this._scene = new THREE.Scene();
+        this._initEventEmitter();
     }
 
-    addToBuffer(
+    _initEventEmitter(){
+        this._eventEmitter = new EventEmitter();
+        this._eventEmitter.on('positionChanged', () => {
+            alert('test');
+        }, this);
+        /** 
+        EE.on('positionChanged', () => {
+            alert('test');
+        }, this);*/
+        EE();
+    }
+
+    addObject(
         id, 
         position, 
         quaternion, 
         scale, 
         geometry) {
-        
+
         if (!id || !position || !quaternion || !scale || !geometry) {
             console.error('ERROR: Given parameters are either null or undefined.');
             return;
@@ -34,5 +48,9 @@ export default class PickingFrameBuffer{
 
     getScene(){
         return this._scene;
+    }
+
+    getSceneObjects(){
+        return this._scene.children;
     }
 }

@@ -8,19 +8,17 @@ import MousePicker from '../mousepicker';
 import InstancedMeshBuilder from './rendering-helper/instanced-mesh-builder.js';
 import DefaultMeshBuilder from './rendering-helper/default-mesh-builder.js';
 
-import PickingFrameBuffer from './picking-framebuffer.js';
+import PickingScene from './pickingscene.js';
 
 let eventEmitter = new EventEmitter();
-eventEmitter.on('positionChanged', () => {
-    alert('test');
-}, this);
+
 eventEmitter.emit('positionChanged');
 
 // Create an empty scene
 let scene = new THREE.Scene();
 let pickingScene = new THREE.Scene();
 
-let pickingFB = new PickingFrameBuffer();
+let pickingSC = new PickingScene();
 
 let scenes = [];
 let activeSceneIdx = 0;
