@@ -29,16 +29,18 @@ scenes.push(scene);
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 camera.position.z = 4;
 
-var mousePicker = new MousePicker(pickingSC, camera);
+var renderer = new THREE.WebGLRenderer();
+
+// Configure renderer size
+renderer.setSize( window.innerWidth, window.innerHeight );
+
+var mousePicker = new MousePicker(pickingSC, camera, renderer);
 
 //Init controls
 var controls = new THREE.OrbitControls(camera);
 controls.update();
 
-var renderer = new THREE.WebGLRenderer();
 
-// Configure renderer size
-renderer.setSize( window.innerWidth, window.innerHeight );
 
 // Append Renderer to DOM
 document.body.appendChild(renderer.domElement);
@@ -86,29 +88,35 @@ function addToPickingScene(id, position, quaternion, scale){
   pickingSC.addObject(id, position, quaternion, scale, geometry);
 }
 
-let visibleMesh = scene.getObjectByName('instanced_mesh');
+
+
+function initEventEmitter(){
+  if (!!EVENT_BUS){
+    EVENT_BUS.on(
+      'positionChanged',
+      (args) => {
+          handlePositionChange(args)
+      }, this);
+  }
+}
+
+function handlePositionChange(args){
+  instancedMesh.rotation.x = instancedMesh.rotation.x + 2;
+}
+
+initEventEmitter();
+
+let pickingScene = pickingSC.getScene();
+let renderedScene = pickingScene;
+let instancedMesh = scene.getObjectByName('instanced_mesh');
 
 // Render Loop
 var render = function () {
   requestAnimationFrame(render);
 
   mousePicker.tick();
-  //visibleMesh.rotation.x += 0.01;
-  // Render the scene
-  renderer.render(pickingSC.getScene(), camera);
+  renderer.render(scene, camera);
 };
 
 render(); 
 
-function changeScene() {
-  if (activeSceneIdx < scenes.length - 1){
-    activeSceneIdx++;
-    activeScene[activeSceneIdx];
-  } else {
-    activeSceneIdx = 0;
-  }
-}
-
-window.APP.scene = scene;
-window["test"] = '2';
-window.APP.changeScene = changeScene();

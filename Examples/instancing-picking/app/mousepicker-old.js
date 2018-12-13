@@ -30,11 +30,9 @@ export default class MousePicker{
         if (!this._mousePosition){
             alert('mousePositoin is null');
         }
-        this._mousePosition.clientX = event.clientX;
-        this._mousePosition.clientY = event.clientY;
         this._mousePosition.x = ( event.clientX / window.innerWidth ) * 2 - 1;
         this._mousePosition.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-        console.log('x:' + this._mousePosition.normalizedX + ' y:' + this._mousePosition.normalizedY);
+        console.log('x:' + this._mousePosition.x + ' y:' + this._mousePosition.y);
     }
 
     tick(time, delta){
@@ -44,33 +42,9 @@ export default class MousePicker{
             console.error('Raycaster undefined or null');
             return;
         }
-        
-        // set the view offset to represent just a single pixel under the mouse
-        this._camera.setViewOffset(
-            this._renderer.domElement.width, 
-            this._renderer.domElement.height, 
-            this._mousePosition.clientX * window.devicePixelRatio | 0,
-            this._mousePosition.clientY * window.devicePixelRatio | 0,
-            1,
-            1);
 
         //Rerender Scene
-        this._renderer.render(this._scene, this._camera, this._pickingTexture);
-
-        // clear the view offset so rendering returns to normal
-		this._camera.clearViewOffset();
-        /*  Render whole scene
-        camera.setViewOffset();
-        this._renderer.render(this._scene, this._camera); */
-
-        //Create pixel buffer and read it's color value <=> id
-        let pixelBuffer = new Uint8Array(4);
-        let x = 2;
-        this._renderer.readRenderTargetPixels(this._pickingTexture, 0,0,1,1, pixelBuffer);
-        //pixelBuffer[0] = 2;
-        //Interpret the pixel as an Id.
-        let id = ( pixelBuffer[ 0 ] << 16 ) | ( pixelBuffer[ 1 ] << 8 ) | ( pixelBuffer[ 2 ] );
-        console.log('id' + pixelBuffer[0]);
+        this._renderer.render(this._scene, this._camera);
 
 
         this._raycaster.setFromCamera(this._mousePosition,this._camera);
