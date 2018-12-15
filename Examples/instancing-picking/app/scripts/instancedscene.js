@@ -32,7 +32,10 @@ camera.position.z = 4;
 var renderer = new THREE.WebGLRenderer();
 
 // Configure renderer size
+renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize( window.innerWidth, window.innerHeight );
+// Append Renderer to DOM
+document.body.appendChild(renderer.domElement);
 
 var mousePicker = new MousePicker(pickingSC, camera, renderer);
 
@@ -42,8 +45,7 @@ controls.update();
 
 
 
-// Append Renderer to DOM
-document.body.appendChild(renderer.domElement);
+
 
 //lights
 var light = new THREE.HemisphereLight( 0xffffff, 0x080820, 1 );
@@ -113,9 +115,8 @@ let instancedMesh = scene.getObjectByName('instanced_mesh');
 // Render Loop
 var render = function () {
   requestAnimationFrame(render);
-
   mousePicker.tick();
-  renderer.render(scene, camera);
+  renderer.render(pickingScene, camera);
 };
 
 render(); 

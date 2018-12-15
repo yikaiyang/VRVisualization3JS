@@ -23,8 +23,8 @@ export default class PickingScene{
             console.error('Event bus could not be accessed.');
         }
 
-        setInterval(function(){EVENT_BUS.emit('positionChanged',
-        'test1'); }, 10000);
+         setInterval(function(){EVENT_BUS.emit('positionChanged',
+        'test1'); }, 10000); 
     }
 
     _handlePositionChange(args){

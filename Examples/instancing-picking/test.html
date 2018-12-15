@@ -1,0 +1,24 @@
+<html>
+    <body>
+        <div
+        id="test"
+        style="position: absolute; top: 20px; left: 20px; background: black; width: 200px; height: 200px"></div>
+        <div>
+            <span>x:</span> <span id="x"></span>
+            <span>y:</span> <span id="y"></span>
+        </div>
+        <script>
+        
+            document.querySelector('#test').addEventListener(
+                'mousemove',
+                (event) => {
+                    console.log('x:' + event.clientX + 'y: ' + event.clientY);
+                    let rect = event.target.getBoundingClientRect();
+                    document.querySelector('#x').innerHTML = event.clientX - rect.left;
+                    document.querySelector('#y').innerHTML = event.clientY - rect.top;
+                }
+            )
+
+        </script>
+    </body>
+</html>
