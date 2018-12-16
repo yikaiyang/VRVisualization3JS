@@ -7,11 +7,14 @@ function resolve (dir) {
 }
 
 module.exports = {
-  entry: './src/main.js',
+  entry: {
+    'app': './src/main.js',
+    'aframe': './src/aframe-entry.js'
+  },
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
-    filename: 'build.js'
+    filename: 'build-[name].js'
   },
   module: {
     rules: [
@@ -95,6 +98,9 @@ module.exports = {
     new CopyWebpackPlugin([
       {from: './src/assets/data', to: './assets/data'}
     ]),
+    new webpack.ProvidePlugin({
+      EVENT_BUS: path.resolve(__dirname, './src/eventbus/eventemitter.js')
+    })
   ],
   devtool: '#eval-source-map'
 }

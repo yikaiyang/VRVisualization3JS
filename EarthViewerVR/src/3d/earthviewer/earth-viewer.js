@@ -37,6 +37,7 @@ class EarthViewer extends BaseThreeJSComponent{
         this.scene = scene;
         this._initEarthObject();
         this._initProperties();
+        this._initEventBusHandling();
         this._registerCallback();
         this._loadVisualization();
     }
@@ -69,6 +70,22 @@ class EarthViewer extends BaseThreeJSComponent{
         this.earth = new THREE.Object3D();
         this.earth.position.set(0, 0, -EarthProperties.RADIUS);
         scene.add(this.earth);
+    }
+
+    _initEventBusHandling(){
+        EVENT_BUS.on('earthviewer:positionChanged',(newPosition) => {
+            if (!!newPosition){
+                let altitude = newPosition.altitude;
+                let latitude = newPosition.latitude;
+                let longitude = newPosition.longitude;
+
+                //TODO validate parameters for validity
+
+                if (!!altitude && !!latitude && !!longitude){
+                    this.rerenderEarth(altitude, latitude, longitude);
+                }
+            }
+        });
     }
 
     //region Visualisation

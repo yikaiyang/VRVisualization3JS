@@ -23,7 +23,6 @@ export default class InstancedMeshBuilder{
         
         this._instancesCount = 0; //Counts the number of instanced meshes.
 
-        alert(THREE.InstancedMesh);
         try {
             this._instancedMesh = new InstancedMesh(
                 this._geometry,
@@ -49,7 +48,7 @@ export default class InstancedMeshBuilder{
         }
 
         if (!position || !quaternion || !color || !scale){
-            alert('invalid parameter');
+            console.error('Invalid parameter(s): Either position, quaternion, color or scale is undefined');
         }
 
         this._instancedMesh.setQuaternionAt(
