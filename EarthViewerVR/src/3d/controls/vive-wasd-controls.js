@@ -8,6 +8,7 @@
 var App = App || {};
 var callbackHelper = App.callbackHelper;
 var userPosition = App.UserPosition;
+var EVENT_BUS = window.EVENT_BUS;
 
 var shouldCaptureKeyEvent = function (event) {
   if (event.metaKey) { return false; }
@@ -38,7 +39,7 @@ var KEYS = [
   'MoveFrwd', 'MoveBwrd'
 ];
 
-var pressedKeys = {}; //Stores pressed keyboard values
+let pressedKeys = {}; //Stores pressed keyboard values
 let viveAxisValues = {}; //Stores vive trackpad values
 
 var zoomScale = 1;
@@ -83,7 +84,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
     this.attachViveKeyEventListeners();
 
     ///Handle transition to camera rig 
-    this.el.sceneEl.addEventListener('enter-vr', (event) => {
+    this.el.sceneEl.addEventListener('enter-vr', () => {
 			if (!AFRAME.utils.device.checkHeadsetConnected() &&
         !AFRAME.utils.device.isMobile()) { return; }
         this.isVREnabled = true;
@@ -126,7 +127,6 @@ AFRAME.registerComponent('vive-wasd-controls', {
     let cameraRigId = data.cameraRigIdentifier;
 
     if (cameraRigId){
-      //cameraRig = document.query
       //alert('cameraRigIdentifier: ' + data.cameraRigIdentifier);
       cameraRig = document.querySelector('#camera-rig');
       if (cameraRig !== undefined){
@@ -176,7 +176,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
 
       let panScale = panAcceleration * userPosition.altitude / height;
       this.pan(-x * panScale, y * panScale);
-      this.rerender();
+      this.updateEarthPosition();
     }
 
     // Zoom in / out
@@ -184,34 +184,34 @@ AFRAME.registerComponent('vive-wasd-controls', {
       console.log('KeyT handled');
       //Zoom into the earth. Reduce acceleration the closer the position is to earth.
       userPosition.altitude = userPosition.altitude * scaleFactor;
-      this.rerender();
+      this.updateEarthPosition();
     }
 
     if (pressedKeys.KeyG || pressedKeys.MoveBwdVive) {
       userPosition.altitude = userPosition.altitude / scaleFactor;
-      this.rerender();
+      this.updateEarthPosition();
     }
 
     //Pan earth
 
     if (pressedKeys.KeyW || pressedKeys.ArrowUp) {
       this.panUp(panAcceleration * userPosition.altitude / height);
-      this.rerender();
+      this.updateEarthPosition();
     }
 
     if (pressedKeys.KeyS || pressedKeys.ArrowDown) {
       this.panUp(-panAcceleration * userPosition.altitude / height);
-      this.rerender();
+      this.updateEarthPosition();
     }
 
     if (pressedKeys.KeyA || pressedKeys.ArrowLeft) {
       this.panLeft(panAcceleration * userPosition.altitude / height);
-      this.rerender();
+      this.updateEarthPosition();
     }
 
     if (pressedKeys.KeyD || pressedKeys.ArrowRight) {
       this.panLeft(panAcceleration * -userPosition.altitude / height);
-      this.rerender();
+      this.updateEarthPosition();
     }
 
     // Limit camera position by defined max / min distance.
@@ -365,14 +365,18 @@ AFRAME.registerComponent('vive-wasd-controls', {
       }
     }
   }, */
+  updateEarthPosition: function(){
+    if (!!EVENT_BUS){
+      EVENT_BUS.emit('earthviewer:positionChanged', {
+        'altitude': userPosition.altitude,
+        'longitude': userPosition.longitude,
+        'latitude': userPosition.latitude
+      });
+    }
+  },
 
   rerender: function(){
     (callbackHelper || {}).callback(userPosition.altitude, userPosition.latitude, userPosition.longitude);
-  },
-
-  /** Updates zoom level and rerenders earth if needed */
-  rerenderEarth: function (altitude, latitude, longitude) {
-    (callbackHelper || {}).callback(altitude, latitude, longitude);
   },
   /*
   getMovementVector: (function () {

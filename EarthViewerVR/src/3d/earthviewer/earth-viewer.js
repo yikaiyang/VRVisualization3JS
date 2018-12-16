@@ -27,9 +27,7 @@ Object.freeze(EarthProperties);
  * Globals
  */
 var App = window.App || {};
-var callbackHelper = App.callbackHelper;
 var userPosition = App.UserPosition;
-
 
 class EarthViewer extends BaseThreeJSComponent{
     constructor(scene, ascene){
@@ -38,7 +36,6 @@ class EarthViewer extends BaseThreeJSComponent{
         this._initEarthObject();
         this._initProperties();
         this._initEventBusHandling();
-        this._registerCallback();
         this._loadVisualization();
     }
 
@@ -86,6 +83,9 @@ class EarthViewer extends BaseThreeJSComponent{
                 }
             }
         });
+        EVENT_BUS.on('test',() => {
+            alert('Test successful');
+        })
     }
 
     //region Visualisation
@@ -104,14 +104,6 @@ class EarthViewer extends BaseThreeJSComponent{
             );
     }
     //endregion
-
-    _registerCallback(){
-        callbackHelper.setCallback(
-            (altitude, latitude, longitude) => {
-                this.rerenderEarth(altitude,latitude,longitude);
-            }
-        );
-    }
 
     getUserPosition(){
         const userPositionClone = Object.assign({}, userPosition);

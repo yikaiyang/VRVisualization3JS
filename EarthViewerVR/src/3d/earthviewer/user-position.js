@@ -32,5 +32,5 @@ class UserPosition {
     }
 }
 
-//TODO: Move this to an intializer
+//TODO: Move this to a boostrapper.
 App.UserPosition = new UserPosition();

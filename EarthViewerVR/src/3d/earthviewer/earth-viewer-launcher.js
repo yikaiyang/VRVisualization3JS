@@ -1,8 +1,9 @@
 'use strict';
 import {EarthViewer} from './earth-viewer.js'
-
-
 import MousePicker from './visualization/picking/mousepicker';
+
+//Expose Earthviewer API to global scope (for aframe components)
+import './api/earthviewer-api';
 
 /**
  * Initializes the earth and renders the earth for the first time.
@@ -18,7 +19,10 @@ window.addEventListener("load", function(event) {
 
     window.Earth = earthViewer; //Export to global scope for debug purposes.
 
-    let picker = new MousePicker(ascene);
+    //Expose eventbus to global scope
+    window.EVENT_BUS = EVENT_BUS;
+    
+    //let picker = new MousePicker(ascene);
 });
  
 

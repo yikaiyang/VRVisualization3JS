@@ -17,9 +17,9 @@
 //    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
 //    Pan - right mouse, or arrow keys / touch: three finger swipe
 var App = App || {};
-var callbackHelper = App.callbackHelper;
 var userPosition = App.UserPosition;
 var EARTH_RADIUS = App.EARTH_RADIUS || 6378137;
+var EVENT_BUS = window.EVENT_BUS;
 
 THREE.OrbitControls = function (object, domElement) {	
 	this.object = object;
@@ -100,6 +100,17 @@ THREE.OrbitControls = function (object, domElement) {
 	//
 	// public methods
 	//
+
+	/// Triggers a rerender of earth
+	this.updateEarthPosition = function (altitude, latitude, longitude) {
+		if (!!EVENT_BUS){
+			EVENT_BUS.emit('earthviewer:positionChanged', {
+				'altitude': altitude,
+				'longitude': longitude,
+				'latitude': latitude
+			});
+		}
+	}
 
 	this.distanceToTarget = function (){
 		let altitude = new THREE.Vector3().copy(this.object.position).sub(this.target).length();
@@ -568,7 +579,7 @@ THREE.OrbitControls = function (object, domElement) {
 		panStart.copy(panEnd);
 
 		scope.update();
-		(callbackHelper || {}).callback(scope.distanceToTarget(), userPosition.latitude, userPosition.longitude);
+		scope.updateEarthPosition(scope.distanceToTarget(), userPosition.latitude, userPosition.longitude);
 	}
 
 	function handleMouseUp(event) {
@@ -594,9 +605,7 @@ THREE.OrbitControls = function (object, domElement) {
 		}
 
 		scope.update();
-		(callbackHelper || {}).callback(scope.distanceToTarget(), userPosition.latitude, userPosition.longitude);
-
-		
+		scope.updateEarthPosition(scope.distanceToTarget(), userPosition.latitude, userPosition.longitude);
 	}
 
 	function handleKeyDown(event) {
@@ -1155,9 +1164,6 @@ AFRAME.registerComponent('orbit-controls', {
 			el.sceneEl.renderer.domElement);
 
 		oldPosition = new THREE.Vector3();
-
-		let threeScene = el.sceneEl.object3D;
-		//let camera2 = document.querySelector('#vr-camera2').getObject3D('camera');
 	
 
 	 	el.sceneEl.addEventListener('enter-vr', () => {
