@@ -1,6 +1,6 @@
 import BaseVisualizationLayer from '../base-visualization-layer.js';
 import JSONUtil from '../../../../../util/json-util.js';
-import ShapeFactory from '../../meshgeneration/shape-factory.js';
+import ShapeFactory from '../../shapes/shape-factory.js';
 
 
 const defaultMapping = {

@@ -1,6 +1,6 @@
 import BaseVisualizationLayer from '../base-visualization-layer.js';
 import JSONUtil from '../../../../../util/json-util.js';
-import ShapeFactory from '../../meshgeneration/shape-factory';
+import ShapeFactory from '../../shapes/shape-factory';
 import {EarthProperties} from '../../../earth-viewer.js';
 /**
  * http://localhost:8888/src/assets/data/haltestellen.csv
