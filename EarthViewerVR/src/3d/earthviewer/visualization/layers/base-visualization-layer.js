@@ -36,7 +36,6 @@ export default class BaseVisualizationLayer {
         this._meshBuilder.addMeshAtLocation(latitude, longitude,mesh);
     }
 
-
     _parseData(data, mapping){
         //TODO: Check validaty of data.
         this.data = data;

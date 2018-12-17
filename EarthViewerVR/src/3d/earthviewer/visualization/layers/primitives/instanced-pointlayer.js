@@ -109,7 +109,6 @@ export default class InstancedPointLayer extends BaseVisualizationLayer{
             let height = JSONUtil.getProperty(
                 dataPoint,
                 DataSchemaV1.properties + '.' + this._visualChannelMapping.height) || DEFAULT_HEIGHT;
-            //alert(height);
 
             let color = JSONUtil.getProperty(
                 dataPoint,
