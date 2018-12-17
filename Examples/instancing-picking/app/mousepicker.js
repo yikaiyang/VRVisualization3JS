@@ -29,23 +29,23 @@ export default class MousePicker{
         this.log = true;
 
         //Initialize event listener
-        window.addEventListener('mousemove', () => { this.onMouseMove() }, false);
+        window.addEventListener('mousemove', (e) => { this.onMouseMove(e) }, false);
     }
 
-    onMouseMove(){
+    onMouseMove(e){
         // calculate mouse position in normalized device coordinates
         // (-1 to +1) for both components
         if (!this._mousePosition){
             alert('mousePositoin is null');
         }
 
-        let boundingBox = event.target.getBoundingClientRect();
-        this._mousePosition.elementX = event.clientX - boundingBox.left;
-        this._mousePosition.elementY = event.clientY - boundingBox.top;
-        this._mousePosition.clientX = event.clientX;
-        this._mousePosition.clientY = event.clientY;
-        this._mousePosition.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-        this._mousePosition.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+        let boundingBox = e.target.getBoundingClientRect();
+        this._mousePosition.elementX = e.clientX - boundingBox.left;
+        this._mousePosition.elementY = e.clientY - boundingBox.top;
+        this._mousePosition.clientX = e.clientX;
+        this._mousePosition.clientY = e.clientY;
+        this._mousePosition.x = ( e.clientX / window.innerWidth ) * 2 - 1;
+        this._mousePosition.y = - ( e.clientY / window.innerHeight ) * 2 + 1;
         console.log('x:' + this._mousePosition.clientX + ' y:' + this._mousePosition.clientY);
     }
 

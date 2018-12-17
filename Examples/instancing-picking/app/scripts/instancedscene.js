@@ -116,7 +116,7 @@ let instancedMesh = scene.getObjectByName('instanced_mesh');
 var render = function () {
   requestAnimationFrame(render);
   mousePicker.tick();
-  renderer.render(pickingScene, camera);
+  renderer.render(scene, camera);
 };
 
 render(); 
