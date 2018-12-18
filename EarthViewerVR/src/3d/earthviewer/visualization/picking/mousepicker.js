@@ -57,7 +57,7 @@ export default class MousePicker{
             return;
         }
 
-        let selectionElement = document.querySelector('#selection');
+        //let selectionElement = document.querySelector('#selection');
         
         //Rerender 1x1 pixel. 
         //We actually do not need to render a scene at all.
@@ -98,8 +98,8 @@ export default class MousePicker{
                 let object = this._selected.object;
                 if (!!object){
                     let color = object.material.color.getHex();
-                    
-                    selectionElement.innerHTML = 'ID: ' + color;
+                    //selectionElement.innerHTML = 'ID: ' + color;
+                    console.log('id' + color);
                 }
             }  
         } 

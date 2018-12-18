@@ -46,13 +46,12 @@ export default class InstancedPointLayer extends BaseVisualizationLayer{
             const colorPropertyPath = visualChannelMapping.color || null;
             const heightPropertyPath = visualChannelMapping.height || null;
 
-            this._setHeightMapping(this._dataArray, heightPropertyPath);
-            this._setColorMapping(this._dataArray, colorPropertyPath);
-       /*      try {
-               
+            try {
+                this._setHeightMapping(this._dataArray, heightPropertyPath);
+                this._setColorMapping(this._dataArray, colorPropertyPath);
             } catch(e) {
                 console.error('Error initializing visual mapping: ' + e.message);
-            } */
+            }
         } else {
             console.error("_parseVisualChannelMapping. Property visual channel mapping is null or undefined.");
         }
@@ -117,9 +116,7 @@ export default class InstancedPointLayer extends BaseVisualizationLayer{
 
             //Retrieve height information
             let height = DataSchema.getProperty(dataPoint,this._visualChannelMapping.height) || DEFAULT_HEIGHT;
-            let color = JSONUtil.getProperty(
-                dataPoint,
-                DataSchema.properties + '.' + this._visualChannelMapping.color) || DEFAULT_COLOR;
+            let color = DataSchema.getProperty(dataPoint, this._visualChannelMapping.color) || DEFAULT_COLOR;
 
             //Create mesh for data entry.
             let meshColor = new THREE.Color(Math.random(), Math.random(), Math.random());

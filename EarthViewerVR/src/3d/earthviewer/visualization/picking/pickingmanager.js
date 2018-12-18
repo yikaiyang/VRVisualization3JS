@@ -9,6 +9,8 @@ class PickingManager extends BaseThreeJSComponent{
      * @param {THREE.WEBGLRenderer} renderer 
      */
     constructor(ascene, camera, renderer, isEnabled = false){
+        super(ascene);
+
         this._camera = camera;
         this._renderer = renderer;
 
@@ -19,8 +21,6 @@ class PickingManager extends BaseThreeJSComponent{
         if (this.isEnabled){
             this.enable()
         }
-
-        super(ascene);
     }
 
     /**
@@ -39,5 +39,9 @@ class PickingManager extends BaseThreeJSComponent{
      */
     disable(){
         this.isEnabled = false;
+    }
+
+    tick(time, delta){
+        //console.log(time);
     }
 }
