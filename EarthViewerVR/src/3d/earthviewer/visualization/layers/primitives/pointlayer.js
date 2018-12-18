@@ -2,7 +2,7 @@ import BaseVisualizationLayer from '../base-visualization-layer.js';
 import JSONUtil from '../../../../../util/json-util.js';
 import ShapeFactory from '../../shapes/shape-factory';
 
-import DataSchemaV1 from '../../dataschema/dataSchemaV1.js';
+import DataSchema from '../../dataschema/dataSchema.js';
 import SizeMapper from '../../datamapping/sizemapper.js';
 import ColorMapper from '../../datamapping/colormapper.js';
 
@@ -18,11 +18,7 @@ export default class PointLayer extends BaseVisualizationLayer{
         this.data = data;
         this._parseVisualChannelMapping(visualChannelMapping);
     }
-
-    _initInstancing(){
-
-    }
-
+    
     _parseVisualChannelMapping(visualChannelMapping){
         if (!!visualChannelMapping){
             this._visualChannelMapping = visualChannelMapping;
@@ -89,17 +85,17 @@ export default class PointLayer extends BaseVisualizationLayer{
         
         for (let i = 0; i < this._dataArray.length; i++){
             let dataPoint = this._dataArray[i];
-            let dataLatitude = JSONUtil.getProperty(dataPoint, DataSchemaV1.latitude);
-            let dataLongitude = JSONUtil.getProperty(dataPoint, DataSchemaV1.longitude);
+            let dataLatitude = JSONUtil.getProperty(dataPoint, DataSchema.latitude);
+            let dataLongitude = JSONUtil.getProperty(dataPoint, DataSchema.longitude);
         
             let height = JSONUtil.getProperty(
                 dataPoint,
-                DataSchemaV1.properties + '.' + this._visualChannelMapping.height) || DEFAULT_HEIGHT;
+                DataSchema.properties + '.' + this._visualChannelMapping.height) || DEFAULT_HEIGHT;
             //alert(height);
 
             let color = JSONUtil.getProperty(
                 dataPoint,
-                DataSchemaV1.properties + '.' + this._visualChannelMapping.color) || DEFAULT_COLOR;
+                DataSchema.properties + '.' + this._visualChannelMapping.color) || DEFAULT_COLOR;
             
             console.log('point : lat: ' + dataLatitude + ' long: ' + dataLongitude);
             if (!dataLatitude || !dataLongitude){

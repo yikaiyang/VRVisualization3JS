@@ -1190,12 +1190,11 @@ AFRAME.registerComponent('orbit-controls', {
 			}
 		}); 
 
-		document.body.style.cursor = 'grab';
 		document.addEventListener('mousedown', () => {
-			document.body.style.cursor = 'grabbing';
+			document.body.style.cursor = 'all-scroll';
 		});
 		document.addEventListener('mouseup', () => {
-			document.body.style.cursor = 'grab';
+			document.body.style.cursor = 'default';
 		}); 
 
 		this.target = new THREE.Vector3();

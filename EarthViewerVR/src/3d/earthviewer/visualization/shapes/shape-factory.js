@@ -6,10 +6,10 @@ class ShapeFactory {
      * Creates a three js cylinder mesh with the given parameters.
      * Returns a cylinder mesh if valid parameters are provided, otherwise null.
      */
-    static createCylinder(height = 100, width = 10, hexColor =  0xbf0b2c){
+    static createCylinder(height = 100, width = 10, color = new THREE.Color('0xbf0b2c')){
         let geometry = new THREE.CylinderGeometry(width, width, height, 14);
         let material = new THREE.MeshLambertMaterial({
-            color: new THREE.Color(hexColor)
+            color: new THREE.Color(color)
         });
 
         if (!!geometry && !! material){
@@ -19,10 +19,10 @@ class ShapeFactory {
         return null;
     }
 
-    static createCube(height, width, hexColor = 0xbf0b2c){
+    static createCube(height, width, color = new THREE.Color('0xbf0b2c')){
         let geometry = new THREE.BoxGeometry(width, height, width);
         let material = new THREE.MeshLambertMaterial({
-            color: new THREE.Color(hexColor)
+            color: new THREE.Color(color)
         });
 
         if (!!geometry && !! material){

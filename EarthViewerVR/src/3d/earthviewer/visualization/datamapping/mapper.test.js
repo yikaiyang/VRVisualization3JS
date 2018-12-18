@@ -1,9 +1,10 @@
 import SizeMapper from './sizemapper.js'
 import SampleData from '../../../../assets/data/sampledata.js'
 import BasePropertyMapper from './base-propertymapper.js';
+import DataMapperFactory from './datamapper-factory.js';
 
 test('Test successful base-propertymapper', () => {
-    const testArray = SampleData.data;
+/*     const testArray = SampleData.data;
     const propertyPath = "Bettenanzahl";
     let sizeMapper = new BasePropertyMapper(testArray, propertyPath);
     const maxValue = sizeMapper.maxValue;
@@ -12,13 +13,14 @@ test('Test successful base-propertymapper', () => {
 
     expect(maxValue).toBeDefined();
     expect(minValue).toBeDefined();
-    expect(range).toBeDefined();
+    expect(range).toBeDefined(); */
 });
 
 test('Test successful sizemapper', () => {
     const testArray = SampleData.data;
     const propertyPath = "Bettenanzahl";
-    let sizeMapper = new SizeMapper(testArray, propertyPath);
+    let sizeMapper = DataMapperFactory.createSizeMapper(testArray, propertyPath);
+    //let sizeMapper = new SizeMapper(testArray, propertyPath);
     const maxValue = sizeMapper.maxValue;
     const minValue = sizeMapper.minValue;
     const range = sizeMapper.valueRange;
@@ -31,8 +33,8 @@ test('Test successful sizemapper', () => {
     const mappedMin = sizeMapper.getMappedValue(minValue);
     const mappedMax = sizeMapper.getMappedValue(maxValue);
     
-    expect(mappedMin).toBe(0);
-    expect(mappedMax).toBe(100);
+    expect(mappedMin).toBe(minValue);
+    expect(mappedMax).toBe(maxValue);
 });
 
 test('Test successful sizemapper with custom range', () => {
@@ -41,7 +43,7 @@ test('Test successful sizemapper with custom range', () => {
     const options = {
         range: [100, 1000]
     }
-    let sizeMapper = new SizeMapper(testArray, propertyPath, options);
+    let sizeMapper = DataMapperFactory.createSizeMapper(testArray, propertyPath, options);
     const maxValue = sizeMapper.maxValue;
     const minValue = sizeMapper.minValue;
     const range = sizeMapper.valueRange;

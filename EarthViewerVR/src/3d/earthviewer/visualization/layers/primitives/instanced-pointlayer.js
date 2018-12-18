@@ -2,7 +2,9 @@ import BaseVisualizationLayer from '../base-visualization-layer.js';
 import JSONUtil from '../../../../../util/json-util.js';
 import ShapeFactory from '../../shapes/shape-factory';
 
-import DataSchemaV1 from '../../dataschema/dataSchemaV1.js';
+import DataSchema from '../../dataschema/dataSchema.js';
+import DataMapperFactory from '../../datamapping/datamapper-factory.js';
+
 import SizeMapper from '../../datamapping/sizemapper.js';
 import ColorMapper from '../../datamapping/colormapper.js';
 
@@ -16,11 +18,10 @@ const defaultVisualChannelMapping = {
 export default class InstancedPointLayer extends BaseVisualizationLayer{
     constructor(scene, earth, data, visualChannelMapping = defaultVisualChannelMapping){
         super(scene,earth);
-        this._initMaterials();
         this.data = data;
 
         this._initInstancing();
-        this._parseVisualChannelMapping(visualChannelMapping);
+        this._initVisualChannels(visualChannelMapping);
     }
 
     _initInstancing(){
@@ -37,34 +38,36 @@ export default class InstancedPointLayer extends BaseVisualizationLayer{
         );
     }
 
-    _parseVisualChannelMapping(visualChannelMapping){
+    _initVisualChannels(visualChannelMapping){
         if (!!visualChannelMapping){
             this._visualChannelMapping = visualChannelMapping;
-            const colorProperty = visualChannelMapping.color;
-            const heightProperty = visualChannelMapping.height;
-            this._setHeightMapping(this._dataArray, heightProperty);
+
+            //Extract mapping paths
+            const colorPropertyPath = visualChannelMapping.color || null;
+            const heightPropertyPath = visualChannelMapping.height || null;
+
+            this._setHeightMapping(this._dataArray, heightPropertyPath);
+            this._setColorMapping(this._dataArray, colorPropertyPath);
+       /*      try {
+               
+            } catch(e) {
+                console.error('Error initializing visual mapping: ' + e.message);
+            } */
         } else {
             console.error("_parseVisualChannelMapping. Property visual channel mapping is null or undefined.");
         }
     }
 
-    _setColorMapping(data, colorProperty){
-        if (!!data && !!colorProperty){
-            this._colorMapper = new ColorMapper(dataArray, colorProperty);
+    _setColorMapping(dataArray, colorPropertyPath){
+        if (!!dataArray && !!colorPropertyPath){
+            this._colorMapper = DataMapperFactory.createColorMapper(dataArray,  DataSchema.getPathForProperty(colorPropertyPath));
         }
     }
     
-    _setHeightMapping(dataArray, heightProperty){
-        if (!!dataArray && !!heightProperty){
-            this._heightMapper = new SizeMapper(dataArray, heightProperty);
+    _setHeightMapping(dataArray, heightPropertyPath){
+        if (!!dataArray && !!heightPropertyPath){
+            this._heightMapper = DataMapperFactory.createSizeMapper(dataArray, DataSchema.getPathForProperty(heightPropertyPath));
         }
-    }
-    
-    _initMaterials(){
-        this._color = new THREE.Color(0xbf0b2c);
-        this._material = new THREE.MeshLambertMaterial({
-            color: this._color
-        });
     }
 
     /*Properties */
@@ -103,32 +106,36 @@ export default class InstancedPointLayer extends BaseVisualizationLayer{
         
         for (let i = 0; i < this._dataArray.length; i++){
             let dataPoint = this._dataArray[i];
-            let dataLatitude = JSONUtil.getProperty(dataPoint, DataSchemaV1.latitude);
-            let dataLongitude = JSONUtil.getProperty(dataPoint, DataSchemaV1.longitude);
-        
-            let height = JSONUtil.getProperty(
-                dataPoint,
-                DataSchemaV1.properties + '.' + this._visualChannelMapping.height) || DEFAULT_HEIGHT;
+            let dataLatitude = JSONUtil.getProperty(dataPoint, DataSchema.latitude);
+            let dataLongitude = JSONUtil.getProperty(dataPoint, DataSchema.longitude);
 
-            let color = JSONUtil.getProperty(
-                dataPoint,
-                DataSchemaV1.properties + '.' + this._visualChannelMapping.color) || DEFAULT_COLOR;
-            
             console.log('point : lat: ' + dataLatitude + ' long: ' + dataLongitude);
             if (!dataLatitude || !dataLongitude){
                 //Entry is empty. Skip this entry.
                 continue;
             }
 
+            //Retrieve height information
+            let height = DataSchema.getProperty(dataPoint,this._visualChannelMapping.height) || DEFAULT_HEIGHT;
+            let color = JSONUtil.getProperty(
+                dataPoint,
+                DataSchema.properties + '.' + this._visualChannelMapping.color) || DEFAULT_COLOR;
+
             //Create mesh for data entry.
             let meshColor = new THREE.Color(Math.random(), Math.random(), Math.random());
-            let mesh = ShapeFactory.createCylinder(height,10, meshColor);
+            let mesh = ShapeFactory.createCylinder(height,10, color);
+
+            let mappedHeight = this._heightMapper.getMappedValue(height);
+            let mappedChromaColor = this._colorMapper.getMappedValue(color); //Color in chroma js color format
+            let mappedColor = (!!mappedChromaColor) ? new THREE.Color(mappedChromaColor.hex()) : meshColor;
+
+            //alert(mappedValue);
           
             this._meshBuilder.addInstanceAtLocation(
-                    dataLatitude, 
-                    dataLongitude, 
-                    meshColor,
-                    new THREE.Vector3(10,height,10)
+                    dataLatitude,
+                    dataLongitude,
+                    mappedColor,
+                    new THREE.Vector3(50, mappedHeight, 50)
             )
         }
         this._renderData();

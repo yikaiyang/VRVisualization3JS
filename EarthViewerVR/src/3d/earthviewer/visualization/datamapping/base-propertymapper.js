@@ -8,28 +8,28 @@ import JSONUtil from '../../../../util/json-util.js'
  * 2. Basic dataprocessing of the extracted values. (Sorting and identification of max and min values).
  */
 class BasePropertyMapper {
-    constructor(jsonArray, propertyPath){
-        if (!Array.isArray(jsonArray)){
+    constructor(values){
+        if (!Array.isArray(values)){
             console.error('ERROR: Parameter jsonArray is not an array.');
         }
-        this._parseParameters(jsonArray, propertyPath);
-    }
 
-    _parseParameters(jsonArray, propertyPath){
-        if (!!jsonArray && !!propertyPath){
-            let values = JSONUtil.extractPropertiesFromArrayAsList(jsonArray, propertyPath);
-            if (!Array.isArray(values)){
-                console.error('ERROR: _parseParameters: Returned object is invalid (null or undefined)');
-                return;
-            }
-            this._values = values;
-            this._processData();
+        if (!Array.isArray(values)){
+            console.error('ERROR: _parseParameters: Returned object is invalid (null or undefined)');
+            return;
         }
+
+        if (values.length <= 0){
+            console.warn('The resulting array is empty.');
+        }
+        
+        //Check if array is empty
+        this._values = values;
+        this._processData();
     }
 
     _processData(){
-        //Sort the array before determining the division of the mapping
-        this._values.sort();
+        //Sort the array in ascending order
+        this._values.sort((a,b) => (a - b));
 
         //Determine largest and smallest value.
         this.minValue = this._values[0];
