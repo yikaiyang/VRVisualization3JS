@@ -50,7 +50,6 @@ export default class PickingHandler extends BaseThreeJSComponent{
         quaternion, 
         scale, 
         geometry){
-            
         this._pickingScene.addObject(
             id,
             position,
@@ -58,6 +57,10 @@ export default class PickingHandler extends BaseThreeJSComponent{
             scale,
             geometry
         )
+    }
+
+    addMeshAtLocation(latitude, longitude, mesh){
+        this._pickingScene.addMeshAtLocation(latitude,longitude,mesh);
     }
 
     tick(time, delta){

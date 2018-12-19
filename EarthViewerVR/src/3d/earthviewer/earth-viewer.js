@@ -325,6 +325,12 @@ class EarthViewer extends BaseThreeJSComponent{
         return zoom;
     }
 
+    _emitEarthRotation(rotation, quaternion){
+        EVENT_BUS.emit('earthviewer:rotationChanged', {
+            rotation: rotation
+        });
+    }
+
     rerenderEarth(
         altitude = EarthProperties.DEFAULT_ALTITUDE,
         latitude = EarthProperties.DEFAULT_LATITUDE,
@@ -349,10 +355,15 @@ class EarthViewer extends BaseThreeJSComponent{
             this.latStamp = latitude;
 
             //Rotate the earth to new position
-            this.earth.rotation.set(
+            let rotationEuler = new THREE.Euler(
                 latitude * Math.PI / 180,
                 (-longitude) * Math.PI / 180,
                 0);
+
+            this.earth.rotation.set(rotationEuler.x, rotationEuler.y, rotationEuler.z);
+
+            //Send event that earth rotation has changed
+            this._emitEarthRotation(rotationEuler);
 
             //Calculate new tiles
             let oldXtile = this.xtile;

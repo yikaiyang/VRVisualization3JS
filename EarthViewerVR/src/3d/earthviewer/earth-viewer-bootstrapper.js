@@ -26,6 +26,7 @@ window.addEventListener("load", (event) => {
 
     let renderer = ascene.renderer;
     let pickingHandler = new PickingHandler(ascene, camera, renderer, true);
+    window.pickingHandler = pickingHandler;
     //pickingHandler.disable();
 
     //Expose eventbus to global scope

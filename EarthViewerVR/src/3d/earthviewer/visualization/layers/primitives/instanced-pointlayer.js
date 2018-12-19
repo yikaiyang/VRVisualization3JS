@@ -22,6 +22,8 @@ export default class InstancedPointLayer extends BaseVisualizationLayer{
 
         this._initInstancing();
         this._initVisualChannels(visualChannelMapping);
+
+        this._pickingHandler = window.pickingHandler;
     }
 
     _initInstancing(){
@@ -128,6 +130,8 @@ export default class InstancedPointLayer extends BaseVisualizationLayer{
             let mappedColor = (!!mappedChromaColor) ? new THREE.Color(mappedChromaColor.hex()) : meshColor;
 
             //alert(mappedValue);
+
+            this._pickingHandler.addMeshAtLocation(dataLatitude, dataLongitude, mesh)
           
             this._meshBuilder.addInstanceAtLocation(
                     dataLatitude,
