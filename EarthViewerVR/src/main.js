@@ -3,7 +3,7 @@ import App from './App.vue'
 import Menubar from './components/Menubar'
 import router from './router'
 
-import './3d/earthviewer/earth-viewer-launcher.js' //Load earth
+import './3d/earthviewer/earth-viewer-bootstrapper.js' //Load earthviewer
 
 //Load node libraries
 require('chroma-js');

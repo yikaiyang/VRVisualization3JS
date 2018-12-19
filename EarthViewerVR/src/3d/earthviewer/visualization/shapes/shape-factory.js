@@ -1,6 +1,8 @@
 import MathUtil from '../../../../util/math-util';
 import GeoConversion from '../../util/geoconversion';
 import {MeshLine, MeshLineMaterial} from 'three.meshline';
+import * as THREE from 'three';
+
 class ShapeFactory {
     /**
      * Creates a three js cylinder mesh with the given parameters.
@@ -9,7 +11,7 @@ class ShapeFactory {
     static createCylinder(height = 100, width = 10, color = new THREE.Color('0xbf0b2c')){
         let geometry = new THREE.CylinderGeometry(width, width, height, 14);
         let material = new THREE.MeshLambertMaterial({
-            color: new THREE.Color(color)
+            color: color
         });
 
         if (!!geometry && !! material){
@@ -22,7 +24,7 @@ class ShapeFactory {
     static createCube(height, width, color = new THREE.Color('0xbf0b2c')){
         let geometry = new THREE.BoxGeometry(width, height, width);
         let material = new THREE.MeshLambertMaterial({
-            color: new THREE.Color(color)
+            color: color
         });
 
         if (!!geometry && !! material){
@@ -68,7 +70,7 @@ class ShapeFactory {
 
         const digits = 8; //Specifies how many digits shall be left.
 
-        // Create a sine-like wave
+        //Create a curve approiximation using a bezier curve
         var curve = new THREE.QuadraticBezierCurve3( 
             new THREE.Vector3( 
                 MathUtil.roundNumber(startCoords.x, digits),
@@ -187,6 +189,12 @@ class ShapeFactory {
         });
         var mesh = new THREE.Mesh(g.geometry, material);
         return mesh;
+    }
+
+    static createEarthContainer(radius){
+        let container = new THREE.Object3D();
+        container.position.set(0, 0, -radius);
+        return container;
     }
 }
 

@@ -6,7 +6,6 @@
  */
 
 var App = App || {};
-var callbackHelper = App.callbackHelper;
 var userPosition = App.UserPosition;
 var EVENT_BUS = window.EVENT_BUS;
 
@@ -91,6 +90,7 @@ AFRAME.registerComponent('vive-wasd-controls', {
         //alert('yay VR ' + this.isVREnabled);
         //console.log('yay VR ' + event.target);
         //vrEnabled = true;
+
 		});
 
 	  this.el.sceneEl.addEventListener('exit-vr', () => {
@@ -375,9 +375,6 @@ AFRAME.registerComponent('vive-wasd-controls', {
     }
   },
 
-  rerender: function(){
-    (callbackHelper || {}).callback(userPosition.altitude, userPosition.latitude, userPosition.longitude);
-  },
   /*
   getMovementVector: (function () {
     var directionVector = new THREE.Vector3(0, 0, 0);

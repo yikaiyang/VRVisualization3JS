@@ -8,6 +8,14 @@ class EarthviewerAPI {
             }
         }
     }
+
+    enablePicking(mode = 'raycast'){
+        EVENT_BUS.emit('earthviewer:pickingStatus', mode);
+    }
+
+    disablePicking(){
+        EVENT_BUS.emit('earthviewer:pickingStatus', 'disabled');
+    }
 }
 
 const API = new EarthviewerAPI();

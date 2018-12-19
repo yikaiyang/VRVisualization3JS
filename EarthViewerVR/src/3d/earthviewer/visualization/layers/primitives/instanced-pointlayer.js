@@ -102,6 +102,7 @@ export default class InstancedPointLayer extends BaseVisualizationLayer{
 
         const DEFAULT_HEIGHT = 0;
         const DEFAULT_COLOR = '0xbf0b2c';
+        const MIN_WIDTH = 50;
         
         for (let i = 0; i < this._dataArray.length; i++){
             let dataPoint = this._dataArray[i];
@@ -120,7 +121,7 @@ export default class InstancedPointLayer extends BaseVisualizationLayer{
 
             //Create mesh for data entry.
             let meshColor = new THREE.Color(Math.random(), Math.random(), Math.random());
-            let mesh = ShapeFactory.createCylinder(height,10, color);
+            let mesh = ShapeFactory.createCylinder(height, MIN_WIDTH, color);
 
             let mappedHeight = this._heightMapper.getMappedValue(height);
             let mappedChromaColor = this._colorMapper.getMappedValue(color); //Color in chroma js color format
@@ -132,7 +133,7 @@ export default class InstancedPointLayer extends BaseVisualizationLayer{
                     dataLatitude,
                     dataLongitude,
                     mappedColor,
-                    new THREE.Vector3(50, mappedHeight, 50)
+                    new THREE.Vector3(MIN_WIDTH, mappedHeight, MIN_WIDTH)
             )
         }
         this._renderData();

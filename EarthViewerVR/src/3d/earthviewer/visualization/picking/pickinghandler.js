@@ -2,7 +2,7 @@ import MousePicker from './mousepicker'
 import EarthviewerPickingScene from './earthviewer-pickingscene'
 import BaseThreeJSComponent from '../../../components/base-threejs-component';
 
-class PickingManager extends BaseThreeJSComponent{
+export default class PickingHandler extends BaseThreeJSComponent{
     /**
      * 
      * @param {THREE.PerspectiveCamera} camera 
@@ -32,6 +32,8 @@ class PickingManager extends BaseThreeJSComponent{
             this._pickingScene = new EarthviewerPickingScene();
             this._picker = new MousePicker(this._pickingScene, this._camera, this._renderer);
         }
+
+        this._picker.enable();
     }
 
     /**
@@ -39,9 +41,29 @@ class PickingManager extends BaseThreeJSComponent{
      */
     disable(){
         this.isEnabled = false;
+        this._picker.disable();
+    }
+
+    addObject(
+        id, 
+        position, 
+        quaternion, 
+        scale, 
+        geometry){
+            
+        this._pickingScene.addObject(
+            id,
+            position,
+            quaternion,
+            scale,
+            geometry
+        )
     }
 
     tick(time, delta){
         //console.log(time);
+        if (!!this._picker){
+            this._picker.tick(time, delta);
+        }
     }
 }

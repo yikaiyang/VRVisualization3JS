@@ -1,12 +1,16 @@
-var THREE = require('three');
+import * as THREE from 'three'
+import ShapeFactory  from '../shapes/shape-factory'
 
 export default class PickingScene{
     constructor(){
         this._scene = new THREE.Scene();
-        this._group = new THREE.Group();
+        this._initContainer();
         this._group.matrixAutoUpdate = false;
         this._scene.add(this._group);
-        this._initEventEmitter();
+    }
+
+    _initContainer(){
+        this._group = new THREE.Group();
     }
 
     addObject(

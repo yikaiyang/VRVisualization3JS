@@ -4,6 +4,7 @@ import GeoConversion from './util/geoconversion.js'
 import BaseThreeJSComponent from './../components/base-threejs-component.js'
 import Units from './util/units.js'
 import {VisualizationManager, VisualizationLayerType} from './visualization/visualizationmanager.js'
+import ShapeFactory from './visualization/shapes/shape-factory'
 
 /**
  * Earth Viewer constants

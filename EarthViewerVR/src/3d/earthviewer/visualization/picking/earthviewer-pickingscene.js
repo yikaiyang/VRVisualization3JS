@@ -1,9 +1,12 @@
 import PickingScene from './pickingscene'
+import ShapeFactory from '../shapes/shape-factory'
+import {EarthProperties} from '../../earth-viewer'
+import * as THREE from 'three'
 
 export default class EarthviewerPickingScene extends PickingScene{
     constructor(){
-        this._handleEvents();
         super();
+        this._handleEvents();
     }
 
     _handleEvents(){
@@ -13,10 +16,19 @@ export default class EarthviewerPickingScene extends PickingScene{
                 'earthviewer:rotationChanged',
                 (args) => {
                     this._handleRotationChanged(args)
-                }, this);        
+                });
         } else {
             console.error('Event bus could not be accessed.');
         }
+    }
+
+    _initContainer(){
+        let container = ShapeFactory.createEarthContainer(EarthProperties.RADIUS);
+        this._group = container;
+        let color = new THREE.Color();
+        color.setHex(1);
+        let testMesh = ShapeFactory.createCylinder(10000,10000,color);
+        this._group.add(testMesh);
     }
 
     _handleRotationChanged(args){
@@ -31,5 +43,4 @@ export default class EarthviewerPickingScene extends PickingScene{
             this._group.updateMatrix();
         }
     }
-
 }

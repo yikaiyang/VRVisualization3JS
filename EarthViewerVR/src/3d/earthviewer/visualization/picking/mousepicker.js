@@ -15,6 +15,8 @@ export default class MousePicker{
         this._pickingTexture = new THREE.WebGLRenderTarget(1,1); //Create 1x1 pixel render target.
         this._renderer = renderer;
 
+        this._isEnabled = true;
+
         this._selected = null;
         
         if (mode === 'pixelbuffer' || mode === 'raycast'){
@@ -134,7 +136,19 @@ export default class MousePicker{
         console.log('id' + id);
     }
 
+    enable(){
+        this._isEnabled = true;
+    }
+
+    disable(){
+        this._isEnabled = false;
+    }
+
     tick(time, delta){
+        if (!this._isEnabled){
+            return;
+        }
+
         if (this._mode === 'raycast'){
             this._raycastPick();
         } else if (this._mode === 'pixelbuffer'){
