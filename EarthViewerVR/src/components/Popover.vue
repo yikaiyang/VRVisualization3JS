@@ -2,26 +2,36 @@
     <transition name="ev-popover-fade">
         <div class="earthviewer-popover" v-show="isPopoverEnabled">
             <div class="title-header">
-                <span class="title">Allgemeines Krankenhaus</span> 
+                <span class="title">{{
+                    ((selectedItem || {} ).properties || {} ).Bezeichnung
+                }}</span> 
             </div>
             
             <div class="content">
                 <table style="color: white;">
                     <tr>
                         <td>ID:</td>
-                        <td>{{selectedItem.id}}</td>
+                        <td>{{
+                            (selectedItem || {}).id
+                        }}</td>
                     </tr>
                     <tr>
                         <td>Title:</td>
-                        <td>{{selectedItem.title}}</td>
+                        <td>{{
+                            (selectedItem || {}).title
+                        }}</td>
                     </tr>
                     <tr>
                         <td>Latitude:</td>
-                        <td>{{selectedItem.latitude}}</td>
+                        <td>{{
+                            ((selectedItem || {}).position || {}).lat
+                        }}</td>
                     </tr>
                     <tr>
                         <td>Longitude:</td>
-                        <td>{{selectedItem.longitude}}</td>
+                        <td>{{
+                            ((selectedItem || {}).position || {}).lon
+                        }}</td>
                     </tr>
                 </table>
             </div>
@@ -44,10 +54,17 @@ export default {
         }
     },
     mounted: function(){
-        EVENT_BUS.on('earthviewer:sceneSelectedItemChanged', (params) => {
-            if (!!params){
+        EVENT_BUS.on('earthviewer:sceneSelectedItemChanged', (id) => {
+            if (!!id){
                 this.isPopoverEnabled = true;
 
+                //Get and set object with the retrieved id 
+                if (!!window.DATA_STORAGE){
+                    let object = window.DATA_STORAGE[id];
+                
+                    //TODO: Validate schema
+                    this.selectedItem = object;
+                }
             } else {
                 //No item selected. Set visibility of popover to hidden.
                 this.isPopoverEnabled = false;

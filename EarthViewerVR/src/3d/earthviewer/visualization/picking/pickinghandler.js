@@ -2,6 +2,10 @@ import MousePicker from './mousepicker'
 import EarthviewerPickingScene from './earthviewer-pickingscene'
 import BaseThreeJSComponent from '../../../components/base-threejs-component';
 
+/**
+ * Manages picking by initializeing picking scene (framebuffer for selectable objects)
+ * and MousePicker.
+ */
 export default class PickingHandler extends BaseThreeJSComponent{
     /**
      * 

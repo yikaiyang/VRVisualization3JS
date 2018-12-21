@@ -11,6 +11,8 @@ import WienerLinienLayer from './layers/wienerlinienlayer.js'
 import ArcLayer from './layers/networks/arclayer.js'
 import SizeMapper from './datamapping/sizemapper.js'
 
+import DataStorage from './datastorage/datastorage.js';
+
 class VisualizationLayerType {};
 VisualizationLayerType.PointLayer = 1;
 VisualizationLayerType.BarsLayer = 2;
@@ -23,6 +25,7 @@ class VisualizationManager{
         this._scene = scene;
         this._earth = earth;
         this.layers = [];
+        this._dataStorage;
     }
 
     createLayer(layerType, filePath, propertyMapping = PropertyMapping){
@@ -31,6 +34,8 @@ class VisualizationManager{
                 .then((data => {
                     //Process data
                     const processedData = DataProcessor.processData(data, propertyMapping);
+
+                    this._dataStorage = new DataStorage(processedData);
 
                     //Add data to layer
                     this._addLayer(layerType, processedData);

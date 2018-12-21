@@ -131,8 +131,6 @@ export default class InstancedPointLayer extends BaseVisualizationLayer{
             let mappedChromaColor = this._colorMapper.getMappedValue(color); //Color in chroma js color format
             let mappedColor = (!!mappedChromaColor) ? new THREE.Color(mappedChromaColor.hex()) : meshColor;
 
-            //alert(mappedValue);
-
             this._pickingHandler.addMeshAtLocation(dataLatitude, dataLongitude, mesh)
           
             this._meshBuilder.addInstanceAtLocation(

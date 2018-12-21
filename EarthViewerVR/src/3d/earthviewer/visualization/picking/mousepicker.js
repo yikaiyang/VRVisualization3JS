@@ -59,8 +59,6 @@ export default class MousePicker{
             return;
         }
 
-        //let selectionElement = document.querySelector('#selection');
-        
         //Rerender 1x1 pixel. 
         //We actually do not need to render a scene at all.
         //By rerendering a scene, the matrices of the objects in the scene graph get automatically updated,
