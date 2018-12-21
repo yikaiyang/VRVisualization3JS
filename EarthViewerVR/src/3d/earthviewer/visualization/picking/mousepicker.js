@@ -87,23 +87,32 @@ export default class MousePicker{
         if (this.log){
             console.log(intersects);
         }
-       
+        
+        /**
+         * Check if currently selected item matches the intersected object.
+         * Intersects[0] returns undefined if nothing is selected, the selected object otherwise.
+         */
         if (this._selected !== intersects[0]){
-            if (!!this._selected){
-             //   this._selected.object.material.emissive.set(0x000000);//Reset selection glow
-            }
-            
             this._selected = intersects[0];
             if (!!this._selected){
-            //    this._selected.object.material.emissive.set(0xff0000);
-                //Selected object differs from the object set.
+                //Object is selected
                 let object = this._selected.object;
                 if (!!object){
                     let color = object.material.color.getHex();
                     //selectionElement.innerHTML = 'ID: ' + color;
                     console.log('id' + color);
+
+                    EVENT_BUS.emit(
+                        'earthviewer:sceneSelectedItemChanged',
+                        color);
+                    //alert(color);
                 }
-            }  
+            } else {
+                //Object is not selected anymore.
+                EVENT_BUS.emit(
+                    'earthviewer:sceneSelectedItemChanged',null);
+                //alert('unselect');
+            }
         } 
     }
 

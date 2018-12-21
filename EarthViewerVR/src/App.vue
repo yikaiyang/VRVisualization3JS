@@ -4,13 +4,16 @@
     <div class="ui">
       <Search ></Search>
       <router-view ></router-view>
+      <Popover/>
     </div>
+
   </div>
 </template>
 
 <script>
 import Menubar from './components/Menubar.vue'
 import Search from './components/Search.vue'
+import Popover from './components/Popover.vue'
 
 export default {
   name: 'app',
@@ -21,7 +24,8 @@ export default {
   },
   components: {
     Menubar,
-    Search
+    Search,
+    Popover
   }
 }
 </script>

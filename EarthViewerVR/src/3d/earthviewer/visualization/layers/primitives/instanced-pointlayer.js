@@ -121,9 +121,11 @@ export default class InstancedPointLayer extends BaseVisualizationLayer{
             let height = DataSchema.getProperty(dataPoint,this._visualChannelMapping.height) || DEFAULT_HEIGHT;
             let color = DataSchema.getProperty(dataPoint, this._visualChannelMapping.color) || DEFAULT_COLOR;
 
+            //Create color from id for picking scene
+            let idColor = new THREE.Color().setHex(i);
+
             //Create mesh for data entry.
-            let meshColor = new THREE.Color(Math.random(), Math.random(), Math.random());
-            let mesh = ShapeFactory.createCylinder(height, MIN_WIDTH, color);
+            let mesh = ShapeFactory.createCylinder(height, MIN_WIDTH, idColor);
 
             let mappedHeight = this._heightMapper.getMappedValue(height);
             let mappedChromaColor = this._colorMapper.getMappedValue(color); //Color in chroma js color format

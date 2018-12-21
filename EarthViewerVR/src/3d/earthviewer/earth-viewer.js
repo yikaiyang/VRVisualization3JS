@@ -337,7 +337,7 @@ class EarthViewer extends BaseThreeJSComponent{
         longitude = EarthProperties.DEFAULT_LONGITUDE
     ){
         console.log('rerenderEarth: altitude: ' + altitude + ' lat: '+ latitude + ' lon: '+ longitude);
-        ////////////////////////////////////////////////////////////
+
         const oldZoom = this.zoom;
 
         //Check Zoom level boundaries
