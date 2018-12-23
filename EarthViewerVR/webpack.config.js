@@ -99,7 +99,8 @@ module.exports = {
       {from: './src/assets/data', to: './assets/data'}
     ]),
     new webpack.ProvidePlugin({
-      EVENT_BUS: path.resolve(__dirname, './src/eventbus/eventemitter.js')
+      EVENT_BUS: path.resolve(__dirname, './src/eventbus/eventemitter.js'),
+      _: 'lodash'
     })
   ],
   devtool: '#eval-source-map'

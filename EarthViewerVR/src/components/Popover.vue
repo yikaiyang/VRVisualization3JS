@@ -8,6 +8,7 @@
             </div>
             
             <div class="content">
+                <Histogram v-bind:id="selectedID" v-bind:selectedItem="selectedItem"/>
                 <table style="color: white;">
                     <tr>
                         <td>ID:</td>
@@ -40,11 +41,13 @@
 </template>
 
 <script>
+import Histogram from './Histogram.vue'
 export default {
     name: 'Popover',
     data: function(){
         return {
             isPopoverEnabled: false,
+            selectedID: 0,
             selectedItem: {
                 id: '1212',
                 title: 'Allgemeines Krankenhaus',
@@ -57,6 +60,7 @@ export default {
         EVENT_BUS.on('earthviewer:sceneSelectedItemChanged', (id) => {
             if (!!id){
                 this.isPopoverEnabled = true;
+                this.selectedID = id;
 
                 //Get and set object with the retrieved id 
                 if (!!window.DATA_STORAGE){
@@ -70,6 +74,9 @@ export default {
                 this.isPopoverEnabled = false;
             }
         });
+    },
+    components: {
+        Histogram
     }
 }
 </script>
