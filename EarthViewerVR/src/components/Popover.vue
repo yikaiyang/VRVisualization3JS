@@ -8,7 +8,10 @@
             </div>
             
             <div class="content">
-                <Histogram v-bind:id="selectedID" v-bind:selectedItem="selectedItem"/>
+                <Histogram 
+                    v-bind:id="selectedID" 
+                    v-bind:selectedItem="selectedItem"
+                    mappedProperty="Bettanzahl"/>                    
                 <table style="color: white;">
                     <tr>
                         <td>ID:</td>
@@ -106,7 +109,8 @@ export default {
     }
 
     .earthviewer-popover table {
-        /* width: 120px; */
+        width: 100%;
+        /*max-width: 340px;*/
     }
 
     .earthviewer-popover table td {

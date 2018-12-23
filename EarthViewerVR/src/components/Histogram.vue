@@ -1,7 +1,18 @@
 <template>
-    <div id="histogram" >
-        <span>{{id}}</span>
+    <div id="histogram">
+        <span class="property-header">Property:</span>
+        <p>
+            <table style="color: white;">
+                <tr>
+                    <td style="color: white"> {{mappedProperty}}</td>
+                    <td>{{mappedValue}}</td>
+                </tr>
+            </table>
+        </p>
+        <div id="histogram-svg-container" >
+        </div>
     </div>
+    
 </template>
 
 <script>
@@ -32,6 +43,7 @@ export default {
             binCount: 25,
             histogramData: [],
             propertyPath: 'properties.Bettenanzahl',
+            mappedValue: '',
             valueToBinScale: () => (null)
         }
     },
@@ -43,6 +55,8 @@ export default {
             if (!!this.selectedItem){
                 //Retrieve the mapped value of the currently selected item.
                 let mappedValue = JSONUtil.getProperty(this.selectedItem, this.$data.propertyPath);
+
+                this.$data.mappedValue = mappedValue;
                 
                 //Calculate the associated bin index for the value.
                 let binNumber = this.$data.valueToBinScale(mappedValue);
@@ -58,13 +72,12 @@ export default {
     methods: {
         initialize(){
             /**
-             * Wait until data is loaded.
+             * Wait 2s until data is loaded.
              * //TODO: implement event trigger which updates this component if the data has been loaded.
              */
             setTimeout(() => {
                 this.$data.histogramData = this.getData(this.$data.propertyPath);
                 this.renderHistogram(this.$data.binCount);
-                this.highlightBinAtIndex(2);
             }, 2000);
         },
 
@@ -74,13 +87,13 @@ export default {
         renderHistogram(binCount){
             var width = 280;
             var height = 100;
-            var elementID = "#histogram";
+            var elementID = "#histogram-svg-container";
 
             let data = this.$data.histogramData || d3.range(1000).map(d3.randomNormal(550,50)); //Take 100 random normal distributed values;
             console.warn(data);
 
             var BIN_COUNT = binCount;
-            var margin = {top: 20, right: 20, bottom: 20, left: 20};
+            var margin = {top: 20, right: 20, bottom: 20, left: 40};
             let color = this.color;
             
             //Determine max and min of dataset
@@ -127,7 +140,7 @@ export default {
             .append("g")
             .attr("class", "bar")
             .attr("transform", function(d) {
-                return "translate(" + x(d.x0) + "," + histogramHeight(d.length) + ")";
+                return "translate(" + (x(d.x0) + margin.left) + "," + histogramHeight(d.length) + ")";
             });
             
             //Maps the y value to a color scheme
@@ -151,12 +164,24 @@ export default {
 
             this.$data.valueToBinScale = scaleQuantize;
 
-            //Add lower axis
-            var axis = d3.axisBottom(x);
+            //Add bottom axis
+            var axis = d3
+                .axisBottom(x)
+                .ticks(8);
             svg.append('g')
                 .attr('class', 'bottomAxis')
-                .attr('transform', 'translate(0,' + height + ')')
+                .attr('transform', 'translate(' + margin.left + ',' + height + ')')
                 .call(axis);
+
+            //Add left axis
+            var axisLeft = d3
+                .axisLeft(histogramHeight)
+                .ticks(5);
+            svg.append('g')
+                .attr('class', 'leftAxis')
+                .attr('transform', 'translate('+ margin.left+ ',0) ')
+                .call(axisLeft);
+
         },
         /**
          * Retrieves an array of the Property from the data storage
@@ -192,6 +217,14 @@ export default {
 </script>
 
 <style>
+
+    .property-header{
+        font-size: 10px;
+        color: #AFAFAF;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
     /**
      * See styling reference: https://bl.ocks.org/d3noob/629790fc15cc1afba0253f29a4d246e7
     */
@@ -205,5 +238,22 @@ export default {
             
     .bottomAxis line {
         visibility: hidden;
+    }
+
+    /**
+     * Left axis
+     */
+
+    .leftAxis text{
+        font-weight: bold;
+        fill: rgb(226, 226, 226);
+    }
+
+    .leftAxis path {
+        visibility: hidden;
+    }
+            
+    .leftAxis line {
+        stroke: #515151;
     }
 </style>
