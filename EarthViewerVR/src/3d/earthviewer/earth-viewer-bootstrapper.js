@@ -22,8 +22,10 @@ window.addEventListener("load", (event) => {
     window.Earth = earthViewer;
     window.Ascene = ascene;
 
+    /**
+     * Retrieve camera and renderer from aframe components.
+     */
     let camera = document.querySelector('#camera').getObject3D('camera');;
-
     let renderer = ascene.renderer;
     let pickingHandler = new PickingHandler(ascene, camera, renderer, true);
     window.pickingHandler = pickingHandler;

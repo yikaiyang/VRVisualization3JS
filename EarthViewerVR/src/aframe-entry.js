@@ -1,4 +1,1 @@
-EVENT_BUS.on('test', () => {
-    alert('hello');
-});
-
+import 'aframe';

@@ -77,19 +77,16 @@ class EarthViewer extends BaseThreeJSComponent{
                 let latitude = newPosition.latitude;
                 let longitude = newPosition.longitude;
 
-                //TODO validate parameters for validity
-
+                //TODO Check parameters for validity
                 if (!!altitude && !!latitude && !!longitude){
                     this.rerenderEarth(altitude, latitude, longitude);
                 }
             }
         });
-        EVENT_BUS.on('test',() => {
-            alert('Test successful');
-        })
     }
 
     //region Visualisation
+    ///TODO: Move this outside from the renderer
     _loadVisualization(){
         const filePath = './src/assets/data/hospital/hospitalData.json'
         this._visualizationManager = new VisualizationManager(this.scene, this.earth);

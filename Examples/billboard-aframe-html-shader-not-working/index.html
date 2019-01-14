@@ -1,0 +1,142 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width">
+    <title>A-Frame HTML Shader - Dynamic</title>
+    <script src="https://aframe.io/releases/0.8.0/aframe.min.js"></script>
+    <script src="./aframe-html-shader.js"></script>
+    <style type="text/css">
+      #target {
+        width: 512px;
+        height: 256px;
+        position: absolute;
+        background: rgba(255,255,0,0.3);
+      }
+      /* Hide the HTML using z-index. */
+      /* Can't use display: none because that would hide the HTML in the rendered material. */
+      #htmlTarget.hide {
+        z-index: -1;
+      }
+      #target h1 {
+        font-family: Arial;
+        font-size: 110px;
+        margin: 0;
+        vertical-align: top;
+        color: white;
+      }
+      #target h1 span {
+        color: tomato;
+      }
+      #pre {
+        font-family: monospace;
+        margin: 0;
+        padding: 0;
+        height: 50px;
+        font-size: 50px;
+        background: royalblue;
+        color: tomato;
+      }
+      #htmlTarget {
+        position: absolute;
+        z-index: 1;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        position: fixed;
+        top: 0;
+      }
+      #debug {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+      }
+      /* Even works with media queries. */
+      /*
+      @media (max-width: 768px) {
+        #target {
+          width: 256px;
+          height: 126px;
+        }
+        #target h1 {
+          font-size: 55px;
+        }
+        #pre {
+          height: 50px;
+          font-size: 25px;
+        }
+      } */
+    </style>
+  </head>
+  <body>
+    <a-scene update-html>
+      <a-entity position="0 0 0">
+        <a-camera>
+          <!-- Letters. -->
+          <a-entity 
+          id="lettersEntity" 
+          geometry="primitive: plane; width: 200; height: 200" 
+          rotation="-10 0 0" 
+          position="0 -100 -200" 
+          material="shader: html; 
+                  target: #target; 
+                  transparent: true; 
+                  ratio: width; 
+                  fps: 1.5">
+          </a-entity>
+        </a-camera>
+        
+      </a-entity>
+
+      <!-- Sky. -->
+      <a-sky color="pink"></a-sky>
+    </a-scene>
+
+    <!-- HTML to render as a material. -->
+    <div id="htmlTarget" class="hide">
+      <div id="target">
+        <h1>HELLO<span>★</span></h1>
+        <p>asdfasfsdf</p>
+        <span id="pre">A</span>
+        <p>asdfasdf</p>
+      </div>
+    </div>
+
+    <!-- Debug, showing the HTML as HTML. -->
+    <div class="buttons">
+      <a id="toggleDOM">toggle DOM visibility</a>
+      <a id="toggleDebug">toggle debug mode for letters</a>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="spacer2"></div>
+
+<!--     <script>
+      // Set up debug buttons.
+      (function () {
+        var htmlTarget = document.getElementById('htmlTarget')
+        var lettersEntity = document.querySelector('#lettersEntity');
+
+        document.querySelector('#toggleDOM').addEventListener('click', function () {
+          htmlTarget.classList.toggle('hide');
+        });
+
+        document.querySelector('#lettersEntity').addEventListener('click', function () {
+          var material = Object.assign({}, lettersEntity.getAttribute('material'))
+          material.debug = !material.debug? '#debug' : ''
+          lettersEntity.setAttribute('material', material)
+        });
+      })();
+    </script> -->
+    <script>
+        let billboard = document.querySelector('lettersEntity');
+    </script>
+
+    <!-- add axis helper -->
+    <script>
+      let axisHelper = new THREE.AxisHelper(10);
+      let gridHelper = new THREE.GridHelper(10,10);
+      let scene = document.querySelector('a-scene').object3D;
+      scene.add(gridHelper);
+    </script>
+  </body>
+</html>
