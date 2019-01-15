@@ -42,99 +42,101 @@
         <script src="https://d3js.org/d3.v5.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
         <script>        
-        var width = 280;
-        var height = 100;
-        var elementID = "body";
 
-        let data = d3.range(1000).map(d3.randomNormal(550,50)); //Take 100 random normal distributed values;
+        function createHistogram(htmlElementID = "body", height = 100, width = 280){
 
-        var BIN_COUNT = 25;
-        var margin = {top: 20, right: 20, bottom: 20, left: 20};
-        var color = "#37BAD0";
-        
-        //Determine max and min of dataset
-        var max = d3.max(data);
-        var min = d3.min(data);
+            let data = d3.range(1000).map(d3.randomNormal(550,50)); //Take 100 random normal distributed values;
 
-        const BIN_WIDTH = 10; //x(bins[0].x1) - x(bins[0].x0) - 1 (take all available space - 1 px padding)
-        const IS_ROUNDED = true;
+            var BIN_COUNT = 25;
+            var margin = {top: 20, right: 20, bottom: 20, left: 20};
+            var color = "#37BAD0";
 
-        var thresholds = d3.range(min, max, (max - min ) / BIN_COUNT);
-        var x = d3.scaleLinear()
-            .domain([min, max])
-            .range([0, width]);
+            //Determine max and min of dataset
+            var max = d3.max(data);
+            var min = d3.min(data);
 
-        console.log(data);
-        //Determine bins
-        var bins = d3
-            .histogram()
-            .domain(x.domain())
-            .thresholds(thresholds)
-            (data);
-        
-        console.log(bins);
-        
-        //Determine y values. (d.length is number of array items in the classified bin)
-        var yMax = d3.max(bins, (d) => (d.length));
-        var yMin = d3.min(bins, (d) => (d.length));
-        
-        var histogramHeight = d3.scaleLinear()
-          .domain([0, yMax])
-          .range([height, 0]);
-        
-        var svg = d3.select(elementID)
-            .append("svg")
-            .attr("id","histogram-svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom);
-        
-        var bars = svg.selectAll("g.bar")
-          .data(bins)
-          .enter()
-          .append("g")
-          .attr("class", "bar")
-          .attr("transform", function(d) {
-            return "translate(" + x(d.x0) + "," + histogramHeight(d.length) + ")";
-        });
+            const BIN_WIDTH = 10; //x(bins[0].x1) - x(bins[0].x0) - 1 (take all available space - 1 px padding)
+            const IS_ROUNDED = true;
 
-        var colorScale = d3.scaleLinear()
-            .domain([yMin, yMax])
-            .range([d3.rgb(color).darker(), d3.rgb(color).brighter()]);
-        
-        bars.append("rect")
-          .attr("fill", (d) => (colorScale(d.length)))
-          .attr('rx', BIN_WIDTH / 2)
-          .attr('ry', BIN_WIDTH / 2)
-          .attr("width", BIN_WIDTH) 
-          .attr("height", function(d) {
-            return height - histogramHeight(d.length);
-        });
+            var thresholds = d3.range(min, max, (max - min ) / BIN_COUNT);
+            var x = d3.scaleLinear()
+                .domain([min, max])
+                .range([0, width]);
 
-        var axis = d3.axisBottom(x)
-            .ticks(8);
-        svg.append('g')
-            .attr('class', 'bottomAxis')
-            .attr('transform', 'translate(0,' + height + ')')
-            .call(axis);
+            console.log(data);
+            //Determine bins
+            var bins = d3
+                .histogram()
+                .domain(x.domain())
+                .thresholds(thresholds)
+                (data);
 
-        var axisLeft = d3
-            .axisLeft(histogramHeight)
-            .ticks(5);
-        svg.append('g')
-            .attr('class', 'leftAxis')
-            .attr('transform', 'translate(20,0)')
-            .call(axisLeft);
+            console.log(bins);
 
-        var binNumber = d3.scaleThreshold()
-            .domain(x.domain())
-            .range([1,15]);
+            //Determine y values. (d.length is number of array items in the classified bin)
+            var yMax = d3.max(bins, (d) => (d.length));
+            var yMin = d3.min(bins, (d) => (d.length));
+
+            var histogramHeight = d3.scaleLinear()
+            .domain([0, yMax])
+            .range([height, 0]);
+
+            var svg = d3.select(htmlElementID)
+                .append("svg")
+                .attr("id","histogram-svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom);
+
+            var bars = svg.selectAll("g.bar")
+            .data(bins)
+            .enter()
+            .append("g")
+            .attr("class", "bar")
+            .attr("transform", function(d) {
+                return "translate(" + x(d.x0) + "," + histogramHeight(d.length) + ")";
+            });
+
+            var colorScale = d3.scaleLinear()
+                .domain([yMin, yMax])
+                .range([d3.rgb(color).darker(), d3.rgb(color).brighter()]);
+
+            bars.append("rect")
+            .attr("fill", (d) => (colorScale(d.length)))
+            .attr('rx', BIN_WIDTH / 2)
+            .attr('ry', BIN_WIDTH / 2)
+            .attr("width", BIN_WIDTH) 
+            .attr("height", function(d) {
+                return height - histogramHeight(d.length);
+            });
+
+            var axis = d3.axisBottom(x)
+                .ticks(8);
+            svg.append('g')
+                .attr('class', 'bottomAxis')
+                .attr('transform', 'translate(0,' + height + ')')
+                .call(axis);
+
+            var axisLeft = d3
+                .axisLeft(histogramHeight)
+                .ticks(5);
+            svg.append('g')
+                .attr('class', 'leftAxis')
+                .attr('transform', 'translate(20,0)')
+                .call(axisLeft);
+
+            var binNumber = d3.scaleThreshold()
+                .domain(x.domain())
+                .range([1,15]);
 
 
-        var scaleQua = d3.scaleQuantize()
-            .domain(x.domain())
-            .range(_.range(1,BIN_COUNT + 1))
+            var scaleQua = d3.scaleQuantize()
+                .domain(x.domain())
+                .range(_.range(1,BIN_COUNT + 1))
 
-        var highlightValue = (value) => (setHighlightcolor(scaleQua(value)))    
+            var highlightValue = (value) => (setHighlightcolor(scaleQua(value)))    
+        }
+
+        createHistogram();
 
         function setHighlightcolor(index){
             var binRectangle = document.querySelector('#histogram-svg .bar:nth-child(' + index +') rect:not(.selected)');

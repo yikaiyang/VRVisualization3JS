@@ -5,31 +5,75 @@
             #snapshot-canvas {
                 position: absolute;
                 bottom: 0px;
-                height: 512px;
-                width: 512px;
+                height: 320px;
+                width: 800px;
                 z-index: 1;
             }
 
-            #target {
+            #billboard-html-target {
                 position: fixed;
-                height: 512px;
-                width: 512px;
+                height: 320px;
+                width: 800px;
+                padding: 20px;
                 z-index: 1;
+                font-family: Arial, Helvetica, sans-serif;
+                background-color: #10151C;
+                color: #E0E0E0;
             }
+
+            #billboard-html-target h1{
+                padding: 0;
+                margin: 0;
+            }
+
+            #billboard-container {
+                margin-top: 20px;
+                display: flex;
+                flex-direction: row;
+            }
+
+            #left-segment {
+                width: 40%;
+            }
+
+            #right-segment {
+                width: 60%;
+            }
+
+
+
         </style>
     </head>
     <body>
         <script src="./bundle.js"></script>
         
-        <div id="target"
-            style="color: #E0E0E0;
-            background-color: darkslategrey">
-            sdafasdfasdf
-            fasdfsd
-            dasfasdf
-            <p>asfdsaf</p>
-            <p>asdfsdf</p>
-            sdfsadf
+        <div id="billboard-html-target">
+            <h1>Allgemeines Krankenhaus</h1>
+            <div id="billboard-container">
+                <div id="left-segment">
+                        <table style="color: white;">
+                                <tr>
+                                    <td>ID:</td>
+                                    <td>{{(selectedItem || {}).id}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Title:</td>
+                                    <td>{{(selectedItem || {}).title}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Latitude:</td>
+                                    <td>{{((selectedItem || {}).position || {}).lat}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Longitude:</td>
+                                    <td>{{((selectedItem || {}).position || {}).lon}}</td>
+                                </tr>
+                            </table>
+                </div>
+                <div id="right-segment">
+                    <div id="histogram"></div>
+                </div>   
+            </div>
         </div>
 
         <canvas 
@@ -42,10 +86,10 @@
                 <!-- Letters. -->
                 <a-entity 
                     id="lettersEntity" 
-                    geometry="primitive: plane; width: 512; height: 512"
+                    geometry="primitive: plane; width: 800; height: 320"
                     material="src: #snapshot-canvas"
                     rotation="-10 0 0" 
-                    position="0 -100 -800" 
+                    position="0 -400 -800" 
                 >
                 </a-entity>
                 </a-camera>
@@ -55,16 +99,6 @@
             <!-- Sky. -->
             <a-sky color="pink"></a-sky>
             </a-scene>
-          
-            <!-- HTML to render as a material. -->
-            <div id="htmlTarget" class="hide">
-                <div id="target">
-                  <h1>HELLO<span>★</span></h1>
-                  <p>asdfasfsdf</p>
-                  <span id="pre">A</span>
-                  <p>asdfasdf</p>
-                </div>
-            </div>
                     
             <!-- add axis helper -->
             <script>
