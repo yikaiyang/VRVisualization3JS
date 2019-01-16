@@ -8,27 +8,45 @@ var App = App || {};
 
 class UserPosition {
     constructor(){
-        this.altitude = Constants.DEFAULT_ALTITUDE;
-        this.latitude = Constants.DEFAULT_LATITUDE;
-        this.longitude = Constants.DEFAULT_LONGITUDE;
-    }
-
-    set(latitude, longitude, altitude){
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.altitude = altitude;
+        this._altitude = Constants.DEFAULT_ALTITUDE;
+        this._latitude = Constants.DEFAULT_LATITUDE;
+        this._longitude = Constants.DEFAULT_LONGITUDE;
     }
     
-    setAltitude(altitude) {
-        this.altitude = altitude;
+    set altitude(value) {
+        if (value !== null && value !== undefined && !isNaN(value)){
+            this._altitude = value;
+        } else {
+            console.warn('Tried to set invalid altitude value: ' + value);
+        } 
     }
 
-    setLatitude(latitude) {
-        this.latitude = latitude;
+    get altitude(){
+        return this._altitude;
     }
 
-    setLongitude(longitude) {
-        this.longitude = longitude;
+    set latitude(value) {
+        if (value !== null || value !== undefined || !isNaN(value)){
+            this._latitude = value;
+        } else {
+            console.warn('Tried to set invalid latitude value: ' + value);
+        } 
+    }
+
+    get latitude(){
+        return this._latitude;
+    }
+
+    set longitude(value) {
+        if (value !== null && value !== undefined && !isNaN(value)){
+            this._longitude = value;
+        } else {
+            console.warn('Tried to set invalid longitude value: ' + value);
+        } 
+    }
+
+    get longitude() {
+        return this._longitude;
     }
 }
 

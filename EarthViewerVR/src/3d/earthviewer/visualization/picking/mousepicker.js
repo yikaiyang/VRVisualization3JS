@@ -59,7 +59,7 @@ export default class MousePicker{
             return;
         }
 
-        //Rerender 1x1 pixel. 
+        //Rerender 0x0 pixel. 
         //We actually do not need to render a scene at all.
         //By rerendering a scene, the matrices of the objects in the scene graph get automatically updated,
         // which is needed if objects inside the scene graph are moved.

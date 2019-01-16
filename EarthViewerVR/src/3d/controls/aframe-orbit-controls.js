@@ -1156,9 +1156,6 @@ AFRAME.registerComponent('orbit-controls', {
 
 		let camera = el.getObject3D('camera');
 		let rig = document.querySelector('#camera-rig');
-
-		//let threeCamera = document.querySelector('#camera[camera]').components.camera.camera;
-		//let rigCamera = document.querySelector('#camera-rig').components.camera.camera;
 		
 		this.controls = new THREE.OrbitControls(camera,
 			el.sceneEl.renderer.domElement);

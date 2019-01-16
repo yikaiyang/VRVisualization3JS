@@ -193,7 +193,6 @@ AFRAME.registerComponent('vive-wasd-controls', {
     }
 
     //Pan earth
-
     if (pressedKeys.KeyW || pressedKeys.ArrowUp) {
       this.panUp(panAcceleration * userPosition.altitude / height);
       this.updateEarthPosition();
@@ -254,10 +253,17 @@ AFRAME.registerComponent('vive-wasd-controls', {
    * Pan left function with functionality similar to AframeOrbitControls.
    */
   panLeft: function (distance) {
+    if (!isFinite(distance)){
+      return;
+    }
+
     //Assume thetha is 0
     let theta = 0;
     let R = 6370; // Radius of earth
+    console.log('distance' + distance);
     var lonDelta = Math.cos(theta) * (distance / (1000 * R * Math.cos(userPosition.latitude * Math.PI / 180))) * 180 / Math.PI;
+
+    console.log('lonDelta: ' + lonDelta);
     userPosition.longitude -= lonDelta;
     var latDelta = -Math.sin(theta) * (distance / (R * 1000)) * 180 / Math.PI;
 
@@ -272,11 +278,19 @@ AFRAME.registerComponent('vive-wasd-controls', {
       // console.log('latitude:', latitude)
     }
     // latitude = (latitude + 90) % 180 - 90;
-    userPosition.longitude = (userPosition.longitude + 540) % 360 - 180;
+
+    let updatedLongitudePosition = (userPosition.longitude + 540) % 360 - 180;
+    if (updatedLongitudePosition !== NaN){
+      userPosition.longitude = updatedLongitudePosition;
+    }
     console.log('latitude: ' + userPosition.latitude + 'longitude: ' + userPosition.longitude);
   },
 
   panUp: function (distance) {
+    if (!isFinite(distance)){
+      return;
+    }
+
     let theta = 0;
     let R = 6370;
 
@@ -367,6 +381,8 @@ AFRAME.registerComponent('vive-wasd-controls', {
   }, */
   updateEarthPosition: function(){
     if (!!EVENT_BUS){
+
+
       EVENT_BUS.emit('earthviewer:positionChanged', {
         'altitude': userPosition.altitude,
         'longitude': userPosition.longitude,
@@ -374,31 +390,6 @@ AFRAME.registerComponent('vive-wasd-controls', {
       });
     }
   },
-
-  /*
-  getMovementVector: (function () {
-    var directionVector = new THREE.Vector3(0, 0, 0);
-    var rotationEuler = new THREE.Euler(0, 0, 0, 'YXZ');
-
-    return function (delta) {
-      var rotation = this.el.getAttribute('rotation');
-      var velocity = this.velocity;
-      var xRotation;
-
-      directionVector.copy(velocity);
-      directionVector.multiplyScalar(delta);
-
-      // Absolute.
-      if (!rotation) { return directionVector; }
-
-      xRotation = this.data.fly ? rotation.x : 0;
-
-      // Transform direction relative to heading.
-      rotationEuler.set(THREE.Math.degToRad(xRotation), THREE.Math.degToRad(rotation.y), 0);
-      directionVector.applyEuler(rotationEuler);
-      return directionVector;
-    };
-  })(),*/
 
   attachVisibilityEventListeners: function () {
     window.addEventListener('blur', this.onBlur);

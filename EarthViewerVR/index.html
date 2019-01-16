@@ -59,9 +59,13 @@
           <!-- <a-sphere position="0 0 -6370000" radius="6370000" color="#EF2D5E"></a-sphere> -->
 
         <a-entity
-            id="camera-entity"  
+            id="camera"
+            camera="far: 100000000; near: 0.05; fov: 75"
+            look-controls="enabled: false"
+            vive-wasd-controls="enabled: true; cameraRigIdentifier: camera-rig"
+            orbit-controls="target: 0 0 0; initialPosition: 0 0 6378000; enabled: true" 
         >
-            <a-camera
+           <!--  <a-camera
                 id="camera"
                 far="100000000"
                 near="0.05"
@@ -70,7 +74,7 @@
                 vive-wasd-controls="enabled: true; cameraRigIdentifier: camera-rig"
                 orbit-controls="target: 0 0 0; initialPosition: 0 0 6378000; enabled: true"
             >
-            </a-camera>
+            </a-camera> -->
         </a-entity>
 
         <!--VR Billboard -->

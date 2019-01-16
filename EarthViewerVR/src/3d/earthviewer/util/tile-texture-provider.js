@@ -75,6 +75,20 @@ class TileTextureProvider {
    }
 
    textureFactory(zoom, xtile, ytile, onLoaded) {
+        //Check if requested tile url is valid.
+        if (zoom === NaN
+            || zoom === undefined
+            || zoom === null
+            || xtile === NaN
+            || xtile === undefined
+            || xtile === null
+            || ytile === NaN
+            || ytile === undefined
+            || ytile === null){
+                console.warn('Requested loading of tile with invalid properties.');
+                return;
+        }
+
         var id = 'tile' + zoom + '_' + xtile + '_' + ytile;
         if (this.textures.hasOwnProperty(id)) {
             onLoaded(this.textures[id]);
