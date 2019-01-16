@@ -1,50 +1,59 @@
 <template>
-    <transition name="ev-popover-fade">
-        <div class="earthviewer-popover" v-show="isPopoverEnabled">
-            <div class="title-header">
-                <span class="title">{{
-                    ((selectedItem || {} ).properties || {} ).Bezeichnung
-                }}</span> 
+    <div>
+        <transition name="ev-popover-fade">
+            <div class="earthviewer-popover" v-show="isPopoverEnabled">
+                <div class="title-header">
+                    <span class="title">{{
+                        ((selectedItem || {} ).properties || {} ).Bezeichnung
+                    }}</span> 
+                </div>
+                
+                <div class="content">
+                    <Histogram 
+                        v-bind:id="selectedID" 
+                        v-bind:selectedItem="selectedItem"
+                        mappedProperty="Bettanzahl"/>                    
+                    <table style="color: white;">
+                        <tr>
+                            <td>ID:</td>
+                            <td>{{
+                                (selectedItem || {}).id
+                            }}</td>
+                        </tr>
+                        <tr>
+                            <td>Title:</td>
+                            <td>{{
+                                (selectedItem || {}).title
+                            }}</td>
+                        </tr>
+                        <tr>
+                            <td>Latitude:</td>
+                            <td>{{
+                                ((selectedItem || {}).position || {}).lat
+                            }}</td>
+                        </tr>
+                        <tr>
+                            <td>Longitude:</td>
+                            <td>{{
+                                ((selectedItem || {}).position || {}).lon
+                            }}</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
-            
-            <div class="content">
-                <Histogram 
-                    v-bind:id="selectedID" 
-                    v-bind:selectedItem="selectedItem"
-                    mappedProperty="Bettanzahl"/>                    
-                <table style="color: white;">
-                    <tr>
-                        <td>ID:</td>
-                        <td>{{
-                            (selectedItem || {}).id
-                        }}</td>
-                    </tr>
-                    <tr>
-                        <td>Title:</td>
-                        <td>{{
-                            (selectedItem || {}).title
-                        }}</td>
-                    </tr>
-                    <tr>
-                        <td>Latitude:</td>
-                        <td>{{
-                            ((selectedItem || {}).position || {}).lat
-                        }}</td>
-                    </tr>
-                    <tr>
-                        <td>Longitude:</td>
-                        <td>{{
-                            ((selectedItem || {}).position || {}).lon
-                        }}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </transition>
+        </transition>
+        <VRBillboard 
+            v-bind:selectedItem="selectedItem"
+            v-bind:id="selectedID"
+        >
+        </VRBillboard>
+    </div>
 </template>
 
 <script>
 import Histogram from './Histogram.vue'
+import VRBillboard from './VRBillboard/VRBillboard.vue'
+
 export default {
     name: 'Popover',
     data: function(){
@@ -52,8 +61,8 @@ export default {
             isPopoverEnabled: false,
             selectedID: 0,
             selectedItem: {
-                id: '1212',
-                title: 'Allgemeines Krankenhaus',
+                id: 'ID',
+                title: 'TITLE',
                 latitude: 42.3,
                 longitude: 13.5
             }
@@ -79,7 +88,8 @@ export default {
         });
     },
     components: {
-        Histogram
+        Histogram,
+        VRBillboard
     }
 }
 </script>

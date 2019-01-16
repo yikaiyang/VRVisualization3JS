@@ -38,23 +38,22 @@
         <a-entity 
             id="camera-rig"
         >
-      <!-- vive-wasd-controls="enabled: false" -->
-          <!-- Left controller / Controls the camera -->
-          <a-entity
-              id="left-controller"
-              laser-controls="hand: left"
-          >    </a-entity>   
-          <!--laser-controls="hand: left" -->
+        <!-- vive-wasd-controls="enabled: false" -->
+        <!-- Left controller / Controls the camera -->
+        <a-entity
+            id="left-controller"
+            laser-controls="hand: left"
+        >
+        </a-entity>
 
-         
-          <!-- Right controller / Navigation of map-->
-          <a-entity
-              laser-controls="hand: right"
-              id="right-controller"
-              line="color: blue; opacity: 0.75" 
-          >
-              <a-cursor color="lavender" opacity="0.5"></a-cursor>
-          </a-entity>
+        <!-- Right controller / Navigation of map-->
+        <a-entity
+            laser-controls="hand: right"
+            id="right-controller"
+            line="color: blue; opacity: 0.75" 
+        >
+            <a-cursor color="lavender" opacity="0.5"></a-cursor>
+        </a-entity>
           
           <!-- This apparently does not work since Aframe elements are culled in a lower distance than three js elements?-->
           <!-- <a-sphere position="0 0 -6370000" radius="6370000" color="#EF2D5E"></a-sphere> -->
@@ -75,13 +74,13 @@
         </a-entity>
 
         <!--VR Billboard -->
-        <a-entity 
+     <!--    <a-entity 
             id="vr-billboard"
-            geometry="primitive: plane; width: 200; height: 200" 
-         
-            rotation="-10 0 0" 
-            position="0 -100 -200"
-        >
+            geometry="primitive: plane; width: 800; height: 320" 
+            material="src: #billboard-canvas"
+            rotation="-5 0 0" 
+            position="0 -500 -800"
+        > -->
         </a-entity>
 
         <a-sky color="#000914" radius="10000000"></a-sky>

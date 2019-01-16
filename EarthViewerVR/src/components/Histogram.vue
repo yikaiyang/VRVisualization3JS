@@ -9,7 +9,7 @@
                 </tr>
             </table>
         </p>
-        <div id="histogram-svg-container" >
+        <div id="histogram-svg-container" ref="svgContainer">
         </div>
     </div>
     
@@ -37,6 +37,14 @@ export default {
         color: {
             type: String,
             default: '#37BAD0'
+        },
+        height: {
+            type: Number,
+            default: 100,
+        },
+        width: {
+            type: Number,
+            default: 280
         }
     },
     data: function(){
@@ -86,17 +94,30 @@ export default {
          * Initializes histogram using d3 histogram
          */
         renderHistogram(binCount){
-            var width = 280;
-            var height = 100;
             var elementID = "#histogram-svg-container";
 
+            //Dom element in which the svg diagramm will be attached.
+            let svgContainerDOMElement = this.$refs.svgContainer;
+
             let data = this.$data.histogramData || d3.range(1000).map(d3.randomNormal(550,50)); //Take 100 random normal distributed values
-            let BIN_COUNT = binCount;
+
+            //alert('height: ' + this.height + ' width: ' + this.width);
 
             createHistogram({
+                htmlDomElement: svgContainerDOMElement,
                 htmlElementID: elementID, 
-                histogramData: data
+                histogramData: data,
+                binCount: binCount,
+                height: this.height,
+                width: this.width
             });
+            
+            var max = d3.max(data);
+            var min = d3.min(data);
+
+            var x = d3.scaleLinear()
+                .domain([min, max])
+                .range([0, this.width]);
 
             var scaleQuantize = d3.scaleQuantize()
                 .domain(x.domain())
@@ -138,7 +159,6 @@ export default {
 </script>
 
 <style>
-
     .property-header{
         font-size: 10px;
         color: #AFAFAF;

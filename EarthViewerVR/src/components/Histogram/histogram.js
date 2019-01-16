@@ -3,20 +3,22 @@ import _ from 'lodash'
 
 export default function createHistogram(
     {
-        htmlElementID = "#histogram-svg-container", 
+        htmlDomElement = null,
+        htmlElementID = "#histogram-svg-container",
         height = 100, 
         width = 280, 
         binCount = 25, 
         histogramData = null,
-        color = '#37BAD0'
+        color = '#37BAD0',
+        margin = {top: 20, right: 20, bottom: 20, left: 40}
     })
 {
     let data = histogramData || d3.range(1000).map(d3.randomNormal(550,50)); //Take 100 random normal distributed values;
 
     console.debug('Created histogram with data: ' + data);
-
-    var margin = {top: 20, right: 20, bottom: 20, left: 40};
     
+    let htmlElement = htmlDomElement || htmlElementID;
+
     //Determine max and min of dataset
     var max = d3.max(data);
     var min = d3.min(data);
@@ -47,7 +49,7 @@ export default function createHistogram(
     .range([height, 0]);
     
     //Create svg element
-    var svg = d3.select(htmlElementID)
+    var svg = d3.select(htmlElement)
         .append("svg")
         .attr('id', 'histogram-svg')
         .attr("width", width + margin.left + margin.right)
