@@ -45,6 +45,13 @@ export default {
         width: {
             type: Number,
             default: 280
+        },
+        /**
+         * When in vr mode styling is applied using attributes manually and not by css.
+         */
+        vrMode: {
+            type: Boolean,
+            default: false
         }
     },
     data: function(){
@@ -101,15 +108,14 @@ export default {
 
             let data = this.$data.histogramData || d3.range(1000).map(d3.randomNormal(550,50)); //Take 100 random normal distributed values
 
-            //alert('height: ' + this.height + ' width: ' + this.width);
-
             createHistogram({
                 htmlDomElement: svgContainerDOMElement,
                 htmlElementID: elementID, 
                 histogramData: data,
                 binCount: binCount,
                 height: this.height,
-                width: this.width
+                width: this.width,
+                vrMode: this.vrMode
             });
             
             var max = d3.max(data);
@@ -138,7 +144,8 @@ export default {
             return result;
         },
         highlightBinAtIndex(index){
-            var binRectangle = document.querySelector('#histogram-svg .bar:nth-child(' + index +') rect:not(.selected)');
+            let svgContainerDOMElement = this.$refs.svgContainer;
+            var binRectangle = svgContainerDOMElement.querySelector('#histogram-svg .bar:nth-child(' + index +') rect:not(.selected)');
             if (!!binRectangle){
                 var initialColor = binRectangle.getAttribute('fill'); 
                 binRectangle.setAttribute('fill', '#E95720');
@@ -147,7 +154,8 @@ export default {
             }
         },
         removeHighlightColor(){
-            var selectedRects = document.querySelectorAll('#histogram-svg .bar .selected');
+            let svgContainerDOMElement = this.$refs.svgContainer;
+            var selectedRects = svgContainerDOMElement.querySelectorAll('#histogram-svg .bar .selected');
             selectedRects.forEach((rect) => {
                 rect.removeAttribute('class');
                 let initialColor = rect.getAttribute('initialColor'); 

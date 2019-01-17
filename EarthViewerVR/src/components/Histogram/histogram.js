@@ -10,9 +10,11 @@ export default function createHistogram(
         binCount = 25, 
         histogramData = null,
         color = '#37BAD0',
-        margin = {top: 20, right: 20, bottom: 20, left: 40}
+        margin = {top: 20, right: 20, bottom: 20, left: 40},
+        vrMode = false
     })
 {
+
     let data = histogramData || d3.range(1000).map(d3.randomNormal(550,50)); //Take 100 random normal distributed values;
 
     console.debug('Created histogram with data: ' + data);
@@ -105,30 +107,44 @@ export default function createHistogram(
         .call(axisLeft);
 
     /**
-     * Apply styling of axis elements manually.
+     * Apply styling of axis elements manually when in VR Mode.
      * This is needed since html2canvas does not support css (currentColor) styling
      * and renders axes in the default color. (black)
      */
-    //Make axis line hidden
 
-/*     let domain = d3.selectAll('.domain')
-    domain.attr('opacity', '0.0');
+    if (vrMode === true) {
+        //Make axis line hidden
+        let domain = d3
+            .select(htmlDomElement)
+            .selectAll('.domain')
+        domain.attr('opacity', '0.0');
 
-    let text = d3.selectAll('.bottomAxis text');
-    text.attr('fill', '#A0A0A0');
-    text.attr('font-size', '16');
-    text.attr('font-weight', 'bold')
+        //Set custom font size and color for bottom axis
+        let text = d3
+            .select(htmlDomElement)
+            .selectAll('.bottomAxis text');
+        text.attr('fill', '#A0A0A0');
+        text.attr('font-size', '16');
+        text.attr('font-weight', 'bold')
 
-    let line = d3.selectAll('.bottomAxis line');
-    line.attr('opacity', '0.0')
+        let line = d3
+            .select(htmlDomElement)
+            .selectAll('.bottomAxis line');
+        line.attr('opacity', '0.0')
 
-    //Left axis
-    text = d3.selectAll('.leftAxis text');
-    text.attr('fill', '#FFFFFF');
-    text.attr('font-size', '16');
-    text.attr('font-weight', 'bold')
+        //Set custom font size and color for left axis.
+        text = d3
+            .select(htmlDomElement)
+            .selectAll('.leftAxis text');
+        text.attr('fill', '#FFFFFF');
+        text.attr('font-size', '16');
+        text.attr('font-weight', 'bold')
 
-    line = d3.selectAll('.leftAxis line');
-    line.attr('stroke', '#FFFFFF');
-    line.attr('stroke-width', '2');*/
+        line = d3
+            .select(htmlDomElement)
+            .selectAll('.leftAxis line');
+        line.attr('stroke', '#FFFFFF');
+        line.attr('stroke-width', '2');
+    }
+
 }

@@ -315,74 +315,11 @@ AFRAME.registerComponent('vive-wasd-controls', {
     this.panLeft(distanceX);
     this.panUp(distanceY);
   },
-  /* 
-  updateVelocity: function (delta) {
-    var acceleration;
-    var adAxis;
-    var adSign;
-    var data = this.data;
-    var keys = pressedKeys;
-    var velocity = this.velocity;
-    var wsAxis;
-    var wsSign;
-
-    adAxis = data.adAxis;
-    wsAxis = data.wsAxis;
-
-    // If FPS too low, reset velocity.
-    if (delta > MAX_DELTA) {
-      velocity[adAxis] = 0;
-      velocity[wsAxis] = 0;
-      return;
-    }
-
-    // Decay velocity.
-    if (velocity[adAxis] !== 0) {
-      velocity[adAxis] -= velocity[adAxis] * data.easing * delta;
-    }
-    if (velocity[wsAxis] !== 0) {
-      velocity[wsAxis] -= velocity[wsAxis] * data.easing * delta;
-    }
-
-    // Clamp velocity easing.
-    if (Math.abs(velocity[adAxis]) < CLAMP_VELOCITY) { velocity[adAxis] = 0; }
-    if (Math.abs(velocity[wsAxis]) < CLAMP_VELOCITY) { velocity[wsAxis] = 0; }
-
-    if (!data.enabled) { return; }
-
-    // Update velocity using keys pressed.
-    acceleration = data.acceleration;
-    if (data.adEnabled) {
-      adSign = data.adInverted ? -1 : 1;
-      if (keys.KeyA || keys.ArrowLeft) {
-        velocity[adAxis] -= adSign * acceleration * delta;
-      }
-      if (keys.KeyD || keys.ArrowRight) {
-        velocity[adAxis] += adSign * acceleration * delta;
-      }
-    }
-    if (data.wsEnabled) {
-      wsSign = data.wsInverted ? -1 : 1;
-
-      let scaleFactor = 1;
-
-      if (keys.KeyW || keys.ArrowUp || keys.moveFrwdVive) {
-        //Zoom into the earth. Reduce acceleration the closer the position is to earth.
-        zoomScale = zoomScale * scaleFactor;
-        velocity[wsAxis] -= wsSign * acceleration * zoomScale * delta;
-        console.log('zoomScale: ' + zoomScale);
-      }
-      if (keys.KeyS || keys.ArrowDown) {
-        zoomScale = zoomScale / scaleFactor;
-        velocity[wsAxis] += wsSign * acceleration * zoomScale * delta;
-        console.log('zoomScale: ' + zoomScale);
-      }
-    }
-  }, */
+  /**
+   * Redraws the map tiles according to new position
+   */
   updateEarthPosition: function(){
     if (!!EVENT_BUS){
-
-
       EVENT_BUS.emit('earthviewer:positionChanged', {
         'altitude': userPosition.altitude,
         'longitude': userPosition.longitude,
@@ -390,7 +327,6 @@ AFRAME.registerComponent('vive-wasd-controls', {
       });
     }
   },
-
   attachVisibilityEventListeners: function () {
     window.addEventListener('blur', this.onBlur);
     window.addEventListener('focus', this.onFocus);

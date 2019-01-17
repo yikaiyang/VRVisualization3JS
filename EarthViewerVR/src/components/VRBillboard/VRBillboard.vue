@@ -27,7 +27,13 @@
                     </table>
                 </div>
                 <div id="right-segment">
-                    <Histogram mappedProperty="Bettanzahl" ></Histogram>
+                    <Histogram 
+                        mappedProperty="Bettanzahl"
+                        v-bind:height="140"
+                        v-bind:width="380"
+                        v-bind:selectedItem="selectedItem"
+                        v-bind:id="selectedID"
+                        v-bind:vrMode="true"></Histogram>
                 </div>   
             </div>
         </div>
@@ -51,12 +57,13 @@ export default {
             type: Object,
             default: null
         },
-    },
-    components: {
-        Histogram
+        selectedID: {
+            type: Number,
+            default: 0
+        }
     },
     watch: {
-        selectedItem(newValue, oldValue){
+        selectedItem: function(newValue, oldValue){
             /**
              * The selected item was changed.
              * -> Rerender the html element to the canvas so that the texture
@@ -67,22 +74,22 @@ export default {
     },
     methods: {
         redrawHistogram(){
+         
             let canvasElement = this.$refs.canvas;
             let billboardElement = this.$refs.billboard;
-            
+              
             if (!!canvasElement){
                 html2canvas(billboardElement, {
                     canvas: canvasElement
-                });/* 
-                let context = canvasElement.getContext('2d');
-                context.fillStyle = "#FF0000";
-                context.fillRect(0, 0, 200, 400); */
-               
+                });
             } else {
                 console.warn('Could not update texture canvas. The referenced canvas element is null or undefined.');
             }
         }
-    }
+    },
+    components: {
+        Histogram
+    },
 }
 </script>
 
@@ -98,6 +105,13 @@ export default {
         padding: 20px;
     }
 
+    #billboard-html h1{
+        color: #FFFFFF;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
     #billboard-container {
         display: flex;
     }
@@ -105,35 +119,37 @@ export default {
     
     #left-segment {
         width: 40%;
+        margin-top: 22px;
     }
 
     #right-segment {
         width: 60%;
+        margin-left: 22px;
     }
 
     #billboard-canvas {
         position: absolute;
-      
         height: 320px;
         width: 800px;
         z-index: 100;
     }
 
-    .billboard-container table {
+    #billboard-container table {
         width: 100%;
+     
+        font-size: 18px;
         /*max-width: 340px;*/
     }
 
-    .billboard-container table td {
-        font-size: 14px;
+    #billboard-container table td {
         color: #FFFFFF;
     }
 
-    .billboard-container table td:last-child{
+    #billboard-container table td:last-child{
         text-align: right;
     }
 
-    .billboard-container table td:first-child {
+    #billboard-container table td:first-child {
         color: #AFAFAF;
     }
   

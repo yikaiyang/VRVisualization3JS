@@ -12,7 +12,8 @@
                     <Histogram 
                         v-bind:id="selectedID" 
                         v-bind:selectedItem="selectedItem"
-                        mappedProperty="Bettanzahl"/>                    
+                        mappedProperty="Bettanzahl"
+                        />                    
                     <table style="color: white;">
                         <tr>
                             <td>ID:</td>
@@ -44,7 +45,7 @@
         </transition>
         <VRBillboard 
             v-bind:selectedItem="selectedItem"
-            v-bind:id="selectedID"
+            v-bind:selectedID="selectedID"
         >
         </VRBillboard>
     </div>
@@ -53,6 +54,7 @@
 <script>
 import Histogram from './Histogram.vue'
 import VRBillboard from './VRBillboard/VRBillboard.vue'
+import JSONUtil from '../util/json-util.js'
 
 export default {
     name: 'Popover',
@@ -86,6 +88,18 @@ export default {
                 this.isPopoverEnabled = false;
             }
         });
+    },
+    methods: {
+        retrieveSelectedItemValue(selectedItem, propertyPath){
+            if (!!selectedItem && !!propertyPath){
+                let propertyValue = JSONUtil.getProperty(this.selectedItem, propertyPath);
+                return propertyValue;
+            } else {
+                console.error('Invalid properties: selectedItem:' 
+                    + selectedItem + ' or propertyPath: ' 
+                    + propertyPath + ' is null or invalid');
+            }
+        }
     },
     components: {
         Histogram,
