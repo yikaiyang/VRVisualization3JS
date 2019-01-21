@@ -1,6 +1,6 @@
 
 <template>
-    <div>
+    <div v-bind:class="{hide: !debug}">
         <div id="billboard-html" ref="billboard">
             <h1>{{
                         ((selectedItem || {} ).properties || {} ).Bezeichnung
@@ -60,6 +60,10 @@ export default {
         selectedID: {
             type: Number,
             default: 0
+        },
+        debug: {
+            type: Boolean,
+            default: false
         }
     },
     watch: {
@@ -94,11 +98,15 @@ export default {
 </script>
 
 <style>
+    .hide {
+        position: absolute;
+        top: -400px;
+    }
+
     #billboard-html {
         position: absolute;
         height: 320px;
         width: 800px;
-        z-index: 100;
         background-color: #10151C;
         color: #E0E0E0;
         font-family: Arial, Helvetica, sans-serif;
