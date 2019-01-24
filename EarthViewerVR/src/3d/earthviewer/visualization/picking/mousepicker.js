@@ -15,6 +15,8 @@ export default class MousePicker{
         this._pickingTexture = new THREE.WebGLRenderTarget(1,1); //Create 1x1 pixel render target.
         this._renderer = renderer;
 
+        this._sceneObjects = this._sceneWrapper.getSceneObjects(); //Store objects of scene here.
+
         this._isEnabled = true;
 
         this._selected = null;
@@ -63,19 +65,22 @@ export default class MousePicker{
         //We actually do not need to render a scene at all.
         //By rerendering a scene, the matrices of the objects in the scene graph get automatically updated,
         // which is needed if objects inside the scene graph are moved.
-        this._camera.setViewOffset(
+         this._camera.setViewOffset(
             this._renderer.domElement.width, 
             this._renderer.domElement.height, 
             0,
             0,
-            1,
-            1);
+            0,
+            0);
+
+        
+
+        // clear the view offset so rendering returns to normal
+        this._camera.clearViewOffset(); 
+
 
         //Rerender Scene
         this._renderer.render(this._scene, this._camera);
-
-        // clear the view offset so rendering returns to normal
-		this._camera.clearViewOffset();
     
 
         this._raycaster.setFromCamera(this._mousePosition,this._camera);

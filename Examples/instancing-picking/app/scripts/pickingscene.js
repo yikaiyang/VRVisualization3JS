@@ -31,6 +31,10 @@ export default class PickingScene{
         if (!!args){
             this._group.rotation.x = this._group.rotation.x + 2;
             this._group.updateMatrix();
+
+            console.log('handlePositonChange');
+            console.log(this._group.children.length);
+            this._scene.updateMatrixWorld();
         }
     }
 

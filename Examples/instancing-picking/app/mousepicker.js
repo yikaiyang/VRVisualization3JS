@@ -65,7 +65,7 @@ export default class MousePicker{
         //We actually do not need to render a scene at all.
         //By rerendering a scene, the matrices of the objects in the scene graph get automatically updated,
         // which is needed if objects inside the scene graph are moved.
-        this._camera.setViewOffset(
+      /*   this._camera.setViewOffset(
             this._renderer.domElement.width, 
             this._renderer.domElement.height, 
             0,
@@ -78,7 +78,7 @@ export default class MousePicker{
 
         // clear the view offset so rendering returns to normal
 		this._camera.clearViewOffset();
-    
+     */
 
         this._raycaster.setFromCamera(this._mousePosition,this._camera);
         // calculate objects intersecting the picking ray

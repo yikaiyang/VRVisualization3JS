@@ -107,7 +107,17 @@ AFRAME.registerComponent('vive-wasd-controls', {
     var el = this.el;
     let scene = el.sceneEl;
     let height = scene.clientHeight;
-    this.height = height;
+
+    /**
+     * For some reason the height is set to 0 when an object is selected in the picking scene.
+     * Temporary fix: Disallow value 0.
+     */
+    if (!height || height <= 0){
+      return;
+    }
+
+
+    console.log('height: ' + height);
     let cameraRig;
     //var movementVector;
     //var position = this.position;
@@ -143,22 +153,8 @@ AFRAME.registerComponent('vive-wasd-controls', {
     }
  
 
-    /*     if (!velocity[data.adAxis] && !velocity[data.wsAxis] &&
-            isEmptyObject(pressedKeys)) { return; } */
-
     // Update velocity.
     delta = delta / 1000;
-    //this.updateVelocity(delta);
-
-    //if (!velocity[data.adAxis] && !velocity[data.wsAxis]) { return; }
-
- /*    console.log('current camera position: '
-      + ' x: ' + currentPosition.x
-      + ' y: ' + currentPosition.y
-      + ' z: ' + currentPosition.z
-      + ' minDistance: ' + data.minDistance
-      + ' maxDistance: ' + data.maxDistance
-    ); */
 
     let position = camera.position;
 
