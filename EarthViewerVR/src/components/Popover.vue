@@ -34,11 +34,11 @@
                 </div>
             </div>
         </transition>
-        <VRBillboard 
+        <!-- <VRBillboard 
             v-bind:selectedItem="selectedItem"
             v-bind:selectedID="selectedID"
         >
-        </VRBillboard>
+        </VRBillboard> -->
     </div>
 </template>
 
