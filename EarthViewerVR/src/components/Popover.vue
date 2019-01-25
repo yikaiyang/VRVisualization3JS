@@ -4,40 +4,31 @@
             <div class="earthviewer-popover" v-show="isPopoverEnabled">
                 <div class="title-header">
                     <span class="title">{{
-                        ((selectedItem || {} ).properties || {} ).Bezeichnung
+                        (selectedItem || {} ).name
                     }}</span> 
                 </div>
                 
                 <div class="content">
                     <Histogram 
-                        v-bind:id="selectedID" 
-                        v-bind:selectedItem="selectedItem"
+                        v-bind:id="selectedID"
                         mappedProperty="Bettanzahl"
                         />                    
                     <table style="color: white;">
                         <tr>
                             <td>ID:</td>
-                            <td>{{
-                                (selectedItem || {}).id
-                            }}</td>
+                            <td>{{selectedID.id}}</td>
                         </tr>
                         <tr>
                             <td>Title:</td>
-                            <td>{{
-                                (selectedItem || {}).title
-                            }}</td>
+                            <td>{{selectedItem.title}}</td>
                         </tr>
                         <tr>
                             <td>Latitude:</td>
-                            <td>{{
-                                ((selectedItem || {}).position || {}).lat
-                            }}</td>
+                            <td>{{selectedItem.latitude}}</td>
                         </tr>
                         <tr>
                             <td>Longitude:</td>
-                            <td>{{
-                                ((selectedItem || {}).position || {}).lon
-                            }}</td>
+                            <td>{{selectedItem.longitude}}</td>
                         </tr>
                     </table>
                 </div>
@@ -55,51 +46,93 @@
 import Histogram from './Histogram.vue'
 import VRBillboard from './VRBillboard/VRBillboard.vue'
 import JSONUtil from '../util/json-util.js'
+import DataStorage from './../3d/earthviewer/visualization/datastorage/datastorage.js'
+
+/**
+ * State / Store pattern 
+ * https://vuejs.org/v2/guide/state-management.html
+ */
+var store = {
+    debug: true,
+    state: {
+        selectedItem: {
+            name: '',
+            id: 'ID',
+            title: 'TITLE',
+            latitude: 0.0,
+            longitude: 0.0
+        },
+        selectedID: 0
+    },
+    setSelectedItemAction (value){
+        if (this.debug) {
+            console.log('setMessageAction triggered with:' + value);
+        };
+
+        if (!!value){
+                this.state.selectedItem.name = value.name;
+                this.state.selectedItem.id = value.id;
+                this.state.selectedItem.title = value.title;
+                this.state.selectedItem.latitude = value.latitude;
+                this.state.selectedItem.longitude = value.longitude;
+        }
+    },
+    setSelectedID(value){
+        if (this.debug) {
+            console.log('setSelectedID triggered with:' + value);
+        };
+
+        if (!!value){
+            this.state.selectedID = value;
+        }
+    }
+}
 
 export default {
     name: 'Popover',
     data: function(){
         return {
             isPopoverEnabled: false,
-            selectedID: 0,
-            selectedItem: {
-                id: 'ID',
-                title: 'TITLE',
-                latitude: 42.3,
-                longitude: 13.5
-            }
+            selectedID: store.state.selectedID,
+            selectedItem: store.state.selectedItem
         }
     },
     mounted: function(){
         EVENT_BUS.on('earthviewer:sceneSelectedItemChanged', (id) => {
-            if (!!id){
+            this.handleSelectedItemChangedEvent(id);
+        });
+    },
+    methods: {
+        async handleSelectedItemChangedEvent(id) {
+            if (!!id && id !== this.selectedID){
                 this.isPopoverEnabled = true;
                 this.selectedID = id;
 
-                //Get and set object with the retrieved id 
-                if (!!window.DATA_STORAGE){
-                    let object = window.DATA_STORAGE[id];
-                
-                    //TODO: Validate schema
-                    this.selectedItem = object;
-                }
+                //Load object with the retrieved id 
+                await this.loadSelectedItem(id);
             } else {
                 //No item selected. Set visibility of popover to hidden.
                 this.isPopoverEnabled = false;
             }
-        });
-    },
-    methods: {
-        retrieveSelectedItemValue(selectedItem, propertyPath){
-            if (!!selectedItem && !!propertyPath){
-                let propertyValue = JSONUtil.getProperty(this.selectedItem, propertyPath);
-                return propertyValue;
-            } else {
-                console.error('Invalid properties: selectedItem:' 
-                    + selectedItem + ' or propertyPath: ' 
-                    + propertyPath + ' is null or invalid');
+        },
+        async loadSelectedItem (id) {
+            if (!!id){
+                 //Get and set object with the retrieved id 
+                if (!!window.DATA_STORAGE){
+                    let selectedObject = await Object.assign({},window.DATA_STORAGE[id]);
+                    let parsedObject = {
+                        name: ((selectedObject || {} ).properties || {} ).Bezeichnung,
+                        id: (selectedObject || {}).id,
+                        title: (selectedObject || {}).title,
+                        latitude: ((selectedObject || {}).position || {}).lat,
+                        longitude: ((selectedObject || {}).position || {}).lon
+                    }
+                    //alert(JSON.stringify(parsedObject));
+                    store.setSelectedItemAction(parsedObject);
+                    //this.selectedItem = window.DATA_STORAGE[id];
+                }
             }
-        }
+        },
     },
     components: {
         Histogram,

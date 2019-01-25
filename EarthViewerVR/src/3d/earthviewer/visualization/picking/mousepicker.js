@@ -19,7 +19,11 @@ export default class MousePicker{
 
         this._isEnabled = true;
 
+        //The selected object
         this._selected = null;
+
+        //The id of the selected object
+        this._selectedID = null;
         
         if (mode === 'pixelbuffer' || mode === 'raycast'){
             this._mode = mode;
@@ -61,42 +65,20 @@ export default class MousePicker{
             return;
         }
 
-        //Rerender 0x0 pixel. 
-        //We actually do not need to render a scene at all.
-        //By rerendering a scene, the matrices of the objects in the scene graph get automatically updated,
-        // which is needed if objects inside the scene graph are moved.
-         this._camera.setViewOffset(
-            this._renderer.domElement.width, 
-            this._renderer.domElement.height, 
-            0,
-            0,
-            0,
-            0);
-
-        
-
-        // clear the view offset so rendering returns to normal
-        this._camera.clearViewOffset(); 
-
-
-        //Rerender Scene
-        this._renderer.render(this._scene, this._camera);
-    
-
         this._raycaster.setFromCamera(this._mousePosition,this._camera);
         // calculate objects intersecting the picking ray
-        let intersects = this._raycaster.intersectObjects( this._sceneWrapper.getSceneObjects());
+        this.intersects = this._raycaster.intersectObjects( this._sceneWrapper.getSceneObjects());
         
         if (this.log){
-            console.log(intersects);
+            console.log(this.intersects);
         }
         
         /**
          * Check if currently selected item matches the intersected object.
          * Intersects[0] returns undefined if nothing is selected, the selected object otherwise.
          */
-        if (this._selected !== intersects[0]){
-            this._selected = intersects[0];
+        if (this._selected !== this.intersects[0]){
+            this._selected = this.intersects[0];
             if (!!this._selected){
                 //Object is selected
                 let object = this._selected.object;
@@ -105,10 +87,12 @@ export default class MousePicker{
                     //selectionElement.innerHTML = 'ID: ' + color;
                     console.log('id' + color);
 
-                    EVENT_BUS.emit(
-                        'earthviewer:sceneSelectedItemChanged',
-                        color);
-                    //alert(color);
+                    if (color !== this._selectedID){
+                        EVENT_BUS.emit(
+                            'earthviewer:sceneSelectedItemChanged',
+                            color);
+                        this._selectedID = color;
+                    }
                 }
             } else {
                 //Object is not selected anymore.

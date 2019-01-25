@@ -2,38 +2,36 @@
 <template>
     <div v-bind:class="{hide: !debug}">
         <div id="billboard-html" ref="billboard">
-            <h1>{{
-                        ((selectedItem || {} ).properties || {} ).Bezeichnung
-                }}</h1>
+            <h1>{{selectedItem.name}}</h1>
             <div id="billboard-container">
                 <div id="left-segment">
                     <table style="color: white;">
                         <tr>
                             <td>ID:</td>
-                            <td>{{(selectedItem || {}).id}}</td>
+                            <td>{{selectedItem.id}}</td>
                         </tr>
                         <tr>
                             <td>Title:</td>
-                            <td>{{(selectedItem || {}).title}}</td>
+                            <td>{{selectedItem.title}}</td>
                         </tr>
                         <tr>
                             <td>Latitude:</td>
-                            <td>{{((selectedItem || {}).position || {}).lat}}</td>
+                            <td>{{selectedItem.latitude}}</td>
                         </tr>
                         <tr>
                             <td>Longitude:</td>
-                            <td>{{((selectedItem || {}).position || {}).lon}}</td>
+                            <td>{{selectedItem.longitude}}</td>
                         </tr>
                     </table>
                 </div>
                 <div id="right-segment">
+                    <!--
                     <Histogram 
                         mappedProperty="Bettanzahl"
                         v-bind:height="140"
                         v-bind:width="380"
-                        v-bind:selectedItem="selectedItem"
                         v-bind:id="selectedID"
-                        v-bind:vrMode="true"></Histogram>
+                        v-bind:vrMode="true"></Histogram>-->
                 </div>   
             </div>
         </div>
@@ -55,7 +53,13 @@ export default {
     props: {
         selectedItem: {
             type: Object,
-            default: null
+            default: {
+                name: 'Test',
+                id: 12,
+                title: 'test',
+                latitude: 43.2,
+                longitude: 32.0
+            }
         },
         selectedID: {
             type: Number,
@@ -67,24 +71,25 @@ export default {
         }
     },
     watch: {
-        selectedItem: function(newValue, oldValue){
-            /**
-             * The selected item was changed.
+        selectedID: function(newValue, oldValue){
+            //alert('selectedID changed:' + newValue);
+            /* The selected item was changed.
              * -> Rerender the html element to the canvas so that the texture
              *  used in the VR billboard is updated
              */
-            this.redrawHistogram();
+            this.redrawBillboard();
         }
     },
     methods: {
-        redrawHistogram(){
-         
+        async redrawBillboard(){
             let canvasElement = this.$refs.canvas;
             let billboardElement = this.$refs.billboard;
               
             if (!!canvasElement){
                 html2canvas(billboardElement, {
-                    canvas: canvasElement
+                    canvas: canvasElement,
+                    async: true,
+                    removeContainer: true
                 });
             } else {
                 console.warn('Could not update texture canvas. The referenced canvas element is null or undefined.');

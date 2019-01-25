@@ -25,10 +25,6 @@ export default {
     name: 'Histogram',
     props: {
         id: Number,
-        selectedItem: {
-            type: Object,
-            default: null
-        },
         mappedProperty: String,
         highlightColor: {
             type: String,
@@ -60,28 +56,35 @@ export default {
             histogramData: [],
             propertyPath: 'properties.Bettenanzahl',
             mappedValue: '',
+            selectedItem: 0,
             valueToBinScale: () => (null)
         }
     },
     mounted: function(){
         this.initialize();
+
+        this.selectedItem = 0;
     },
     watch: {
         id(newId, oldId) {
-            if (!!this.selectedItem){
-                //Retrieve the mapped value of the currently selected item.
-                let mappedValue = JSONUtil.getProperty(this.selectedItem, this.$data.propertyPath);
+            if (!!newId){
+                this.selectedItem = window.DATA_STORAGE[newId];
 
-                this.$data.mappedValue = mappedValue;
-                
-                //Calculate the associated bin index for the value.
-                let binNumber = this.$data.valueToBinScale(mappedValue);
-                
-                //Remove all highlights
-                this.removeHighlightColor();
+                if (!!this.selectedItem){
+                    //Retrieve the mapped value of the currently selected item.
+                    let mappedValue = JSONUtil.getProperty(this.selectedItem, this.$data.propertyPath);
 
-                //Set a highlight color to the bin associated with the selected item value.
-                this.highlightBinAtIndex(binNumber);
+                    this.$data.mappedValue = mappedValue;
+                    
+                    //Calculate the associated bin index for the value.
+                    let binNumber = this.$data.valueToBinScale(mappedValue);
+                    
+                    //Remove all highlights
+                    this.removeHighlightColor();
+
+                    //Set a highlight color to the bin associated with the selected item value.
+                    this.highlightBinAtIndex(binNumber);
+                }
             }
         }
     },
@@ -192,7 +195,6 @@ export default {
     /**
      * Left axis
      */
-
     .leftAxis text{
         font-weight: bold;
         fill: rgb(226, 226, 226);

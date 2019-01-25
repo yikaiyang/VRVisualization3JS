@@ -42,6 +42,8 @@ export default class EarthviewerPickingScene extends PickingScene{
         
         //Add mesh
         this.addObject(mesh);
+
+        this._scene.updateMatrixWorld();
     }
 
     _initContainer(){
@@ -63,6 +65,8 @@ export default class EarthviewerPickingScene extends PickingScene{
                 this._group.setRotationFromEuler(rotation);
             }
             this._group.updateMatrix();
+
+            this._scene.updateMatrixWorld();
         }
     }
 }
